@@ -12,7 +12,7 @@ return array(
 	//模块简介
 	'introduce' => '商城管理-商品，订单，分类',
 	//模块介绍地址
-	'address' => 'http://ztbcms.com',
+	'address' => 'http://doc.ztbcms.com/module/shop/',
 	//模块作者
 	'author' => 'ZtbCMS-zhlhuang',
 	//作者地址
