@@ -83,13 +83,14 @@ class UserService extends BaseService {
                 return false;
             }
         }
-        $user = M('ShopUsers')->where("userid = {$user_id}")->find();
+        $user = M('ShopUsers')->where(['userid' => $member_user_id])->find();
 
         return $user;
     }
 
     /**
      * 添加编辑地址信息
+     *
      * @param     $user_id
      * @param int $address_id
      * @param     $data
@@ -123,7 +124,7 @@ class UserService extends BaseService {
             return false;
         }
         if (!check_mobile($post['mobile'])) {
-            $this->set_err_msg('手机号码格式有误'.$post['mobile']);
+            $this->set_err_msg('手机号码格式有误' . $post['mobile']);
 
             return false;
         }
