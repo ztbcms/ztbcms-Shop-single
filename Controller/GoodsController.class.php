@@ -7,9 +7,7 @@
 namespace Shop\Controller;
 
 use Common\Controller\AdminBase;
-use Shop\Util\Page;
 use Shop\Logic\GoodsLogic;
-use Shop\Util\AjaxPage;
 
 class GoodsController extends AdminBase {
     /**
@@ -78,10 +76,9 @@ class GoodsController extends AdminBase {
         $Goods = D('Goods'); //
         $type = $_POST['goods_id'] > 0 ? 2 : 1; // 标识自动验证时的 场景 1 表示插入 2 表示更新
         //ajax提交验证
-        if (($_GET['is_ajax'] == 1) && IS_POST) {
-            C('TOKEN_ON', false);
-            if (!$Goods->create(null, $type))// 根据表单提交的POST数据创建数据对象
-            {
+        if (IS_AJAX && IS_POST) {
+            // 根据表单提交的POST数据创建数据对象
+            if (!$Goods->create(null, $type)) {
                 //  编辑
                 $error = $Goods->getError();
                 $error_msg = array_values($error);
@@ -93,16 +90,13 @@ class GoodsController extends AdminBase {
                 $this->ajaxReturn($return_arr);
             } else {
                 //  form表单提交
-                // C('TOKEN_ON',true);
                 $Goods->on_time = time(); // 上架时间
-                //$Goods->cat_id = $_POST['cat_id_1'];
                 $_POST['cat_id_2'] && ($Goods->cat_id = $_POST['cat_id_2']);
                 $_POST['cat_id_3'] && ($Goods->cat_id = $_POST['cat_id_3']);
 
                 $_POST['extend_cat_id_2'] && ($Goods->extend_cat_id = $_POST['extend_cat_id_2']);
                 $_POST['extend_cat_id_3'] && ($Goods->extend_cat_id = $_POST['extend_cat_id_3']);
-                $Goods->shipping_area_ids = implode(',', $_POST['shipping_area_ids']);
-                $Goods->shipping_area_ids = $Goods->shipping_area_ids ? $Goods->shipping_area_ids : '';
+
 
                 if ($type == 2) {
                     $goods_id = $_POST['goods_id'];
@@ -132,20 +126,12 @@ class GoodsController extends AdminBase {
         }
 
         $goodsInfo = M('Goods')->where('goods_id=' . I('GET.id', 0))->find();
-        //$cat_list = $GoodsLogic->goods_cat_list(); // 已经改成联动菜单
         $level_cat = $GoodsLogic->find_parent_cat($goodsInfo['cat_id']); // 获取分类默认选中的下拉框
         $level_cat2 = $GoodsLogic->find_parent_cat($goodsInfo['extend_cat_id']); // 获取分类默认选中的下拉框
         $cat_list = M('goods_category')->where("parent_id = 0")->select(); // 已经改成联动菜单
         $brandList = $GoodsLogic->getSortBrands();
         $goodsType = M("GoodsType")->select();
         $suppliersList = M("suppliers")->select();
-        $plugin_shipping = M('plugin')->where(array('type' => array('eq', 'shipping')))->select();//插件物流
-        //暂时关闭配送区域
-        // $shipping_area = D('shipping_area')->getShippingArea();//配送区域
-        // $goods_shipping_area_ids = explode(',',$goodsInfo['shipping_area_ids']);
-        // $this->assign('goods_shipping_area_ids',$goods_shipping_area_ids);
-        $this->assign('shipping_area', $shipping_area);
-        $this->assign('plugin_shipping', $plugin_shipping);
         $this->assign('suppliersList', $suppliersList);
         $this->assign('level_cat', $level_cat);
         $this->assign('level_cat2', $level_cat2);
