@@ -441,6 +441,15 @@
                         dataType: 'json',
                         success: function (res) {
                             console.log(res)
+                            if (res.status) {
+                                //添加成功
+                                layer.msg('添加成功')
+                                setTimeout(function () {
+                                    location.href = "{:U('Shop/Goods/index')}"
+                                }, 1500)
+                            } else {
+                                layer.msg('系统繁忙，请稍后')
+                            }
                         }
                     })
                 }
