@@ -96,14 +96,14 @@ class UserApiController extends BaseController {
      */
     public function edit_address() {
         if (IS_POST) {
-            $id = I('post.id');
-            if (!$id) {
+            $address_id = I('post.address_id');
+            if (!$address_id) {
                 $this->error('参数错误', '', true);
             }
             $post = I('post.');
-            unset($post['id']);
+            unset($post['address_id']);
             $user_service = new UserService();
-            $data = $user_service->add_eidt_address($this->userid, 0, I('post.'));
+            $data = $user_service->add_eidt_address($this->userid, $address_id, I('post.'));
             $this->success($data, '', true);
         } else {
             $this->error('请求方法错误', '', true);
