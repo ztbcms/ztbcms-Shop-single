@@ -14,7 +14,7 @@ class UserApiController extends BaseController {
         if ($userinfo && $shop_user) {
             $this->success($shop_user, '', true);
         } else {
-            $this->error('没有登录', -500, 1);
+            $this->ajaxReturn(array('status' => -500, 'msg' => '没有登录'));
         }
     }
 
