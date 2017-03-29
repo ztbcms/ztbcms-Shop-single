@@ -28,3 +28,5 @@ DROP TABLE IF EXISTS `cms_delivery_doc`;
 DROP TABLE IF EXISTS `cms_cart`;
 DROP TABLE IF EXISTS `cms_brand`;
 DROP TABLE IF EXISTS `cms_account_log`;
+DROP TABLE IF EXISTS `cms_shop_recom`;
+DROP TABLE IF EXISTS `cms_shop_recom_item`;

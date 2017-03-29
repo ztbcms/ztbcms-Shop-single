@@ -3,25 +3,34 @@
 return array(
     array(
         //父菜单ID，NULL或者不写系统默认，0为顶级菜单
-         "parentid" => 0,
+        "parentid" => 0,
         //地址，[模块/]控制器/方法
-         "route" => "Shop/Shop/index",
+        "route" => "Shop/Shop/index",
         //类型，1：权限认证+菜单，0：只作为菜单
-         "type" => 0,
+        "type" => 0,
         //状态，1是显示，0不显示（需要参数的，建议不显示，例如编辑,删除等操作）
-         "status" => 1,
+        "status" => 1,
         //名称
-         "name" => "商城",
+        "name" => "商城",
         //备注
-         "remark" => "商城相关操作",
+        "remark" => "商城相关操作",
         //子菜单列表
-         "child" => array(
+        "child" => array(
             array(
                 "route" => "Shop/Shop/index",
                 "type" => 1,
                 "status" => 1,
                 "name" => "商城主页",
-            ), array(
+                "child" => array(
+                    array(
+                        "route" => "Shop/Shop/recom",
+                        "type" => 1,
+                        "status" => 1,
+                        "name" => "首页推荐",
+                    )
+                )
+            ),
+            array(
                 "route" => "Shop/Goods/index",
                 "type" => 1,
                 "status" => 1,
@@ -44,27 +53,32 @@ return array(
                         "type" => 1,
                         "status" => 1,
                         "name" => "商品类型",
-                    ), array(
+                    ),
+                    array(
                         "route" => "Shop/Spec/index",
                         "type" => 1,
                         "status" => 1,
                         "name" => "商品规格",
-                    ), array(
+                    ),
+                    array(
                         "route" => "Shop/Attribute/index",
                         "type" => 1,
                         "status" => 1,
                         "name" => "商品属性",
-                    ), array(
+                    ),
+                    array(
                         "route" => "Shop/Brand/index",
                         "type" => 1,
                         "status" => 1,
                         "name" => "商品品牌",
-                    ), array(
+                    ),
+                    array(
                         "route" => "Shop/Comment/index",
                         "type" => 1,
                         "status" => 1,
                         "name" => "商品评论",
-                    ), array(
+                    ),
+                    array(
                         "route" => "Shop/Comment/ask_list",
                         "type" => 1,
                         "status" => 1,

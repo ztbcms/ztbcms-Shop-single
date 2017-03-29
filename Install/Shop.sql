@@ -602,3 +602,31 @@ CREATE TABLE `cms_account_log` (
   PRIMARY KEY (`log_id`),
   KEY `user_id` (`userid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- 推荐位表
+-- ----------------------------
+
+CREATE TABLE `cms_shop_recom` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) DEFAULT NULL COMMENT '推荐位名称',
+  `sort` int(11) DEFAULT NULL COMMENT '排序',
+  `status` int(1) DEFAULT NULL COMMENT '推荐位状态',
+  `create_time` int(10) DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- 推荐内容表
+-- ----------------------------
+CREATE TABLE `cms_shop_recom_item` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `recom_id` int(11) DEFAULT NULL COMMENT '所属推荐位id',
+  `name` varchar(128) DEFAULT NULL COMMENT '内容名称',
+  `link` varchar(255) DEFAULT NULL COMMENT '链接地址',
+  `img_url` varchar(255) DEFAULT NULL COMMENT '图片url',
+  `sort` int(11) DEFAULT NULL COMMENT '排序',
+  `status` int(1) DEFAULT NULL COMMENT '状态',
+  `create_time` int(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
