@@ -12,7 +12,7 @@ class ShopController extends AdminBase {
         if (IS_AJAX) {
             $res = M('ShopRecom')->order('id desc')->select();
             foreach ($res as $key => $value) {
-                $item_list = M('ShopRecomItem')->where(['recom_id' => $value['id']])->order('id desc')->select();
+                $item_list = M('ShopRecomItem')->where(['recom_id' => $value['id']])->order('sort desc')->select();
                 $res[$key]['item_list'] = $item_list ? $item_list : [];
             }
 

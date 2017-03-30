@@ -34,6 +34,9 @@
                                        aria-describedby="example2_info">
                                     <thead>
                                     <tr role="row">
+                                        <th>
+                                            排序
+                                        </th>
                                         <th>名称
                                         </th>
                                         <th>
@@ -49,6 +52,9 @@
                                     </thead>
                                     <tbody>
                                     <tr v-for="i in item.item_list" role="row" class="odd">
+                                        <td>
+                                            {{i.sort}}
+                                        </td>
                                         <td class="sorting_1">{{ i.name }}</td>
                                         <td>
                                             <img style="width:200px;" :src="i.img_url" alt="">
@@ -105,10 +111,11 @@
                             <label for="">推荐链接</label>
                         </div>
                         <div class="col-md-9">
-                            <img id="edit_show_img" src="" alt="">
+                            <img style="width: 200px;" id="edit_show_img" src="" alt="">
                             <input type="hidden" id="edit_img_url">
                             <input type="button" class="btn btn-default" value="上传图片"
                                    onclick="GetUploadify(1,'','recom','edit_call_back');"/>
+                            <p>*请保持同一个推荐位的图片尺寸一致</p>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -182,7 +189,7 @@
                             <label for="">推荐链接</label>
                         </div>
                         <div class="col-md-9">
-                            <img id="show_img" src="" alt="">
+                            <img id="show_img" style="width: 200px;" src="" alt="">
                             <input type="hidden" id="img_url">
                             <input type="button" class="btn btn-default" value="上传图片"
                                    onclick="GetUploadify(1,'','recom','call_back');"/>
