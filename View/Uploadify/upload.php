@@ -40,11 +40,11 @@
 	</div>
 </div>
 
-<script src="{$config_siteurl}statics/extres/shop/plugins/uploadify/jquery.min.js" type="text/javascript"></script> 
+<script src="{$config_siteurl}statics/extres/shop/plugins/uploadify/jquery.min.js" type="text/javascript"></script>
 <!--防止客户端缓存文件，造成uploadify.js不更新，而引起的“喔唷，崩溃啦”-->
 <script>document.write("<script type='text/javascript' "+ "src='{$config_siteurl}statics/extres/shop/plugins/uploadify/jquery.uploadify.js?" + new Date()+ "'></s" + "cript>");
-</script>			
-<script src="{$config_siteurl}statics/extres/shop/plugins/uploadify/uploadify-move.js" type="text/javascript"></script> 
+</script>
+<script src="{$config_siteurl}statics/extres/shop/plugins/uploadify/uploadify-move.js" type="text/javascript"></script>
 <script type="text/javascript">
 function Close(){
 	$("iframe.uploadframe", window.parent.document).remove();
@@ -72,20 +72,20 @@ $(function() {
 			'buttonImage'     : '{$config_siteurl}statics/extres/shop/plugins/uploadify/select.png',
 			'queueID'         : 'fileQueue',
 			'onUploadStart'   : function(file){
-				$('#uploadify').uploadify('settings', 'formData', {'iswatermark':$("#iswatermark").is(':checked')});				
+				$('#uploadify').uploadify('settings', 'formData', {'iswatermark':$("#iswatermark").is(':checked')});
 			},
 			'onUploadSuccess' : function(file, data, response){
-				console.log(data)
 				data=JSON.parse(data)
-				$(".fileWarp ul").append(SetImgContent(data.res));
+                console.log(data)
+				$(".fileWarp ul").append(SetImgContent(data));
 				SetUploadFile();
 			}
 		});
 });
 
-function SetImgContent(obj){	
+function SetImgContent(obj){
 	// var obj=eval('('+data+')');
-	if(obj.state == 'SUCCESS'){
+	if(obj.status){
 		var sLi = "";
 		sLi += '<li class="img">';
 		sLi += '<img src="' + obj.url + '" width="100" height="100" onerror="this.src=\'{$config_siteurl}statics/extres/shop/plugins/uploadify/nopic.png\'">';
@@ -121,32 +121,32 @@ function SetUploadFile(){
  *如果是单一文件，上传结束后将地址存入$input元素
  *如果是组文件上传，则创建input样式，添加到$input后面
  *隐藏父框架，清空列队，移除已上传文件样式*/
-$("#SaveBtn").click(function(){	
+$("#SaveBtn").click(function(){
 	var callback = "{$info.func}";
 	var num = {$info.num};
 	var fileurl_tmp = [];
-	if(callback != "undefined"){	
-		if(num > 1){	
+	if(callback != "undefined"){
+		if(num > 1){
 			 $("input[name^='fileurl_tmp']").each(function(index,dom){
 				fileurl_tmp[index] = dom.value;
-			 });	
+			 });
 		}else{
-			fileurl_tmp = $("input[name^='fileurl_tmp']").val();	
+			fileurl_tmp = $("input[name^='fileurl_tmp']").val();
 		}
 		eval('window.parent.'+callback+'(fileurl_tmp)');
 		$(window.parent.document).find("iframe.uploadframe").remove();
 		return;
-	}					 
+	}
 	if(num > 1){
 			var fileurl_tmp = "";
 			$("input[name^='fileurl_tmp']").each(function(){
-				fileurl_tmp += '<li rel="'+ this.value +'"><input class="input-text" type="text" name="{$info.input}[]" value="'+ this.value +'" /><a href="javascript:void(0);" onclick="ClearPicArr(\''+ this.value +'\',\'\')">删除</a></li>';	
-			});			
+				fileurl_tmp += '<li rel="'+ this.value +'"><input class="input-text" type="text" name="{$info.input}[]" value="'+ this.value +'" /><a href="javascript:void(0);" onclick="ClearPicArr(\''+ this.value +'\',\'\')">删除</a></li>';
+			});
 			$(window.parent.document).find("#{$info.input}").append(fileurl_tmp);
 	}else{
 			$(window.parent.document).find("#{$info.input}").val($("input[name^='fileurl_tmp']").val());
 	}
-	
+
 	$(window.parent.document).find("iframe.uploadframe").remove();
 });
 </script>
