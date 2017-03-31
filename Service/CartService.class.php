@@ -4,6 +4,7 @@ namespace Shop\Service;
 class CartService extends BaseService {
     /**
      * 加入购物车
+     *
      * @param     $goods_id
      * @param     $goods_num
      * @param     $goods_spec
@@ -89,6 +90,7 @@ class CartService extends BaseService {
             'add_time' => time(), // 加入购物车时间
             'prom_type' => $goods['prom_type'],   // 0 普通订单,1 限时抢购, 2 团购 , 3 促销优惠
             'prom_id' => $goods['prom_id'],   // 活动id
+            'original_img' => $goods['original_img']
         );
 
         // 如果商品购物车已经存在
@@ -105,11 +107,12 @@ class CartService extends BaseService {
             $cart_count = cart_goods_num($user_id, $session_id); // 查找购物车数量
             setcookie('cn', $cart_count, null, '/');
         }
-        if($res){
+        if ($res) {
             $cart_count = cart_goods_num($user_id, $session_id); // 查找购物车数量
             return $cart_count;
-        }else{
+        } else {
             $this->set_err_msg('添加购物车失败');
+
             return false;
         }
     }
