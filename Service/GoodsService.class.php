@@ -5,6 +5,7 @@ class GoodsService extends BaseService {
 
     /**
      * 获取指定的商品列表
+     *
      * @param     $where
      * @param     $catid
      * @param     $order
@@ -22,6 +23,7 @@ class GoodsService extends BaseService {
             'goods_list' => $goods_list ? $goods_list : [],
             'page' => $page,
             'limit' => $limit,
+            'page_count' => ceil($total_count / $limit),
             'total_count' => $total_count,
         ];
 
@@ -30,6 +32,7 @@ class GoodsService extends BaseService {
 
     /**
      * 获取相片所属的规格信息
+     *
      * @param $goods_id
      * @return array
      */
@@ -51,6 +54,7 @@ class GoodsService extends BaseService {
                 );
             }
         }
+
         return $filter_spec;
     }
 }

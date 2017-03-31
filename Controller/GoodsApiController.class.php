@@ -55,5 +55,21 @@ class GoodsApiController extends Base {
         $goods_res = $goods_service->get_goods_list($where, $catid, $order, $page, $limit);
         $this->success($goods_res, '', true);
     }
+
+    /**
+     * 获取商品分类
+     */
+    public function getGoodsCat() {
+        if (I('get.parent_id')) {
+            $where['parent_id'] = I('get.parent_id');
+        }
+        $where['is_show'] = 1;
+        $res = M('GoodsCategory')->where($where)->select();
+        if ($res) {
+            $this->success($res ? $res : [], '', true);
+        } else {
+            $this->error();
+        }
+    }
 }
 
