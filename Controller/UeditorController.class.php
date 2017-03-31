@@ -290,7 +290,8 @@ class UeditorController extends AdminBase{
         $return_data['title'] = $title;
         $return_data['original'] = $info['upfile']['name'];
         $return_data['state'] = $state;
-        $this->ajaxReturn(array('res'=>$return_data),'json');
+        $return_data['status']=true;
+        $this->ajaxReturn($return_data,'json');
     }
 
 }
