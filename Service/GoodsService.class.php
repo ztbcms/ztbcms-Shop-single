@@ -5,18 +5,19 @@ class GoodsService extends BaseService {
 
     /**
      * 获取指定的商品列表
-     *
-     * @param     $where
-     * @param     $catid
-     * @param     $order
-     * @param int $page
-     * @param int $limit
+     * @param array $where 查询条件
+     * @param int $catid 分类ID
+     * @param int $order 排序
+     * @param int $onsale 是否上架
+     * @param int $page 当前页
+     * @param int $limit 每页显示数据
      * @return array
      */
-    public function get_goods_list($where, $catid, $order, $page = 1, $limit = 20) {
+    public function get_goods_list($where, $catid, $order, $onsale, $page = 1, $limit = 20) {
         if ($catid) {
             $where['cat_id'] = ['in', getCatGrandson($catid)];
         }
+        $where['is_on_sale'] = $onsale;
         $goods_list = M('Goods')->where($where)->page($page, $limit)->order($order)->select();
         $total_count = M('Goods')->where($where)->count();
         $res = [

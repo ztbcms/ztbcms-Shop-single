@@ -37,9 +37,6 @@ class GoodsApiController extends Base {
      */
     public function goods_list() {
         $where = [];
-        if (I('get.is_on_sale')) {
-            $where['is_on_sale'] = true;
-        }
         if (I('get.is_recommend')) {
             $where['is_recommend'] = true;
         }
@@ -54,8 +51,9 @@ class GoodsApiController extends Base {
 
         $catid = I('get.catid', 0);
         $order = I('get.order', '');
+        $onsale = I('get.is_on_sale','1');
         $goods_service = new GoodsService();
-        $goods_res = $goods_service->get_goods_list($where, $catid, $order, $page, $limit);
+        $goods_res = $goods_service->get_goods_list($where, $catid, $order, $onsale, $page, $limit);
         $this->success($goods_res, '', true);
     }
 
