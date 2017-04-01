@@ -6,9 +6,53 @@
             goods_del: '/index.php?g=Shop&m=goods&a=delGoods'
         }
     }
-
+    window.__baseFilters = {
+        filters: {
+            getPayNameByCode: function (value) {
+                var pay = {cod: '现金支付', 'wxpay': '微信支付', 'alipay': '支付宝支付'};
+                return pay[value];
+            },
+            getFormatTime: function (value) {
+                var time = new Date(parseInt(value * 1000));
+                var y = time.getFullYear();
+                var m = time.getMonth() + 1;
+                var d = time.getDate();
+                var h = time.getHours()
+                var min = time.getMinutes()
+                var res = y + '-' + (m < 10 ? '0' + m : m) + '-' + (d < 10 ? '0' + d : d);
+                res += '  ' + (h < 10 ? '0' + h : h) + ':' + (min < 10 ? '0' + min : min)
+                return res;
+            }
+        }
+    }
     window.__baseMethods = {
         methods: {
+            httpGet: function (url, data, success) {
+                $.ajax({
+                    url: url,
+                    type: 'get',
+                    data: data,
+                    dataType: 'json',
+                    success: function (res) {
+                        if (typeof success == 'function') {
+                            success(res)
+                        }
+                    }
+                })
+            },
+            httpPost: function (url, data, success) {
+                $.ajax({
+                    url: url,
+                    type: 'post',
+                    data: data,
+                    dataType: 'json',
+                    success: function (res) {
+                        if (typeof success == 'function') {
+                            success(res)
+                        }
+                    }
+                })
+            },
             /**
              * 更新表中指定字段
              *
