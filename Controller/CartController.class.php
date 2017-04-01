@@ -10,6 +10,9 @@ class CartController extends BaseController {
     public function index() {
         //如果用户没有登录，是用session_id加入购物车
         $where = ['user_id' => $this->userid];
+        if (I('get.ids')) {
+            $where['id'] = ['in', I('get.ids')];
+        }
         $cart_list = M("Cart")->where($where)->select();
         $this->success($cart_list ? $cart_list : [], '', true);
     }

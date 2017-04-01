@@ -63,7 +63,7 @@ class UserApiController extends BaseController {
      * 用户地址列表
      */
     public function address_list() {
-        $address_lists = M('UserAddress')->where(array('userid' => $this->userid))->select();
+        $address_lists = M('UserAddress')->where(array('userid' => $this->userid))->order('is_default desc')->select();
         $list = [];
         foreach ($address_lists as $key => $value) {
             $value['province_name'] = getRegionName($value['province'], 1);

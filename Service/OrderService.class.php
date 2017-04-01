@@ -2,6 +2,7 @@
 namespace Shop\Service;
 
 class OrderService extends BaseService {
+    const TABLE_NAME = 'Order';
 
     /**
      * 订单状态
@@ -39,7 +40,7 @@ class OrderService extends BaseService {
      * @param string     $shipping_code 物流编号
      * @param string     $invoice_title 发票
      * @param string|int $coupon_id     优惠券id
-     * @param array      $car_price     各种价格
+     * @param array      $cart_price    各种价格
      * @return string $order_id 返回新增的订单id
      */
     public function addOrder(
@@ -49,7 +50,7 @@ class OrderService extends BaseService {
         $shipping_code,
         $invoice_title,
         $coupon_id = 0,
-        $car_price
+        $cart_price
     ) {
 
         // 仿制灌水 1天只能下 50 单  // select * from `tp_order` where user_id = 1  and order_sn like '20151217%'
@@ -78,17 +79,17 @@ class OrderService extends BaseService {
             'shipping_code' => $shipping_code,//'物流编号',
             'shipping_name' => $shipping['name'], //'物流名称',
             'invoice_title' => $invoice_title, //'发票抬头',
-            'goods_price' => $car_price['goodsFee'],//'商品价格',
-            'shipping_price' => $car_price['postFee'],//'物流价格',
-            'user_money' => $car_price['balance'],//'使用余额',
-            'coupon_price' => $car_price['couponFee'],//'使用优惠券',
-            'integral' => ($car_price['pointsFee'] * tpCache('shopping.point_rate')), //'使用积分',
-            'integral_money' => $car_price['pointsFee'],//'使用积分抵多少钱',
-            'total_amount' => ($car_price['goodsFee'] + $car_price['postFee']),// 订单总额
-            'order_amount' => $car_price['payables'],//'应付款金额',
+            'goods_price' => $cart_price['goodsFee'],//'商品价格',
+            'shipping_price' => $cart_price['postFee'],//'物流价格',
+            'user_money' => $cart_price['balance'],//'使用余额',
+            'coupon_price' => $cart_price['couponFee'],//'使用优惠券',
+            'integral' => ($cart_price['pointsFee'] * tpCache('shopping.point_rate')), //'使用积分',
+            'integral_money' => $cart_price['pointsFee'],//'使用积分抵多少钱',
+            'total_amount' => ($cart_price['goodsFee'] + $cart_price['postFee']),// 订单总额
+            'order_amount' => $cart_price['payables'],//'应付款金额',
             'add_time' => time(), // 下单时间
-            'order_prom_id' => $car_price['order_prom_id'],//'订单优惠活动id',
-            'order_prom_amount' => $car_price['order_prom_amount'],//'订单优惠活动优惠了多少钱',
+            'order_prom_id' => $cart_price['order_prom_id'],//'订单优惠活动id',
+            'order_prom_amount' => $cart_price['order_prom_amount'],//'订单优惠活动优惠了多少钱',
         );
 
         $order_id = M("Order")->data($data)->add();
@@ -137,12 +138,12 @@ class OrderService extends BaseService {
         }
 
         // 3 扣除积分 扣除余额
-        if ($car_price['pointsFee'] > 0) {
+        if ($cart_price['pointsFee'] > 0) {
             M('ShopUsers')->where("userid = $user_id")->setDec('pay_points',
-                ($car_price['pointsFee'] * tpCache('shopping.point_rate')));
+                ($cart_price['pointsFee'] * tpCache('shopping.point_rate')));
         } // 消费积分
-        if ($car_price['balance'] > 0) {
-            M('ShopUsers')->where("userid = $user_id")->setDec('user_money', $car_price['balance']);
+        if ($cart_price['balance'] > 0) {
+            M('ShopUsers')->where("userid = $user_id")->setDec('user_money', $cart_price['balance']);
         } // 抵扣余额
         // 4 删除已提交订单商品
 
@@ -151,8 +152,8 @@ class OrderService extends BaseService {
 
         // 5 记录log 日志
         $data4['user_id'] = $user_id;
-        $data4['user_money'] = -$car_price['balance'];
-        $data4['pay_points'] = -($car_price['pointsFee'] * tpCache('shopping.point_rate'));
+        $data4['user_money'] = -$cart_price['balance'];
+        $data4['pay_points'] = -($cart_price['pointsFee'] * tpCache('shopping.point_rate'));
         $data4['change_time'] = time();
         $data4['desc'] = '下单消费';
         $data4['order_sn'] = $order['order_sn'];
@@ -273,5 +274,12 @@ class OrderService extends BaseService {
         );
 
         return $result;
+    }
+
+
+    public function updateInfo($order_id, $data) {
+        $res = M(self::TABLE_NAME)->where(['order_id' => $order_id])->save($data);
+
+        return $res;
     }
 }
