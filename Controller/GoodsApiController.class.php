@@ -37,6 +37,9 @@ class GoodsApiController extends Base {
      */
     public function goods_list() {
         $where = [];
+        if (I('get.is_on_sale')) {
+            $where['is_on_sale'] = true;
+        }
         if (I('get.is_recommend')) {
             $where['is_recommend'] = true;
         }
