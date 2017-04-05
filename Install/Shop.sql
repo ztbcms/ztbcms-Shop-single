@@ -565,6 +565,7 @@ CREATE TABLE `cms_cart` (
   `prom_type` tinyint(1) DEFAULT '0' COMMENT '0 普通订单,1 限时抢购, 2 团购 , 3 促销优惠',
   `prom_id` int(11) DEFAULT '0' COMMENT '活动id',
   `sku` varchar(128) DEFAULT '' COMMENT 'sku',
+  `original_img` varchar(255) NOT NULL DEFAULT '' COMMENT '商品上传原始图',
   PRIMARY KEY (`id`),
   KEY `session_id` (`session_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
