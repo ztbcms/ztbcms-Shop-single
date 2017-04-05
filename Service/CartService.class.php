@@ -2,14 +2,14 @@
 namespace Shop\Service;
 
 class CartService extends BaseService {
+
     /**
      * 加入购物车
-     *
-     * @param     $goods_id
-     * @param     $goods_num
-     * @param     $goods_spec
-     * @param     $session_id
-     * @param int $user_id
+     * @param int $goods_id 商品ID
+     * @param int $goods_num 购买数量
+     * @param array $goods_spec 商品规格
+     * @param $session_id
+     * @param int $user_id 用户ID
      * @return bool|int
      */
     function add_cart($goods_id, $goods_num, $goods_spec, $session_id, $user_id = 0) {
