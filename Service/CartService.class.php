@@ -38,7 +38,7 @@ class CartService extends BaseService {
             $where .= " and  session_id = '$session_id' ";
         }
 
-        $catr_goods = M('Cart')->where($where)->find(); // 查找购物车是否已经存在该商品
+        $cart_goods = M('Cart')->where($where)->find(); // 查找购物车是否已经存在该商品
         $price = $spec_price ? $spec_price : $goods['shop_price']; // 如果商品规格没有指定价格则用商品原始价格
 
 
@@ -58,7 +58,7 @@ class CartService extends BaseService {
 
             return false;
         }
-        if ($catr_goods['goods_num'] + $goods_num <= 0) {
+        if ($cart_goods['goods_num'] + $goods_num <= 0) {
             $this->set_err_msg('购买商品数量不能为0');
 
             return false;
@@ -68,7 +68,7 @@ class CartService extends BaseService {
 
             return false;
         }
-        if (($goods['store_count'] < ($catr_goods['goods_num'] + $goods_num))) {
+        if (($goods['store_count'] < ($cart_goods['goods_num'] + $goods_num))) {
             $this->set_err_msg('商品库存不足');
 
             return false;
@@ -94,12 +94,12 @@ class CartService extends BaseService {
         );
 
         // 如果商品购物车已经存在
-        if ($catr_goods) {
+        if ($cart_goods) {
             // 如果购物车的已有数量加上 这次要购买的数量  大于  库存输  则不再增加数量
-            if (($catr_goods['goods_num'] + $goods_num) > $goods['store_count']) {
+            if (($cart_goods['goods_num'] + $goods_num) > $goods['store_count']) {
                 $goods_num = 0;
             }
-            $res = M('Cart')->where("id =" . $catr_goods[id])->save(array("goods_num" => ($catr_goods['goods_num'] + $goods_num))); // 数量相加
+            $res = M('Cart')->where("id =" . $cart_goods['id'])->save(array("goods_num" => ($cart_goods['goods_num'] + $goods_num))); // 数量相加
             $cart_count = cart_goods_num($user_id, $session_id); // 查找购物车数量
             setcookie('cn', $cart_count, null, '/');
         } else {
@@ -108,8 +108,7 @@ class CartService extends BaseService {
             setcookie('cn', $cart_count, null, '/');
         }
         if ($res) {
-            $cart_count = cart_goods_num($user_id, $session_id); // 查找购物车数量
-            return $cart_count;
+            return $cart_goods ? $cart_goods['id'] : $res;
         } else {
             $this->set_err_msg('添加购物车失败');
 

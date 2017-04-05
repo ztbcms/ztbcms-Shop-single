@@ -66,7 +66,7 @@ class OrderApiController extends BaseController {
 //        $model = new \Shop\Logic\ShopUsersLogic();
         foreach ($order_list as $k => $v) {
             $data = OrderService::get_order_goods($v['order_id']);
-            $order_list[$k]['goods_list'] = $data['result'];
+            $order_list[$k]['goods_list'] = $data;
         }
         $res_data['total'] = $total;
         $res_data['page'] = $page;

@@ -44,12 +44,23 @@ class CartController extends BaseController {
             $result = $cart_service->add_cart($goods_id, $goods_num, $goods_spec, $this->session_id,
                 $this->user_id); // 将商品加入购物车
             if ($result) {
-                $this->success($set_num, '', true);
+                $this->success($result, '', true);
             } else {
                 $this->error($cart_service->get_err_msg(), '', true);
             }
         } else {
-            $this->error('数据错误', '', true);
+            //如果购物车没有，默认是添加
+            $goods_id = I("goods_id"); // 商品id
+            $goods_num = I("goods_num", 1);// 商品数量
+            $goods_spec = I("goods_spec"); // 商品规格
+            $cart_service = new CartService();
+            $result = $cart_service->add_cart($goods_id, $goods_num, $goods_spec, $this->session_id,
+                $this->userid); // 将商品加入购物车
+            if ($result) {
+                $this->success($result, '', true);
+            } else {
+                $this->error($cart_service->get_err_msg(), '', true);
+            }
         }
     }
 
