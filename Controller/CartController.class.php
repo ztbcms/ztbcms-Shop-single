@@ -42,7 +42,7 @@ class CartController extends BaseController {
             $cart_service = new CartService();
             //设置购物车数据操作
             $result = $cart_service->add_cart($goods_id, $goods_num, $goods_spec, $this->session_id,
-                $this->user_id); // 将商品加入购物车
+                $this->userid); // 将商品加入购物车
             if ($result) {
                 $this->success($result, '', true);
             } else {
@@ -94,5 +94,34 @@ class CartController extends BaseController {
         } else {
             $this->error('无可删除内容', '', true);
         }
+    }
+
+    /**
+     * 通过订单编号再来一单，返回购物车id
+     */
+    public function order_again() {
+        $order_id = I('post.order_id');
+        $goods_list = M('OrderGoods')->where(['order_id' => $order_id])->select();
+        $result_arr = [];
+        foreach ($goods_list as $key => $value) {
+            $goods_id = $value['goods_id'];
+            $goods_num = $value['goods_num'];
+            //将sku信息转化成数组
+            if ($value['spec_key_name']) {
+                $spec_key_name = explode(' ', $value['spec_key_name']);
+                $spec_key = explode('_', $value['spec_key']);
+                $spec_arr = null;
+                foreach ($spec_key_name as $key => $value) {
+                    $spec_arr[explode(':', $value)[0]] = $spec_key[$key];
+                };
+                $goods_spec = $spec_arr;
+            }
+            $cart_service = new CartService();
+            //设置购物车数据操作
+            $result = $cart_service->add_cart($goods_id, $goods_num, $goods_spec, $this->session_id,
+                $this->userid); // 将商品加入购物车
+            $result_arr[] = $result;
+        }
+        $this->success($result_arr);
     }
 }
