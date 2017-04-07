@@ -91,9 +91,9 @@ class UserService extends BaseService {
     /**
      * 添加编辑地址信息
      *
-     * @param     $user_id
-     * @param int $address_id
-     * @param     $data
+     * @param int $user_id 用户ID
+     * @param int $address_id 地址ID
+     * @param array $data 传入参数
      * @return bool|int|mixed
      */
     public function add_eidt_address($user_id, $address_id = 0, $data) {
