@@ -4,6 +4,7 @@
 namespace Shop\Logic;
 
 use Common\Model\RelationModel;
+use Shop\Service\OrderService;
 
 class OrderLogic extends RelationModel {
     /**
@@ -187,37 +188,42 @@ class OrderLogic extends RelationModel {
      * @return bool
      */
     public function orderProcessHandle($order_id, $act) {
-        $updata = array();
+        $order_sn = M('order')->where("order_id = $order_id")->getField("order_sn");
+        $order_service = new OrderService();
+        $res = null;
         switch ($act) {
             case 'pay': //付款
-                $order_sn = M('order')->where("order_id = $order_id")->getField("order_sn");
-                update_pay_status($order_sn); // 调用确认收货按钮
-                return true;
-            case 'pay_cancel': //取消付款
-                $updata['pay_status'] = 0;
-                $this->order_pay_cancel($order_id);
+                $res = $order_service->payOrder($order_sn);
 
-                return true;
+                break;
+            case 'pay_cancel': //取消付款
+                $res = $order_service->cancelPay($order_sn);
+
+                break;
             case 'confirm': //确认订单
-                $updata['order_status'] = 1;
+                $res = $order_service->confirmOrder($order_sn);
+
                 break;
             case 'cancel': //取消确认
-                $updata['order_status'] = 0;
+                $res = $order_service->cancelOrder($order_sn);
+
                 break;
             case 'invalid': //作废订单
-                $updata['order_status'] = 5;
-                break;
-            case 'remove': //移除订单
-                return $this->delOrder($order_id);
+                $res = $order_service->invalidOrder($order_sn);
+
                 break;
             case 'delivery_confirm'://确认收货
-                confirm_order($order_id); // 调用确认收货按钮
-                return true;
+                $res = $order_service->deliveryOrder($order_sn);
+
+                break;
             default:
                 return true;
         }
-
-        return M('order')->where("order_id=$order_id")->save($updata);//改变订单状态
+        if ($res) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

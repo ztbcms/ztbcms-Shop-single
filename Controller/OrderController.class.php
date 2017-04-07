@@ -685,8 +685,6 @@ class OrderController extends AdminBase {
 
     /**
      * 订单操作
-     *
-     * @param $id
      */
     public function order_action() {
         $orderLogic = new OrderLogic();
@@ -694,9 +692,8 @@ class OrderController extends AdminBase {
         $order_id = I('get.order_id');
         $order = M('Order')->find($order_id);
         if ($action && $order) {
-            $a = $orderLogic->orderProcessHandle($order_id, $action);
-            $res = $orderLogic->orderActionLog($order_id, $action, I('note'));
-            if ($res && $a) {
+            $res = $orderLogic->orderProcessHandle($order_id, $action);
+            if ($res) {
                 exit(json_encode(array('status' => 1, 'msg' => '操作成功')));
             } else {
                 exit(json_encode(array('status' => 0, 'msg' => '操作失败')));

@@ -319,6 +319,7 @@ CREATE TABLE `cms_order` (
   `order_amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '应付款金额',
   `total_amount` decimal(10,2) DEFAULT '0.00' COMMENT '订单总价',
   `add_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '下单时间',
+  `update_time` int(10) DEFAULT '0' COMMENT '更新订单时间',
   `shipping_time` int(11) DEFAULT '0' COMMENT '最后新发货时间',
   `confirm_time` int(10) DEFAULT '0' COMMENT '收货确认时间',
   `pay_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '支付时间',

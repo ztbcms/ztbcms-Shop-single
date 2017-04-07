@@ -1,6 +1,8 @@
 <?php
 namespace Shop\Service;
 
+use Shop\Model\OrderModel;
+
 class OrderService extends BaseService {
     const TABLE_NAME = 'Order';
 
@@ -281,5 +283,184 @@ class OrderService extends BaseService {
         $res = M(self::TABLE_NAME)->where(['order_id' => $order_id])->save($data);
 
         return $res;
+    }
+
+    /**
+     * 支付成功
+     *
+     * @param $order_sn
+     * @return bool
+     */
+    public function payOrder($order_sn) {
+        $order = M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->find();
+        if ($order) {
+            if ($order['pay_status'] == OrderModel::PAY_STATUS_NO) {
+                $update = [
+                    'pay_status' => OrderModel::PAY_STATUS_YES,
+                    'pay_time' => time()
+                ];
+                M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
+                logOrder($order['order_id'], '订单支付成功', '支付成功', $order['user_id']);
+
+                return $order['order_id'];
+            } else {
+                //已经支付
+                $this->set_err_msg('该订单已经支付');
+
+                return false;
+            }
+        } else {
+            $this->set_err_msg('找不到该订单');
+
+            return false;
+        }
+    }
+
+    /**
+     * 取消支付
+     *
+     * @param $order_sn
+     * @return bool
+     */
+    public function cancelPay($order_sn) {
+        $order = M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->find();
+        if ($order) {
+            if ($order['pay_status'] == OrderModel::PAY_STATUS_YES) {
+                $update = [
+                    'pay_status' => OrderModel::PAY_STATUS_NO,
+                    'pay_time' => time()
+                ];
+                M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
+                logOrder($order['order_id'], '订单取消支付', '支付取消', $order['user_id']);
+
+                return $order['order_id'];
+            } else {
+                //该订单未支付
+                $this->set_err_msg('该订单未支付');
+
+                return false;
+            }
+        } else {
+            $this->set_err_msg('找不到该订单');
+
+            return false;
+        }
+    }
+
+    /**
+     * 确认订单
+     *
+     * @param $order_sn
+     * @return bool
+     */
+    public function confirmOrder($order_sn) {
+        $order = M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->find();
+        if ($order) {
+            $update = [
+                'order_status' => OrderModel::STATUS_CONFIRM,
+                'update_time' => time()
+            ];
+            M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
+            logOrder($order['order_id'], '订单确认', '订单确认', $order['user_id']);
+
+            return true;
+        } else {
+            $this->set_err_msg('找不到该订单');
+
+            return false;
+        }
+    }
+
+    /**
+     *  取消订单操作
+     *
+     * @param $order_sn
+     * @return bool
+     */
+    public function cancelOrder($order_sn) {
+        $order = M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->find();
+        if ($order) {
+            $update = [
+                'order_status' => OrderModel::STATUS_CANCEL,
+                'update_time' => time()
+            ];
+            M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
+            //取消订单，处理下单的商品的库存问题
+            $goods_list = M('OrderGoods')->where(['order_id' => $order['order_id']])->select();
+            foreach ($goods_list as $key => $value) {
+                if ($value['spec_key']) {
+                    //如果是有规格
+                    M('SpecGoodsPrice')->where([
+                        'goods_id' => $value['goods_id'],
+                        'key' => $value['spec_key']
+                    ])->setInc('store_count', $value['goods_num']);
+                } else {
+                    //没有规格商品,增加库存
+                    M('Goods')->where(['goods_id' => $value['goods_id']])->setInc('store_count', $value['goods_num']);
+                }
+                M('Goods')->where(['goods_id' => $value['goods_id']])->setDec('sales_sum', $value['goods_num']);
+            }
+            logOrder($order['order_id'], '订单取消', '订单取消', $order['user_id']);
+
+            return true;
+        } else {
+            $this->set_err_msg('找不到该订单');
+
+            return false;
+        }
+    }
+
+    /**
+     * 订单无效操作
+     *
+     * @param $order_sn
+     * @return bool
+     */
+    public function invalidOrder($order_sn) {
+        $order = M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->find();
+        if ($order) {
+            if ($order['order_status'] == OrderModel::STATUS_CANCEL) {
+                $this->set_err_msg('请先取消订单');
+
+                return false;
+            }
+            $update = [
+                'order_status' => OrderModel::STATUS_INVALID,
+                'update_time' => time()
+            ];
+            M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
+
+            logOrder($order['order_id'], '作废订单', '作废订单', $order['user_id']);
+
+            return true;
+        } else {
+            $this->set_err_msg('找不到该订单');
+
+            return false;
+        }
+    }
+
+    /**
+     * 确认收货操作
+     *
+     * @param $order_sn
+     * @return bool
+     */
+    public function deliveryOrder($order_sn) {
+        $order = M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->find();
+        if ($order) {
+            $update = [
+                'order_status' => OrderModel::STATUS_SHIPPING,
+                'update_time' => time()
+            ];
+            M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
+            logOrder($order['order_id'], '确认收货', '确认收货', $order['user_id']);
+
+            return true;
+        } else {
+            $this->set_err_msg('找不到该订单');
+
+            return false;
+        }
     }
 }
