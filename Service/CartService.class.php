@@ -5,11 +5,12 @@ class CartService extends BaseService {
 
     /**
      * 加入购物车
-     * @param int $goods_id 商品ID
-     * @param int $goods_num 购买数量
+     *
+     * @param int   $goods_id   商品ID
+     * @param int   $goods_num  购买数量
      * @param array $goods_spec 商品规格
-     * @param $session_id
-     * @param int $user_id 用户ID
+     * @param       $session_id
+     * @param int   $user_id    用户ID
      * @return bool|int
      */
     function add_cart($goods_id, $goods_num, $goods_spec, $session_id, $user_id = 0) {
@@ -99,7 +100,10 @@ class CartService extends BaseService {
             if (($cart_goods['goods_num'] + $goods_num) > $goods['store_count']) {
                 $goods_num = 0;
             }
-            $res = M('Cart')->where("id =" . $cart_goods['id'])->save(array("goods_num" => ($cart_goods['goods_num'] + $goods_num))); // 数量相加
+            $update = array();
+            $update['goods_num'] = ($cart_goods['goods_num'] + $goods_num);
+            $update['add_time'] = time();
+            $res = M('Cart')->where("id =" . $cart_goods['id'])->save($update); // 数量相加
             $cart_count = cart_goods_num($user_id, $session_id); // 查找购物车数量
             setcookie('cn', $cart_count, null, '/');
         } else {

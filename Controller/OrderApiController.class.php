@@ -47,29 +47,28 @@ class OrderApiController extends BaseController {
     * 订单列表
     */
     public function order_list($page = 1, $limit = 10) {
-        $where = ' user_id=' . $this->userid;
-        //条件搜索
-        if (I('get.type')) {
-            $where .= C(strtoupper(I('get.type')));
+        $where['user_id'] = $this->userid;
+        if (I('get.order_status') != '') {
+            $where['order_status'] = I('get.order_status');
         }
-        // 搜索订单 根据商品名称 或者 订单编号
-        $search_key = trim(I('search_key'));
-        if ($search_key) {
-            $where .= " and (order_sn like '%$search_key%' or order_id in (select order_id from `" . C('DB_PREFIX') . "order_goods` where goods_name like '%$search_key%') ) ";
+        if (I('get.pay_status') != '') {
+            $where['pay_status'] = I('get.pay_status');
         }
-
+        if (I('get.shipping_status') != '') {
+            $where['shipping_status'] = I('get.shipping_status');
+        }
         $total = M('order')->where($where)->count();
         $order_str = "order_id DESC";
         $order_list = M('order')->order($order_str)->where($where)->page($page, $limit)->select();
 
         //获取订单商品
-//        $model = new \Shop\Logic\ShopUsersLogic();
         foreach ($order_list as $k => $v) {
             $data = OrderService::get_order_goods($v['order_id']);
             $order_list[$k]['goods_list'] = $data;
         }
         $res_data['total'] = $total;
         $res_data['page'] = $page;
+        $res_data['page_count'] = ceil($total / $limit);
         $res_data['limit'] = $limit;
         //订单状态对应的中文描述
         $res_data['order_status'] = OrderService::ORDER_STATUS;
