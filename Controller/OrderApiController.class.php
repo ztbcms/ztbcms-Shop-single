@@ -21,6 +21,10 @@ class OrderApiController extends BaseController {
         $map['user_id'] = $this->userid;
         $order_info = M('order')->where($map)->find();
 
+        $order_info['province_name'] = getRegionName($order_info['province'], 1);
+        $order_info['city_name'] = getRegionName($order_info['city'], 2);
+        $order_info['district_name'] = getRegionName($order_info['district'], 3);
+
         if (!$order_info) {
             $this->error('查不到指定订单信息');
         }

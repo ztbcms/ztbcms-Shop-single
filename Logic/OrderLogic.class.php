@@ -290,8 +290,8 @@ class OrderLogic extends RelationModel {
         $data['city'] = $order['city'];
         $data['district'] = $order['district'];
         $data['address'] = $order['address'];
-        $data['shipping_code'] = $order['shipping_code'];
-        $data['shipping_name'] = $order['shipping_name'];
+        $data['shipping_code'] = $data['shipping_code'];
+        $data['shipping_name'] = $data['shipping_name'];
         $data['shipping_price'] = $order['shipping_price'];
         $data['create_time'] = time();
         $did = M('delivery_doc')->add($data);
@@ -308,6 +308,8 @@ class OrderLogic extends RelationModel {
             }
         }
         $updata['shipping_time'] = time();
+        $updata['shipping_code'] = $data['shipping_code'];
+        $updata['shipping_name'] = $data['shipping_name'];
         if ($is_delivery == count($orderGoods)) {
             $updata['shipping_status'] = 1;
         } else {

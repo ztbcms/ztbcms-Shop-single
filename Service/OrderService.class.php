@@ -300,7 +300,7 @@ class OrderService extends BaseService {
                     'pay_time' => time()
                 ];
                 M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
-                logOrder($order['order_id'], '订单支付成功', '支付成功', $order['user_id']);
+                self::logOrder($order['order_id'], '订单支付成功', '支付成功', $order['user_id']);
 
                 return $order['order_id'];
             } else {
@@ -331,7 +331,7 @@ class OrderService extends BaseService {
                     'pay_time' => time()
                 ];
                 M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
-                logOrder($order['order_id'], '订单取消支付', '支付取消', $order['user_id']);
+                self::logOrder($order['order_id'], '订单取消支付', '支付取消', $order['user_id']);
 
                 return $order['order_id'];
             } else {
@@ -361,7 +361,7 @@ class OrderService extends BaseService {
                 'update_time' => time()
             ];
             M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
-            logOrder($order['order_id'], '订单确认', '订单确认', $order['user_id']);
+            self::logOrder($order['order_id'], '订单确认', '订单确认', $order['user_id']);
 
             return true;
         } else {
@@ -400,7 +400,7 @@ class OrderService extends BaseService {
                 }
                 M('Goods')->where(['goods_id' => $value['goods_id']])->setDec('sales_sum', $value['goods_num']);
             }
-            logOrder($order['order_id'], '订单取消', '订单取消', $order['user_id']);
+            self::logOrder($order['order_id'], '订单取消', '订单取消', $order['user_id']);
 
             return true;
         } else {
@@ -430,7 +430,7 @@ class OrderService extends BaseService {
             ];
             M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
 
-            logOrder($order['order_id'], '作废订单', '作废订单', $order['user_id']);
+            self::logOrder($order['order_id'], '作废订单', '作废订单', $order['user_id']);
 
             return true;
         } else {
@@ -454,7 +454,7 @@ class OrderService extends BaseService {
                 'update_time' => time()
             ];
             M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
-            logOrder($order['order_id'], '确认收货', '确认收货', $order['user_id']);
+            self::logOrder($order['order_id'], '确认收货', '确认收货', $order['user_id']);
 
             return true;
         } else {
@@ -462,5 +462,20 @@ class OrderService extends BaseService {
 
             return false;
         }
+    }
+
+    static function logOrder($order_id, $action_note, $status_desc, $user_id = 0){
+        $order = M('order')->where("order_id = $order_id")->find();
+        $action_info = array(
+            'order_id' => $order_id,
+            'action_user' => $user_id,
+            'order_status' => $order['order_status'],
+            'shipping_status' => $order['shipping_status'],
+            'pay_status' => $order['pay_status'],
+            'action_note' => $action_note,
+            'status_desc' => $status_desc, //''
+            'log_time' => time(),
+        );
+        return M('order_action')->add($action_info);
     }
 }

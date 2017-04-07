@@ -567,13 +567,13 @@ class OrderController extends AdminBase {
         $orderLogic = new OrderLogic();
         $order = $orderLogic->getOrderInfo($order_id);
         $orderGoods = $orderLogic->getOrderGoods($order_id);
-        // $delivery_record = M('delivery_doc')->join('LEFT JOIN __ADMIN__ ON __ADMIN__.admin_id = __DELIVERY_DOC__.admin_id')->where('order_id='.$order_id)->select();
+         $delivery_record = M('delivery_doc')->where('order_id='.$order_id)->select();
         if ($delivery_record) {
             $order['invoice_no'] = $delivery_record[count($delivery_record) - 1]['invoice_no'];
         }
         $this->assign('order', $order);
         $this->assign('orderGoods', $orderGoods);
-        // $this->assign('delivery_record',$delivery_record);//发货记录
+         $this->assign('delivery_record',$delivery_record);//发货记录
         $this->display();
     }
 
