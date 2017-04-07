@@ -141,4 +141,13 @@ class OrderApiController extends BaseController {
             $this->error($order_service->get_err_msg());
         }
     }
+
+    /**
+     * 订单发货记录
+     */
+    public function order_delivery() {
+        $order_sn = I('get.order_sn');
+        $deliverys = M('DeliveryDoc')->where(['order_sn' => $order_sn])->select();
+        $this->success($deliverys ? $deliverys : [], '', true);
+    }
 }
