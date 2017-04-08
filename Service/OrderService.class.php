@@ -9,29 +9,37 @@ class OrderService extends BaseService {
     /**
      * 订单状态
      */
-    const ORDER_STATUS = array(
-        0 => '待确认',
-        1 => '已确认',
-        2 => '已收货',
-        3 => '已取消',
-        4 => '已完成',
-        5 => '已作废',
-    );
+    static function ORDER_STATUS() {
+        return array(
+            0 => '待确认',
+            1 => '已确认',
+            2 => '已收货',
+            3 => '已取消',
+            4 => '已完成',
+            5 => '已作废',
+        );
+    }
+
     /**
      * 支付状态
      */
-    const PAY_STATUS = array(
-        0 => '未支付',
-        1 => '已支付',
-    );
+    static function PAY_STATUS() {
+        return array(
+            0 => '未支付',
+            1 => '已支付',
+        );
+    }
+
     /**
      * 发货状态
      */
-    const  SHIPPING_STATUS = array(
-        0 => '未发货',
-        1 => '已发货',
-        2 => '部分发货'
-    );
+    static function SHIPPING_STATUS() {
+        return array(
+            0 => '未发货',
+            1 => '已发货',
+            2 => '部分发货'
+        );
+    }
 
     /**
      *  添加一个订单
@@ -464,7 +472,7 @@ class OrderService extends BaseService {
         }
     }
 
-    static function logOrder($order_id, $action_note, $status_desc, $user_id = 0){
+    static function logOrder($order_id, $action_note, $status_desc, $user_id = 0) {
         $order = M('order')->where("order_id = $order_id")->find();
         $action_info = array(
             'order_id' => $order_id,
@@ -476,6 +484,7 @@ class OrderService extends BaseService {
             'status_desc' => $status_desc, //''
             'log_time' => time(),
         );
+
         return M('order_action')->add($action_info);
     }
 }

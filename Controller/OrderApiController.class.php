@@ -37,11 +37,11 @@ class OrderApiController extends BaseController {
         $order_action = M('order_action')->where(array('order_id' => $id))->select();
 
         //订单状态对应的中文描述
-        $res_data['order_status'] = OrderService::ORDER_STATUS;
+        $res_data['order_status'] = OrderService::ORDER_STATUS();
         //订单物流状态对应的中文描述
-        $res_data['shipping_status'] = OrderService::SHIPPING_STATUS;
+        $res_data['shipping_status'] = OrderService::SHIPPING_STATUS();
         //订单支付状态
-        $res_data['pay_status'] = OrderService::PAY_STATUS;
+        $res_data['pay_status'] = OrderService::PAY_STATUS();
         $res_data['order_info'] = $order_info;
         $res_data['order_action'] = $order_action;
         $this->success($res_data, '', true);
@@ -75,11 +75,11 @@ class OrderApiController extends BaseController {
         $res_data['page_count'] = ceil($total / $limit);
         $res_data['limit'] = $limit;
         //订单状态对应的中文描述
-        $res_data['order_status'] = OrderService::ORDER_STATUS;
+        $res_data['order_status'] = OrderService::ORDER_STATUS();
         //订单物流状态对应的中文描述
-        $res_data['shipping_status'] = OrderService::SHIPPING_STATUS;
+        $res_data['shipping_status'] = OrderService::SHIPPING_STATUS();
         //订单支付状态
-        $res_data['pay_status'] = OrderService::PAY_STATUS;
+        $res_data['pay_status'] = OrderService::PAY_STATUS();
         //订单列表
         $res_data['lists'] = $order_list;
         $this->success($res_data, '', true);
