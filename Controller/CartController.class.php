@@ -13,7 +13,7 @@ class CartController extends BaseController {
         if (I('get.ids')) {
             $where['id'] = ['in', I('get.ids')];
         }
-        $cart_list = M("Cart")->where($where)->select();
+        $cart_list = M("Cart")->where($where)->order('id DESC')->select();
         $this->success($cart_list ? $cart_list : [], '', true);
     }
 
