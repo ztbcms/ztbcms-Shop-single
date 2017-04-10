@@ -2,6 +2,7 @@
 namespace Shop\Service;
 
 use Shop\Model\OrderModel;
+use Think\Hook;
 
 class OrderService extends BaseService {
     const TABLE_NAME = 'Order';
@@ -463,6 +464,7 @@ class OrderService extends BaseService {
             ];
             M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
             self::logOrder($order['order_id'], '确认收货', '确认收货', $order['user_id']);
+            Hook::listen('shop_order_delivery', $order);
 
             return true;
         } else {
