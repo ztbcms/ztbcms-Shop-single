@@ -109,40 +109,23 @@ CREATE TABLE `cms_spec` (
 DROP TABLE IF EXISTS `cms_shop_users`;
 CREATE TABLE `cms_shop_users` (
   `userid` mediumint(8) unsigned NOT NULL COMMENT '表id',
-  `email` varchar(60) NOT NULL DEFAULT '' COMMENT '邮件',
-  `password` varchar(32) NOT NULL DEFAULT '' COMMENT '密码',
-  `sex` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '0 保密 1 男 2 女',
   `birthday` int(11) NOT NULL DEFAULT '0' COMMENT '生日',
-  `user_money` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '用户金额',
-  `frozen_money` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '冻结金额',
-  `distribut_money` decimal(10,2) DEFAULT '0.00' COMMENT '累积分佣金额',
-  `pay_points` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '消费积分',
-  `address_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '默认收货地址',
-  `reg_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '注册时间',
-  `last_login` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '最后登录时间',
-  `last_ip` varchar(15) NOT NULL DEFAULT '' COMMENT '最后登录ip',
-  `qq` varchar(20) NOT NULL COMMENT 'QQ',
   `mobile` varchar(20) NOT NULL COMMENT '手机号码',
   `mobile_validated` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '是否验证手机',
   `oauth` varchar(10) DEFAULT '' COMMENT '第三方来源 wx weibo alipay',
   `openid` varchar(100) DEFAULT NULL COMMENT '第三方唯一标示',
-  `head_pic` varchar(255) DEFAULT NULL COMMENT '头像',
   `province` int(6) DEFAULT '0' COMMENT '省份',
   `city` int(6) DEFAULT '0' COMMENT '市区',
   `district` int(6) DEFAULT '0' COMMENT '县',
   `email_validated` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否验证电子邮箱',
-  `nickname` varchar(50) DEFAULT NULL COMMENT '第三方返回昵称',
   `level` tinyint(1) DEFAULT '1' COMMENT '会员等级',
   `discount` decimal(10,2) DEFAULT '1.00' COMMENT '会员折扣，默认1不享受',
-  `total_amount` decimal(10,2) DEFAULT '0.00' COMMENT '消费累计额度',
-  `is_lock` tinyint(1) DEFAULT '0' COMMENT '是否被锁定冻结',
   `is_distribut` tinyint(1) DEFAULT '0' COMMENT '是否为分销商 0 否 1 是',
   `first_leader` int(11) DEFAULT '0' COMMENT '第一个上级',
   `second_leader` int(11) DEFAULT '0' COMMENT '第二个上级',
   `third_leader` int(11) DEFAULT '0' COMMENT '第三个上级',
   `token` varchar(64) DEFAULT '' COMMENT '用于app 授权类似于session_id',
-  PRIMARY KEY (`userid`),
-  KEY `email` (`email`)
+  PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 -- ----------------------------
 -- 商城配置表

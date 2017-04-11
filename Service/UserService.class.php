@@ -15,7 +15,7 @@ class UserService extends BaseService {
 
             return false;
         }
-        $user = M('ShopUsers')->where("userid='%d'", $userid)->find();
+        $user = M('Member')->where("userid='%d'", $userid)->find();
 
         return $user;
     }
@@ -31,7 +31,7 @@ class UserService extends BaseService {
     public function register($username, $password, $password2) {
         $is_validated = 0;
         //检查是手机
-        if (check_mobile($username)) {
+        if (self::check_mobile($username)) {
             $is_validated = 1;
             $map['mobile_validated'] = 1;
             $map['nickname'] = $map['mobile'] = $username; //手机注册
@@ -58,14 +58,11 @@ class UserService extends BaseService {
         }
 
         //验证是否存在用户名
-        if (get_user_info($username, 1) || get_user_info($username, 2)) {
+        if (self::getUserInfo($member_username)) {
             $this->set_err_msg('账号已存在');
 
             return false;
         }
-
-        $map['password'] = encrypt($password);
-        $map['reg_time'] = time();
 
         $map['token'] = md5(time() . mt_rand(1, 99999));
         $member_user_id = service("Passport")->userRegister($member_username, $password, $map['mobile'] . "@139.com");
@@ -83,7 +80,7 @@ class UserService extends BaseService {
                 return false;
             }
         }
-        $user = M('ShopUsers')->where(['userid' => $member_user_id])->find();
+        $user = M('Member')->where(['userid' => $member_user_id])->find();
 
         return $user;
     }
@@ -91,9 +88,9 @@ class UserService extends BaseService {
     /**
      * 添加编辑地址信息
      *
-     * @param int $user_id 用户ID
-     * @param int $address_id 地址ID
-     * @param array $data 传入参数
+     * @param int   $user_id    用户ID
+     * @param int   $address_id 地址ID
+     * @param array $data       传入参数
      * @return bool|int|mixed
      */
     public function add_eidt_address($user_id, $address_id = 0, $data) {
@@ -123,7 +120,7 @@ class UserService extends BaseService {
 
             return false;
         }
-        if (!check_mobile($post['mobile'])) {
+        if (!self::check_mobile($post['mobile'])) {
             $this->set_err_msg('手机号码格式有误' . $post['mobile']);
 
             return false;
@@ -167,5 +164,34 @@ class UserService extends BaseService {
         }
 
         return $address_id;
+    }
+
+    /**
+     * 通过用户名获取用户信息
+     *
+     * @param $username
+     * @return bool|mixed
+     */
+    static function getUserInfo($username) {
+        $member = M('Member')->where(['username' => $username])->find();
+        if ($member) {
+            return $member;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 检查是否是手机
+     *
+     * @param $mobile
+     * @return bool
+     */
+    static function check_mobile($mobile) {
+        if (preg_match('/1[34578]\d{9}$/', $mobile)) {
+            return true;
+        }
+
+        return false;
     }
 }

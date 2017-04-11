@@ -10,9 +10,10 @@ class UserApiController extends BaseController {
      */
     public function index() {
         $userinfo = service("Passport")->getInfo();
-        $shop_user = M('ShopUsers')->find($userinfo['userid']);
-        if ($userinfo && $shop_user) {
-            $this->success($shop_user, '', true);
+        if ($userinfo) {
+            unset($userinfo['password']);
+            unset($userinfo['encrypt']);
+            $this->success($userinfo, '', true);
         } else {
             $this->ajaxReturn(array('status' => -500, 'msg' => '没有登录'));
         }
@@ -30,13 +31,8 @@ class UserApiController extends BaseController {
         $user_service = new UserService();
         $res = $user_service->login($username, $password);
         if ($res) {
-            //商城一系列操作登录
-            session('user', $res);
-            setcookie('user_id', $res['user_id'], null, '/');
-            $nickname = empty($res['nickname']) ? $username : $res['nickname'];
-            setcookie('uname', urlencode($nickname), null, '/');
-            setcookie('cn', 0, time() - 3600, '/');
             unset($res['password']);
+            unset($res['encrypt']);
             $this->success($res, '', true);
         } else {
             $this->error($user_service->get_err_msg(), '', true);
@@ -53,6 +49,7 @@ class UserApiController extends BaseController {
         if ($res) {
             session('user', $res);
             unset($res['password']);
+            unset($res['encrypt']);
             $this->success($res, '', true);
         } else {
             $this->error($user_service->get_err_msg(), '', true);
