@@ -11,11 +11,11 @@
         <div class="panel-body">    
 		<div class="navbar navbar-default">
             <div class="row navbar-form">
-                <button type="submit" onclick="location.href='{:U('Type/addEditGoodsType')}'"  class="btn btn-primary pull-right"><i class="fa fa-plus"></i>新增商品类型</button>
+                <button type="submit" onclick="location.href='{:U('Type/getTypeDetail')}'"  class="btn btn-primary pull-right"><i class="fa fa-plus"></i>新增商品类型</button>
             </div>
           </div>
                         
-          <div id="ajax_return"> 
+          <div id="app">
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
                             <thead>
@@ -26,25 +26,18 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <volist name="goodsTypeList" id="list">
-                                <tr>
-                                    <td class="text-center">{$list.id}</td>
-                                    <td class="text-center">{$list.name}</td>
-                                    <td class="text-center">
-										<a href="{:U('Spec/index',array('type_id'=>$list['id']))}" data-toggle="tooltip" title="" class="btn btn-info" data-original-title="属性列表"><i class="fa fa-eye"></i></a>                                    
-                                        <a href="{:U('Type/addEditGoodsType',array('id'=>$list['id']))}" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="编辑"><i class="fa fa-pencil"></i></a>
-                                        <a href="javascript:del_fun('{:U('Type/delGoodsType',array('id'=>$list['id']))}');" id="button-delete6" data-toggle="tooltip" title="" class="btn btn-danger" data-original-title="删除"><i class="fa fa-trash-o"></i></a>
-                                    </td>
-                                </tr>
-                            </volist>
+                            <tr v-for="item in lists">
+                                <td class="text-center">{{ item.id }}</td>
+                                <td class="text-center">{{ item.name }}</td>
+                                <td class="text-center">
+                                    <a :href="'{:U('Spec/index')}&type_id='+item.id" data-toggle="tooltip" title="" class="btn btn-info" data-original-title="属性列表"><i class="fa fa-eye"></i></a>
+                                    <a :href="'{:U('Type/getTypeDetail')}&id='+item.id" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="编辑"><i class="fa fa-pencil"></i></a>
+                                    <a href="javascript:;" v-on:click="delGoodsType(item.id)" data-toggle="tooltip" title="" class="btn btn-danger" data-original-title="删除"><i class="fa fa-trash-o"></i></a>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
-                
-                <div class="row">
-                    <div class="col-sm-6 text-left"></div>
-                    <div class="col-sm-6 text-right">{$show}</div>
-                </div>
           
           </div>
         </div>
@@ -54,6 +47,46 @@
   </section>
   <!-- /.content --> 
 </div>
-<!-- /.content-wrapper --> 
+<!-- /.content-wrapper -->
+<include file="Public/vue"/>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            lists:[]
+        },
+        methods: {
+            getList: function(){
+                var that = this;
+                $.ajax({url: '', type: 'post', data: {}, dataType: 'json',
+                    success:function (res){
+                        if(res.status){
+                            that.lists = res.data;
+                        }
+                    }
+                });
+            },
+            delGoodsType: function (id) {
+                layer.confirm('确定要删除该分类吗？',{
+                    btn:['确定', '取消']
+                },function () {
+                    $.ajax({url: "{:U('Type/delGoodsType')}", type: 'get', data: {'id': id}, dataType: 'json',
+                        success:function (res){
+                            layer.alert(res.info,{
+                                icon: res.status
+                            },function(){
+                                window.location.reload();
+                            });
+                        }
+                    });
+                });
+
+            }
+        },
+        mounted: function(){
+            this.getList();
+        }
+    });
+</script>
 </body>
 </html>
