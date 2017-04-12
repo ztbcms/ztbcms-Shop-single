@@ -55,12 +55,13 @@ class ShopUsersLogic extends RelationModel {
         $username = $user['mobile'] ? 'mobile_' . $user['mobile'] : 'email_' . $user['email'];
         //注册cms member模块用户
         $userid = service("Passport")->userRegister($username, $user['password'], $user['email'] ? $user['email'] : $user['mobile'] . "@139.com");
+        M('Member')->where('userid = "'.$userid.'"')->save($user);
         if (!$userid) {
             return array('status' => -1, 'msg' => '注册失败');
         }
         $user['userid'] = $userid;
         $user['password'] = encrypt($user['password']);
-        $user['reg_time'] = time();
+        $user['regdate'] = time();
         $user_id = M('ShopUsers')->add($user);
         if (!$user_id) {
             return array('status' => -1, 'msg' => '添加失败');

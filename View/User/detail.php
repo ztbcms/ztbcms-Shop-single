@@ -21,12 +21,6 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td>用户积分:</td>
-                        <td>{$user.pay_points} <span style="margin-left:100px;">账户余额：{$user.user_money}</span></td>
-                        <td></td>
-                    </tr>
-
-                    <tr>
                         <td>邮件地址:</td>
                         <td><input type="text" class="form-control" name="email" value="{$user.email}"></td>
                         <td>电子邮箱</td>
@@ -55,13 +49,6 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td>QQ:</td>
-                        <td>
-                            <input class="form-control" type="text" name="qq" value="{$user.qq}">
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr>
                         <td>手机:</td>
                         <td>
                             <input type="text" class="form-control" name="mobile" value="{$user.mobile}">
@@ -71,15 +58,15 @@
                     <tr>
                         <td>冻结用户:</td>
                         <td>
-                            <input name="is_lock" type="radio" value="1" <if condition="$user['is_lock'] eq 1">checked</if> >是
-                            <input name="is_lock" type="radio" value="0" <if condition="$user['is_lock'] eq 0">checked</if> >否
+                            <input name="islock" type="radio" value="1" <if condition="$user['islock'] eq 1">checked</if> >是
+                            <input name="islock" type="radio" value="0" <if condition="$user['islock'] eq 0">checked</if> >否
                         </td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td>注册时间:</td>
+                        <td>上次登录时间:</td>
                         <td>
-                            {$user.reg_time|date='Y-m-d H:i',###}
+                            {$user.lastdate|date='Y-m-d H:i',###}
                         </td>
                         <td></td>
                     </tr>
@@ -91,56 +78,29 @@
                             <input name="is_distribut" type="radio" value="0" <if condition="$user['is_distribut'] eq 0">checked</if> >否
                         </td>
                         <td></td>
-                    </tr>                    
+                    </tr>
                     <tr>
-                        <table  class="table table-bordered">
-                            
-                            <tr>
-                                    <td>用户余额:</td>
-                                    <td>{$user.user_money}</td>                                
-                                    <td>累积分佣金额:</td>
-                                    <td>{$user.distribut_money}</td>    
-                                </tr>                            
-                            
-                             <tr>
-                                <td>上一级编号</td>
-                                    <td>                            
-                                        <if condition='$user[first_leader] gt 0'>
-                                                <a href="{:U(detail,array('id'=>$user[first_leader]))}">{$user.first_leader}</a>
-                                        <else />
-                                                {$user.first_leader}
-                                        </if>                           
-                                    </td>                                
-                                    <td>一级下线数</td>
-                                    <td>{$user.first_lower}</td>    
-                                </tr>
-                                
-                                <tr>
-                                    <td>上二级编号</td>
-                                    <td>                            
-                                        <if condition='$user[second_leader] gt 0'>
-                                                <a href="{:U(detail,array('id'=>$user[second_leader]))}">{$user.second_leader}</a>
-                                        <else />
-                                                {$user.second_leader}
-                                        </if>                           
-                                    </td>
-                                    <td>二级下线数</td>
-                                    <td>{$user.second_lower}</td>                                
-                                </tr>
-                                <tr>
-                                    <td>上三级编号</td>
-                                    <td>                            
-                                        <if condition='$user[third_leader] gt 0'>
-                                                <a href="{:U(detail,array('id'=>$user[third_leader]))}">{$user.third_leader}</a>
-                                        <else />
-                                                {$user.third_leader}
-                                        </if>                           
-                                    </td>                                 
-                                    <td>三级下线数</td>
-                                    <td>{$user.third_lower}</td>                                   
-                           </tr>                    
-                        </table>
-                    </tr>             
+                        <td width="300">上一级编号</td>
+                        <td>
+                            <input type="text" class="form-control" name="first_leader" value="{$user.first_leader}">
+                        </td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td>上二级编号</td>
+                        <td>
+                            <input type="text" class="form-control" name="second_leader" value="{$user.second_leader}">
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>上三级编号</td>
+                        <td>
+                            <input type="text" class="form-control" name="third_leader" value="{$user.third_leader}">
+                        </td>
+                        <td></td>
+                    </tr>
                     <tr>
                         <td></td>
                         <td>
