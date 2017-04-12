@@ -78,49 +78,29 @@
                             <input name="is_distribut" type="radio" value="0" <if condition="$user['is_distribut'] eq 0">checked</if> >否
                         </td>
                         <td></td>
-                    </tr>                    
+                    </tr>
                     <tr>
-                        <table  class="table table-bordered">
+                        <td width="300">上一级编号</td>
+                        <td>
+                            <input type="text" class="form-control" name="first_leader" value="{$user.first_leader}">
+                        </td>
+                        <td></td>
+                    </tr>
 
-                             <tr>
-                                <td width="300">上一级编号</td>
-                                    <td>                            
-                                        <if condition='$user[first_leader] gt 0'>
-                                                <a href="{:U(detail,array('id'=>$user[first_leader]))}">{$user.first_leader}</a>
-                                        <else />
-                                                {$user.first_leader}
-                                        </if>                           
-                                    </td>                                
-                                    <td width="300">一级下线数</td>
-                                    <td>{$user.first_lower}</td>    
-                                </tr>
-                                
-                                <tr>
-                                    <td>上二级编号</td>
-                                    <td>                            
-                                        <if condition='$user[second_leader] gt 0'>
-                                                <a href="{:U(detail,array('id'=>$user[second_leader]))}">{$user.second_leader}</a>
-                                        <else />
-                                                {$user.second_leader}
-                                        </if>                           
-                                    </td>
-                                    <td>二级下线数</td>
-                                    <td>{$user.second_lower}</td>                                
-                                </tr>
-                                <tr>
-                                    <td>上三级编号</td>
-                                    <td>                            
-                                        <if condition='$user[third_leader] gt 0'>
-                                                <a href="{:U(detail,array('id'=>$user[third_leader]))}">{$user.third_leader}</a>
-                                        <else />
-                                                {$user.third_leader}
-                                        </if>                           
-                                    </td>                                 
-                                    <td>三级下线数</td>
-                                    <td>{$user.third_lower}</td>                                   
-                           </tr>                    
-                        </table>
-                    </tr>             
+                    <tr>
+                        <td>上二级编号</td>
+                        <td>
+                            <input type="text" class="form-control" name="second_leader" value="{$user.second_leader}">
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>上三级编号</td>
+                        <td>
+                            <input type="text" class="form-control" name="third_leader" value="{$user.third_leader}">
+                        </td>
+                        <td></td>
+                    </tr>
                     <tr>
                         <td></td>
                         <td>

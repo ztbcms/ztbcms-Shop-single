@@ -62,12 +62,16 @@
                                     </td>
                                     <td class="text-left">
                                         <if condition="$list[is_default] == 0">
-                                            <button onclick="setDefault({$list[address_id]})" class="btn btn-danger">设为默认</button>
+                                            <button onclick="setDefault({$list[address_id]})" class="btn btn-info">设为默认</button>
                                             <else/>
                                             <button id="default" value="{$list[address_id]}" class="btn btn-success disabled">默认地址</button>
                                         </if>
-                                        <a href="{:U('User/update_address')}&id={$list[address_id]}" class="btn btn-info">修改地址</a>
-                                        <button onclick="del({$list[address_id]})" class="btn btn-info">删除</button>
+                                        <a href="{:U('User/update_address')}&id={$list[address_id]}" class="btn btn-primary">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <button onclick="del({$list[address_id]})" class="btn btn-danger">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             </volist>

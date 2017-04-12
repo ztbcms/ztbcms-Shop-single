@@ -93,16 +93,12 @@ class UserController extends AdminBase{
             }
             $row = M('ShopUsers')->where(array('userid'=>$uid))->save($_POST);
             if($row!==false) $row = M('Member')->where(array('userid'=>$uid))->save($_POST);
-            if($row)
+            if($row!==false)
                 exit($this->success('修改成功'));
             exit($this->error('未作内容修改或修改失败'));
         }
 
         $user = array_merge($user,$member);
-        
-        $user['first_lower'] = M('ShopUsers')->where("first_leader = {$user['userid']}")->count();
-        $user['second_lower'] = M('ShopUsers')->where("second_leader = {$user['userid']}")->count();
-        $user['third_lower'] = M('ShopUsers')->where("third_leader = {$user['userid']}")->count();
  
         $this->assign('user',$user);
         $this->display();
