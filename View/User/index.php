@@ -145,6 +145,9 @@
                     });
                 },
                 getFormatTime: function(date){
+                    if (date == 0) {
+                        return '未登录';
+                    }
                     var time = new Date(parseInt(date * 1000));
                     var y = time.getFullYear();
                     var m = time.getMonth() + 1;

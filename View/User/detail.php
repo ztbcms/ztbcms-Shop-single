@@ -21,12 +21,6 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td>用户积分:</td>
-                        <td>{$user.pay_points} <span style="margin-left:100px;">账户余额：{$user.user_money}</span></td>
-                        <td></td>
-                    </tr>
-
-                    <tr>
                         <td>邮件地址:</td>
                         <td><input type="text" class="form-control" name="email" value="{$user.email}"></td>
                         <td>电子邮箱</td>
@@ -70,9 +64,9 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td>注册时间:</td>
+                        <td>上次登录时间:</td>
                         <td>
-                            {$user.regdate|date='Y-m-d H:i',###}
+                            {$user.lastdate|date='Y-m-d H:i',###}
                         </td>
                         <td></td>
                     </tr>
@@ -89,7 +83,7 @@
                         <table  class="table table-bordered">
 
                              <tr>
-                                <td>上一级编号</td>
+                                <td width="300">上一级编号</td>
                                     <td>                            
                                         <if condition='$user[first_leader] gt 0'>
                                                 <a href="{:U(detail,array('id'=>$user[first_leader]))}">{$user.first_leader}</a>
@@ -97,7 +91,7 @@
                                                 {$user.first_leader}
                                         </if>                           
                                     </td>                                
-                                    <td>一级下线数</td>
+                                    <td width="300">一级下线数</td>
                                     <td>{$user.first_lower}</td>    
                                 </tr>
                                 

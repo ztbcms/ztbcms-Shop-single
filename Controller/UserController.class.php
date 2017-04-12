@@ -43,7 +43,9 @@ class UserController extends AdminBase{
         foreach ($data as $key=>&$val) {
             $userid = $val['userid'];
             $res = M('shopUsers')->where('userid = '.$userid)->find();
-            $val = array_merge($val,$res);
+            if ($res){
+                $val = array_merge($val,$res);
+            }
         }
 
         $level = M('userLevel')->getField('level_id,level_name');
