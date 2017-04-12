@@ -11,7 +11,7 @@ CREATE TABLE `cms_user_message` (
   PRIMARY KEY (`rec_id`),
   KEY `user_id` (`userid`),
   KEY `message_id` (`message_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 用户等级表
 -- ----------------------------
@@ -23,7 +23,7 @@ CREATE TABLE `cms_user_level` (
   `discount` smallint(4) DEFAULT NULL COMMENT '折扣',
   `describe` varchar(200) DEFAULT NULL COMMENT '头街 描述',
   PRIMARY KEY (`level_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 用户地址表
 -- ----------------------------
@@ -45,7 +45,7 @@ CREATE TABLE `cms_user_address` (
   `is_pickup` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`address_id`),
   KEY `user_id` (`userid`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 商品规格供货商表
 -- ----------------------------
@@ -58,7 +58,7 @@ CREATE TABLE `cms_suppliers` (
   `suppliers_contacts` varchar(255) NOT NULL DEFAULT '' COMMENT '供应商联系人',
   `suppliers_phone` varchar(20) NOT NULL DEFAULT '' COMMENT '供应商名字',
   PRIMARY KEY (`suppliers_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 商品规格单元表
 -- ----------------------------
@@ -68,7 +68,7 @@ CREATE TABLE `cms_spec_item` (
   `spec_id` int(11) DEFAULT NULL COMMENT '规格id',
   `item` varchar(54) DEFAULT NULL COMMENT '规格项',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=125 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=125 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 商品规格对应图片表
 -- ----------------------------
@@ -77,7 +77,7 @@ CREATE TABLE `cms_spec_image` (
   `goods_id` int(11) DEFAULT '0' COMMENT '商品规格图片表id',
   `spec_image_id` int(11) DEFAULT '0' COMMENT '规格项id',
   `src` varchar(512) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT '商品规格图片路径'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 商品规格对应价格库存表
 -- ----------------------------
@@ -90,7 +90,7 @@ CREATE TABLE `cms_spec_goods_price` (
   `store_count` int(11) unsigned DEFAULT '10' COMMENT '库存数量',
   `bar_code` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT '商品条形码',
   `sku` varchar(128) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT 'SKU'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 商品规格表
 -- ----------------------------
@@ -102,7 +102,7 @@ CREATE TABLE `cms_spec` (
   `order` int(11) DEFAULT '50' COMMENT '排序',
   `search_index` tinyint(1) DEFAULT '1' COMMENT '是否需要检索：1是，0否',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 商城用户信息表
 -- ----------------------------
@@ -126,7 +126,7 @@ CREATE TABLE `cms_shop_users` (
   `third_leader` int(11) DEFAULT '0' COMMENT '第三个上级',
   `token` varchar(64) DEFAULT '' COMMENT '用于app 授权类似于session_id',
   PRIMARY KEY (`userid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 商城配置表
 -- ----------------------------
@@ -138,7 +138,7 @@ CREATE TABLE `cms_shop_config` (
   `inc_type` varchar(64) DEFAULT NULL COMMENT '配置分组',
   `desc` varchar(50) DEFAULT NULL COMMENT '描述',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 商城评论表
 -- ----------------------------
@@ -162,7 +162,7 @@ CREATE TABLE `cms_shop_comment` (
   PRIMARY KEY (`comment_id`),
   KEY `parent_id` (`parent_id`),
   KEY `id_value` (`goods_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 退货记录表
 -- ----------------------------
@@ -202,7 +202,7 @@ CREATE TABLE `cms_rebate_log` (
   `confirm_time` int(11) DEFAULT '0' COMMENT '确定分成或者取消时间',
   `remark` varchar(1024) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT '如果是取消, 有取消备注',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 商城插件
 -- ----------------------------
@@ -220,7 +220,7 @@ CREATE TABLE `cms_plugin` (
   `icon` varchar(255) DEFAULT NULL COMMENT '图标',
   `bank_code` text COMMENT '网银配置信息',
   `scene` tinyint(1) DEFAULT '0' COMMENT '使用场景 0 PC+手机 1 手机 2 PC'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 订单商品表
 -- ----------------------------
@@ -249,7 +249,7 @@ CREATE TABLE `cms_order_goods` (
   PRIMARY KEY (`rec_id`),
   KEY `order_id` (`order_id`),
   KEY `goods_id` (`goods_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 订单跟进表
 -- ----------------------------
@@ -266,7 +266,7 @@ CREATE TABLE `cms_order_action` (
   `status_desc` varchar(255) DEFAULT NULL COMMENT '状态描述',
   PRIMARY KEY (`action_id`),
   KEY `order_id` (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 订单表
 -- ----------------------------
@@ -321,7 +321,7 @@ CREATE TABLE `cms_order` (
   KEY `pay_status` (`pay_status`),
   KEY `shipping_id` (`shipping_code`),
   KEY `pay_id` (`pay_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 消息表
 -- ----------------------------
@@ -334,7 +334,7 @@ CREATE TABLE `cms_message` (
   `category` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT ' 系统消息：0，活动消息：1',
   `send_time` int(10) unsigned NOT NULL COMMENT '发送时间',
   PRIMARY KEY (`message_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 团购商品表
 -- ----------------------------
@@ -366,7 +366,7 @@ CREATE TABLE `cms_goods_type` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id自增',
   `name` varchar(60) NOT NULL DEFAULT '' COMMENT '类型名称',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 商品类型
 -- ----------------------------
@@ -377,7 +377,7 @@ CREATE TABLE `cms_goods_images` (
   `image_url` varchar(255) NOT NULL DEFAULT '' COMMENT '图片地址',
   PRIMARY KEY (`img_id`),
   KEY `goods_id` (`goods_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=546 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=546 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 商品咨询表
 -- ----------------------------
@@ -392,7 +392,7 @@ CREATE TABLE `cms_goods_consult` (
   `parent_id` int(11) DEFAULT '0' COMMENT '父id 用于管理员回复',
   `is_show` tinyint(1) DEFAULT '0' COMMENT '是否显示',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 商品分类表
 -- ----------------------------
@@ -412,7 +412,7 @@ CREATE TABLE `cms_goods_category` (
   `commission_rate` tinyint(1) DEFAULT '0' COMMENT '分佣比例',
   PRIMARY KEY (`id`),
   KEY `parent_id` (`parent_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 商品属性表
 -- ----------------------------
@@ -428,7 +428,7 @@ CREATE TABLE `cms_goods_attribute` (
   `order` tinyint(3) unsigned NOT NULL DEFAULT '50' COMMENT '属性排序',
   PRIMARY KEY (`attr_id`),
   KEY `cat_id` (`type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 商品所属属性表
 -- ----------------------------
@@ -442,7 +442,7 @@ CREATE TABLE `cms_goods_attr` (
   PRIMARY KEY (`goods_attr_id`),
   KEY `goods_id` (`goods_id`),
   KEY `attr_id` (`attr_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 商品表
 -- ----------------------------
@@ -494,7 +494,7 @@ CREATE TABLE `cms_goods` (
   KEY `goods_number` (`store_count`),
   KEY `goods_weight` (`weight`),
   KEY `sort_order` (`sort`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 发货单
 -- ----------------------------
@@ -552,7 +552,7 @@ CREATE TABLE `cms_cart` (
   `original_img` varchar(255) NOT NULL DEFAULT '' COMMENT '商品上传原始图',
   PRIMARY KEY (`id`),
   KEY `session_id` (`session_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 商品品牌
 -- ----------------------------
@@ -569,7 +569,7 @@ CREATE TABLE `cms_brand` (
   `cat_id` int(10) DEFAULT '0' COMMENT '分类id',
   `is_hot` tinyint(1) DEFAULT '0' COMMENT '是否推荐',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 交易记录
 -- ----------------------------
@@ -586,7 +586,7 @@ CREATE TABLE `cms_account_log` (
   `order_id` int(10) DEFAULT NULL COMMENT '订单id',
   PRIMARY KEY (`log_id`),
   KEY `user_id` (`userid`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- 推荐位表
@@ -615,3 +615,42 @@ CREATE TABLE `cms_shop_recom_item` (
   `create_time` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- 商城优惠券
+-- ----------------------------
+DROP TABLE IF EXISTS `bs_shop_coupon`;
+CREATE TABLE `bs_shop_coupon` (
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '优惠券id',
+  `type` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '优惠券类型，0不可叠加，1可叠加',
+  `discount_price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '优惠价格',
+  `full_pirce` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '满减价格。例如100，满100才能减，无条件默认是0',
+  `start_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '使用起始时间',
+  `end_time` int(11) unsigned NOT NULL COMMENT '过期时间',
+  `status` tinyint(4) unsigned NOT NULL DEFAULT '1' COMMENT '优惠券状态，0 无效，1正常，2过期',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- 用户优惠券
+-- ----------------------------
+DROP TABLE IF EXISTS `bs_shop_usercoupon`;
+CREATE TABLE `bs_shop_usercoupon` (
+  `id` mediumint(8) NOT NULL,
+  `coupon_id` mediumint(8) unsigned NOT NULL COMMENT '所属优惠券id',
+  `coupon_num` varchar(20) NOT NULL DEFAULT '' COMMENT '优惠券编码',
+  `order_sn` varchar(20) NOT NULL DEFAULT '' COMMENT '被使用订单号',
+  `order_type` varchar(20) NOT NULL DEFAULT '' COMMENT '被使用的订单类型',
+  `userid` int(11) unsigned NOT NULL COMMENT '所属用户',
+  `type` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '优惠券类型，0不可叠加，1可叠加',
+  `discount_price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '优惠价格',
+  `full_pirce` decimal(10,0) unsigned NOT NULL DEFAULT '0' COMMENT '满减价格。例如100，满100才能减，无条件默认是0',
+  `start_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '使用起始时间',
+  `end_time` int(11) unsigned NOT NULL COMMENT '过期时间',
+  `status` tinyint(4) unsigned NOT NULL DEFAULT '1' COMMENT '优惠券状态，0 无效，1正常，2过期',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `coupon_num` (`coupon_num`) USING BTREE,
+  KEY `coupon_id` (`coupon_id`) USING BTREE,
+  KEY `order_sn` (`order_sn`) USING BTREE,
+  KEY `userid` (`userid`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
