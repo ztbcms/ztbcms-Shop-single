@@ -12,42 +12,50 @@ class UserController extends AdminBase{
      * 会员列表
      */
     public function ajaxindex(){
-        // 搜索条件
-        $condition = array();
-        I('mobile') ? $condition['mobile'] = array('like',"%".I('mobile')."%") : false;
-        I('email') ? $condition['email'] =  array('like',"%".I('email')."%")  : false;
-        $sort_order = I('order_by','userid').' '.I('sort','desc');
-               
-        $model = M('ShopUsers');
-        $count = $model->where($condition)->count();
-        $Page  = new AjaxPage($count,10);
-        //  搜索条件下 分页赋值
-        foreach($condition as $key=>$val) {
-            $Page->parameter[$key]   =   urlencode($val);
-        }
-        
-        $userList = $model->where($condition)->order($sort_order)->limit($Page->firstRow.','.$Page->listRows)->select();
-                
-        $user_id_arr = get_arr_column($userList, 'userid');
+        $setWhere = I('where');
+        $phone = $setWhere['phone'];
+        $where['modelid'] = ['eq',0];
+        $where['username'] = ['like','%'.$phone.'%'];
+
+        $page = I('page',1);
+        $limit_start = 12*($page-1);
+        $limit_end = $page*12-1;
+        $limit = $limit_start . ',' . $limit_end;
+        $page_count = ceil(M('Member')->where($where)->count() / 12);
+
+        $order = I('order','userid');
+
+        $data = M('Member')->where($where)->order($order)->limit($limit)->select();
+
+        $user_id_arr = get_arr_column($data, 'userid');
         if(!empty($user_id_arr))
         {
             $first_leader = M('ShopUsers')->query("select first_leader,count(1) as count  from __PREFIX__shop_users where first_leader in(".  implode(',', $user_id_arr).")  group by first_leader");
             $first_leader = convert_arr_key($first_leader,'first_leader');
-            
+
             $second_leader = M('ShopUsers')->query("select second_leader,count(1) as count  from __PREFIX__shop_users where second_leader in(".  implode(',', $user_id_arr).")  group by second_leader");
-            $second_leader = convert_arr_key($second_leader,'second_leader');            
-            
+            $second_leader = convert_arr_key($second_leader,'second_leader');
+
             $third_leader = M('ShopUsers')->query("select third_leader,count(1) as count  from __PREFIX__shop_users where third_leader in(".  implode(',', $user_id_arr).")  group by third_leader");
-            $third_leader = convert_arr_key($third_leader,'third_leader');            
+            $third_leader = convert_arr_key($third_leader,'third_leader');
         }
-        $this->assign('first_leader',$first_leader);
-        $this->assign('second_leader',$second_leader);
-        $this->assign('third_leader',$third_leader);                                
-        $show = $Page->show();
-        $this->assign('userList',$userList);
-        $this->assign('level',M('user_level')->getField('level_id,level_name'));
-        $this->assign('page',$show);// 赋值分页输出
-        $this->display();
+
+        foreach ($data as $key=>&$val) {
+            $userid = $val['userid'];
+            $res = M('shopUsers')->where('userid = '.$userid)->find();
+            $val = array_merge($val,$res);
+        }
+
+        $level = M('userLevel')->getField('level_id,level_name');
+        $this->ajaxReturn([
+            'page' => $page,
+            'page_count' => $page_count,
+            'data'=>$data,
+            'level'=>$level,
+            'first_leader'=>$first_leader,
+            'second_leader'=>$second_leader,
+            'third_leader'=>$third_leader
+        ]);
     }
 
     /**
