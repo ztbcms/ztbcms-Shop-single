@@ -6,7 +6,7 @@
 
 namespace Shop\Controller;
 use Common\Controller\AdminBase;
-use Shop\Util\AjaxPage;
+use Shop\Util\Page;
 use Shop\Logic\GoodsLogic;
 
 
@@ -15,8 +15,11 @@ class SpecController extends AdminBase {
      * 商品类型  用于设置商品的属性
      */
     public function index() {
-        $goodsTypeList = M("GoodsType")->select();
-        $this->assign('goodsTypeList',$goodsTypeList);
+        if (IS_POST) {
+            $data = $this->getSpecList();
+            $this->ajaxReturn($data);
+        }
+
         $this->display();
     }
 
@@ -59,15 +62,15 @@ class SpecController extends AdminBase {
      /**
      *  商品规格列表
      */
-    public function ajaxSpecList(){ 
-        //ob_start('ob_gzhandler'); // 页面压缩输出
+    public function getSpecList(){
+
         $where = ' 1 = 1 '; // 搜索条件                        
         I('type_id')   && $where = "$where and type_id = ".I('type_id') ;        
         // 关键词搜索               
         $model = D('spec');
         $count = $model->where($where)->count();
-        $Page       = new AjaxPage($count,20);
-        $show = $Page->show();
+        $Page = new Page($count, 100);
+
         $specList = $model->where($where)->order('`type_id` asc')->limit($Page->firstRow.','.$Page->listRows)->select();        
         $GoodsLogic = new GoodsLogic();        
         foreach($specList as $k => $v)
@@ -76,64 +79,71 @@ class SpecController extends AdminBase {
                 $specList[$k]['spec_item'] = implode(' , ', $arr);
         }
         
-        $this->assign('specList',$specList);
-        $this->assign('page',$show);// 赋值分页输出
+
         $goodsTypeList = M("GoodsType")->select(); // 规格分类
         $goodsTypeList = convert_arr_key($goodsTypeList, 'id');
-        $this->assign('goodsTypeList',$goodsTypeList);        
-        $this->display('ajax_spec_list');         
+
+        return ['goodsTypeList'=>$goodsTypeList,'specList'=>$specList];
     }
      /**
      * 添加修改编辑  商品规格
      */
     public  function addEditSpec(){
-                        
-            $model = D("spec");                      
-            $type = $_POST['id'] > 0 ? 2 : 1; // 标识自动验证时的 场景 1 表示插入 2 表示更新             
-            if(($_GET['is_ajax'] == 1) && IS_POST)//ajax提交验证
-            {                
-                C('TOKEN_ON',false);
-                if(!$model->create(NULL,$type))// 根据表单提交的POST数据创建数据对象                 
-                {
-                    //  编辑
-                    $return_arr = array(
-                        'status' => -1,
-                        'msg'   => '',
-                        'data'  => $model->getError(),
-                    );
-                    $this->ajaxReturn($return_arr);
-                }else {                   
-                   // C('TOKEN_ON',true); //  form表单提交
-                    if ($type == 2)
-                    {
-                        $model->save(); // 写入数据到数据库                        
-                        $model->afterSave($_POST['id']);
-                    }
-                    else
-                    {
-                        $insert_id = $model->add(); // 写入数据到数据库        
-                        $model->afterSave($insert_id);
-                    }                    
-                    $return_arr = array(
-                        'status' => 1,
-                        'msg'   => '操作成功',                        
-                        'data'  => array('url'=>U('Spec/index')),
-                    );
-                    $this->ajaxReturn($return_arr);
-                }  
-            }                
-           // 点击过来编辑时                 
-           $id = $_GET['id'] ? $_GET['id'] : 0;       
-           $spec = $model->find($id);
-           $GoodsLogic = new GoodsLogic();  
-           $items = $GoodsLogic->getSpecItem($id);
-           $spec[items] = implode(PHP_EOL, $items); 
-           $this->assign('spec',$spec);
-           
-           $goodsTypeList = M("GoodsType")->select();           
-           $this->assign('goodsTypeList',$goodsTypeList);           
-           $this->display('spec');           
-    }     
+        if (IS_POST) {
+            $post = I('post.');
+
+            $items = $post['items'];
+            $itemsArr = explode('
+',$items);
+
+            $model = M('Spec');
+            $id = I('id',0);
+
+            if ($id == 0) {
+                // 添加
+                $res = $model->add($post['detail']); // 插入id
+                foreach($itemsArr as $val){
+                    M('specItem')->add(['spec_id'=>$res, 'item'=>$val]);
+                }
+            } else {
+                // 修改
+                $res = $model->where(['id'=>$id])->save($post['detail']);
+                M('specItem')->where(['spec_id'=>$id])->delete();
+                foreach($itemsArr as $val){
+                    M('specItem')->add(['spec_id'=>$id, 'item'=>$val]);
+                }
+            }
+            $this->ajaxReturn(['data'=>$res,'status'=>true]);
+
+        }
+    }
+    public function getSpecDetail() {
+        $id = I('id', 0);
+        if (IS_POST) {
+            $res = M("Spec")->find($id);
+            $goodsType = M("GoodsType")->select();
+            if ($res) {
+                $specItem = M('SpecItem')->where(['spec_id'=>$id])->select();
+                $specItemStr = '';
+                foreach($specItem as $val){
+                    $specItemStr .= $val['item']."
+";
+                }
+                $specItemStr = rtrim($specItemStr);
+                $this->ajaxReturn(['specItemStr'=>$specItemStr,'goodsType'=>$goodsType,'data' => $res, 'status' => true]);
+            } else {
+                $res = [
+                    'type_id' => '',
+                    'name' => '',
+                    'order' => '',
+                    'search_index' => ''
+                ];
+                $this->ajaxReturn(['goodsType'=>$goodsType,'data' => $res, 'status' => false]);
+            }
+        }
+        $this->assign('id',$id);
+        $this->display('spec');
+    }
       /**
      * 删除商品规格
      */
@@ -144,6 +154,6 @@ class SpecController extends AdminBase {
         $count > 0 && $this->error('清空规格项后才可以删除!',U('Spec/index'));
         // 删除分类
         M('Spec')->where("id = {$_GET['id']}")->delete();   
-        $this->success("操作成功",U('Spec/index'));
+        $this->success("删除成功",U('Spec/index'));
     }     
 }
