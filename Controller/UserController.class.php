@@ -200,6 +200,60 @@ class UserController extends AdminBase{
         $this->display();
     }
 
+    public function setDefault_address(){
+        if (IS_POST) {
+            // 设置默认地址
+            $default_id = I('default_id');
+            $address_id = I('address_id');
+            $res = M('UserAddress')->where(['address_id'=>$default_id])->save(['is_default'=>0]);
+            if ($res!==false) $res = M('UserAddress')->where(['address_id'=>$address_id])->save(['is_default'=>1]);
+            if ($res!==false) $this->ajaxReturn(['msg'=>'设置成功']);
+            $this->ajaxReturn(['msg'=>'设置失败']);
+        }
+    }
+
+    public function add_address(){
+        if(IS_POST){
+            $data = I('post.');
+            $res = M('userAddress')->add($data);
+            if($res){
+                $this->success('添加成功',U('User/address',['id'=>$data['userid']]));
+            }else{
+                $this->error('添加失败',U('User/address',['id'=>$data['userid']]));
+            }
+            exit;
+        }
+        $this->display();
+    }
+    public function del_address(){
+        if(IS_POST){
+            $id = I('id');
+            $res = M('userAddress')->where(['address_id'=>$id])->delete();
+            if($res){
+                $this->ajaxReturn(['msg'=>'删除成功']);
+            }
+            $this->ajaxReturn(['msg'=>'删除失败']);
+        }
+    }
+
+    public function update_address(){
+        if(IS_POST){
+            $data = I('post.');
+            $id = $data['id'];
+            $res = M('userAddress')->where(['address_id'=>$id])->save($data);
+            if($res){
+                $this->success('修改成功',U('User/address',['id'=>$data['userid']]));
+            }else{
+                $this->error('修改失败',U('User/address',['id'=>$data['userid']]));
+            }
+            exit;
+        }
+        $id = I('id');
+        $address = M('userAddress')->where(['address_id' => $id])->find();
+        $this->assign('address',$address);
+        $this->display();
+    }
+
     /**
      * 发送站内信
      */

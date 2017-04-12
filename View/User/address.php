@@ -15,6 +15,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-list"></i> 收货地址列表</h3>
+                    <a href="{:U('User/add_address')}&id={:I('id')}" class="btn btn-info pull-right" style="margin-top: -25px">新增地址</a>
                 </div>
 
 
@@ -43,7 +44,7 @@
                                 地址
                                  </td>
 
-
+                                <td  class="text-left">操作</td>
 
                             </tr>
                             </thead>
@@ -59,7 +60,15 @@
                                     <td class="text-left">
                                         {$province[$list[province]]},{$city[$list[city]]},{$district[$list[district]]},{$list.address}
                                     </td>
-
+                                    <td class="text-left">
+                                        <if condition="$list[is_default] == 0">
+                                            <button onclick="setDefault({$list[address_id]})" class="btn btn-danger">设为默认</button>
+                                            <else/>
+                                            <button id="default" value="{$list[address_id]}" class="btn btn-success disabled">默认地址</button>
+                                        </if>
+                                        <a href="{:U('User/update_address')}&id={$list[address_id]}" class="btn btn-info">修改地址</a>
+                                        <button onclick="del({$list[address_id]})" class="btn btn-info">删除</button>
+                                    </td>
                                 </tr>
                             </volist>
                             </tbody>
@@ -75,33 +84,41 @@
 </div>
 <!-- /.content-wrapper -->
 <script>
-    $(document).ready(function(){
-        ajax_get_table('search-form2',1);
-
-    });
-
-
-    // ajax 抓取页面
-    function ajax_get_table(tab,page){
-        cur_page = page; //当前页面 保存为全局变量
+    function setDefault(id){
+        layer.confirm('确定要设置此地址为默认地址？', {
+            btn: ['确定', '取消'] //按钮
+        }, function () {
+            var default_id = $('#default').val();
             $.ajax({
-                type : "POST",
-                url:"{:U('User/ajaxindex')}&p="+page,//+tab,
-                data : $('#'+tab).serialize(),// 你的formid
-                success: function(data){
-                    $("#ajax_return").html('');
-                    $("#ajax_return").append(data);
+                url: '{:U("User/setDefault_address")}',
+                data: {'address_id': id, 'default_id': default_id},
+                type: 'post',
+                dataType: 'json',
+                success: function(res){
+                    layer.alert(res.msg,function(){
+                        window.location.reload();
+                    });
                 }
             });
+        });
     }
 
-    // 点击排序
-    function sort(field)
-    {
-        $("input[name='order_by']").val(field);
-        var v = $("input[name='sort']").val() == 'desc' ? 'asc' : 'desc';
-        $("input[name='sort']").val(v);
-        ajax_get_table('search-form2',cur_page);
+    function del(id){
+        layer.confirm('确定要删除？', {
+            btn: ['确定', '取消'] //按钮
+        },function(){
+            $.ajax({
+                url: '{:U("User/del_address")}',
+                data: {'id': id},
+                type: 'post',
+                dataType: 'json',
+                success: function(res){
+                    layer.alert(res.msg,function(){
+                        window.location.reload();
+                    });
+                }
+            });
+        });
     }
 </script>
 </body>
