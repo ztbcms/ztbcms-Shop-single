@@ -54,6 +54,16 @@ class GoodsApiController extends Base {
         $catid = I('get.catid', 0);
         $order = I('get.order', '');
         $onsale = I('get.is_on_sale','1');
+
+        // 添加关键词搜索
+        $key_word = I('get.key_word') ? trim(I('get.key_word')) : '';
+        if($key_word){
+            $search['goods_name'] = array('like','%'.$key_word.'%');
+            $search['keywords'] = array('like','%'.$key_word.'%');
+            $search['_logic'] = 'or';
+            $where['_complex'] = $search;
+        }
+
         $goods_service = new GoodsService();
         $goods_res = $goods_service->get_goods_list($where, $catid, $order, $onsale, $page, $limit);
         $this->success($goods_res, '', true);

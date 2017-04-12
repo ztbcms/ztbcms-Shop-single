@@ -51,7 +51,7 @@
                                     <select name="pay_code" class="form-control" style="width:150px;">
                                         <option value="">支付方式</option>
                                         <option value="alipay">支付宝支付</option>
-                                        <option value="weixin">微信支付</option>
+                                        <option value="wxpay">微信支付</option>
                                         <option value="cod">货到付款</option>
                                     </select>
                                 </div>
