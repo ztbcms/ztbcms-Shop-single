@@ -163,8 +163,13 @@
                     if (page > vue.page_count) {
                         page = vue.page_count;
                     }
-                    vue.page = page;
-                    this.getList();
+                    if ( (vue.page == 1 && page <= 1) || (vue.page == vue.page_count && page >= vue.page_count) ){
+
+                    }else{
+                        vue.page = page;
+                        this.getList();
+                    }
+
                 },
                 orderBy: function(field) {
                     if (vue.temp_order == field) {
