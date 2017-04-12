@@ -69,6 +69,15 @@ class UserController extends AdminBase{
             exit($this->error('会员不存在'));
         if(IS_POST){
             //  会员信息编辑
+            
+            $tempData = D('ShopUsers')->where(array('mobile'=>$_POST['mobile']))->find();
+            if ($tempData) {
+                if ($user['mobile'] != $tempData['mobile'] ) {
+                    exit($this->error('此手机号码已经存在'));
+                }
+            }
+
+            $_POST['username'] = 'mobile_'.$_POST['mobile'];
             $password = I('post.password');
             $password2 = I('post.password2');
             if($password != '' && $password != $password2){
@@ -81,10 +90,13 @@ class UserController extends AdminBase{
                 service("Passport")->userEdit($member['username'], '', $password, '', 1);
             }
             $row = M('ShopUsers')->where(array('userid'=>$uid))->save($_POST);
+            if($row!==false) $row = M('Member')->where(array('userid'=>$uid))->save($_POST);
             if($row)
                 exit($this->success('修改成功'));
             exit($this->error('未作内容修改或修改失败'));
         }
+
+        $user = array_merge($user,$member);
         
         $user['first_lower'] = M('ShopUsers')->where("first_leader = {$user['userid']}")->count();
         $user['second_lower'] = M('ShopUsers')->where("second_leader = {$user['userid']}")->count();

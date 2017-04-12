@@ -55,13 +55,6 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td>QQ:</td>
-                        <td>
-                            <input class="form-control" type="text" name="qq" value="{$user.qq}">
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr>
                         <td>手机:</td>
                         <td>
                             <input type="text" class="form-control" name="mobile" value="{$user.mobile}">
@@ -71,15 +64,15 @@
                     <tr>
                         <td>冻结用户:</td>
                         <td>
-                            <input name="is_lock" type="radio" value="1" <if condition="$user['is_lock'] eq 1">checked</if> >是
-                            <input name="is_lock" type="radio" value="0" <if condition="$user['is_lock'] eq 0">checked</if> >否
+                            <input name="islock" type="radio" value="1" <if condition="$user['islock'] eq 1">checked</if> >是
+                            <input name="islock" type="radio" value="0" <if condition="$user['islock'] eq 0">checked</if> >否
                         </td>
                         <td></td>
                     </tr>
                     <tr>
                         <td>注册时间:</td>
                         <td>
-                            {$user.reg_time|date='Y-m-d H:i',###}
+                            {$user.regdate|date='Y-m-d H:i',###}
                         </td>
                         <td></td>
                     </tr>
@@ -94,14 +87,7 @@
                     </tr>                    
                     <tr>
                         <table  class="table table-bordered">
-                            
-                            <tr>
-                                    <td>用户余额:</td>
-                                    <td>{$user.user_money}</td>                                
-                                    <td>累积分佣金额:</td>
-                                    <td>{$user.distribut_money}</td>    
-                                </tr>                            
-                            
+
                              <tr>
                                 <td>上一级编号</td>
                                     <td>                            
