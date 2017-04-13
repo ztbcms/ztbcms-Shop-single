@@ -7,21 +7,21 @@
         <div class="panel-heading">
           <h3 class="panel-title"><i class="fa fa-list"></i> 品牌列表</h3>
         </div>
-        <div class="panel-body">    
+        <div class="panel-body" id="app">
 		<div class="navbar navbar-default">                    
-                <form id="search-form2" class="navbar-form form-inline"  method="post" action="{:U('Brand/index')}">
+                <form id="search-form2" class="navbar-form form-inline"  method="post" action="" onsubmit="return false;">
                 <div class="form-group">
                   <label for="input-order-id" class="control-label">名称:</label>
                   <div class="input-group">
-                    <input type="text" class="form-control" id="input-order-id" placeholder="搜索词" value="{$_POST['keyword']}" name="keyword">                    
+                    <input type="text" class="form-control" id="input-order-id" placeholder="搜索词" v-model="where.keyword" name="keyword">
                   </div>
                 </div>
                 <div class="form-group">    
-                    <button class="btn btn-primary" id="button-filter search-order" type="submit"><i class="fa fa-search"></i> 筛选</button>    
+                    <button class="btn btn-primary" id="button-filter search-order" type="submit" v-on:click="getList()"><i class="fa fa-search"></i> 筛选</button>
                 </div>                
-                <button type="button" class="btn btn-primary pull-right"  onclick="location.href='{:U('Brand/addEditBrand')}'">
+                <a href="{:U('Brand/getBrandDetail')}" type="button" class="btn btn-primary pull-right" >
                  <i class="fa fa-plus"></i> 添加品牌
-                </button>                
+                </a>
                 </form>    
           </div>
                         
@@ -31,44 +31,49 @@
                         <table class="table table-bordered table-hover">
                             <thead>
                             <tr>
-                                <th class="sorting text-left">ID</th>
-                                <th class="sorting text-left">品牌名称</th>
-                                <th class="sorting text-left">Logo</th>
-                                <th class="sorting text-left">品牌分类</th>
+                                <th class="sorting text-center">ID</th>
+                                <th class="sorting text-center">品牌名称</th>
+                                <th class="sorting text-center">Logo</th>
+                                <th class="sorting text-center">品牌分类</th>
                                 <th valign="middle">是否推荐</th>
-                                <th class="sorting text-left">排序</th>
-                                <th class="sorting text-left">操作</th>
+                                <th class="sorting text-center">排序</th>
+                                <th class="sorting text-center">操作</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <volist name="brandList" id="list">
-                                <tr>
-                                    <td class="text-right">{$list.id}</td>
-                                    <td class="text-left">{$list.name}</td>
-                                    <td class="text-left">
-                                        <a href="{$list.logo}" target="_blank"><img onmouseover="$(this).attr('width','80').attr('height','45');" onmouseout="$(this).attr('width','40').attr('height','30');" width="40" height="30" src="{$list.logo}"/></a>                                    
+                                <tr v-for="item in brandList">
+                                    <td class="text-center">{{item.id}}</td>
+                                    <td class="text-center">{{item.name}}</td>
+                                    <td class="text-center">
+                                        <a><img width="32" height="32" :src="item.logo"/></a>
                                     </td>
-                                    <td class="text-left">{$cat_list[$list[parent_cat_id]]} {$cat_list[$list[cat_id]]}</td>                                   
+                                    <td class="text-center">{{catList[item.parent_cat_id]}} {{catList[item.cat_id]}}</td>
                                     <td>
-                                         <img width="20" height="20" src="{$config_siteurl}statics/extres/shop/images/<if condition='$list[is_hot] eq 1'>yes.png<else />cancel.png</if>" onclick="changeTableVal('brand','id','{$list.id}','is_hot',this)"/>			                             
-			            </td>
-                                    <td class="text-left">                                         
-                                        <input type="text" onchange="updateSort('brand','id','{$list.id}','sort',this)" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onpaste="this.value=this.value.replace(/[^\d]/g,'')"  size="4"   value="{$list.sort}" class="input-sm" />
+                                        <img v-on:click="changeHot(item)" width="20" height="20" v-bind:src="item.is_hot == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
+			                        </td>
+                                    <td class="text-center">
+                                        <input type="text" class="form-control input-sm" v-on:change="updateSort(item)" size="4" v-model="item.sort" />
                                     </td>
-                                    <td class="text-left">
-                                        <a href="{:U('Brand/addEditBrand',array('id'=>$list['id'],'p'=>$_GET[p]))}" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="编辑"><i class="fa fa-pencil"></i></a>
-                                        <a href="javascript:void(0);" onclick="del('{$list[id]}')" id="button-delete6" data-toggle="tooltip" title="" class="btn btn-danger" data-original-title="删除"><i class="fa fa-trash-o"></i></a>
+                                    <td class="text-center">
+                                        <a :href="'{:U('Brand/getBrandDetail')}&id='+item.id" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="编辑"><i class="fa fa-pencil"></i></a>
+                                        <a v-on:click="del(item.id)" href="javascript:;" id="button-delete6" data-toggle="tooltip" title="" class="btn btn-danger" data-original-title="删除"><i class="fa fa-trash-o"></i></a></td>
                                     </td>
                                 </tr>
-                            </volist>
                             </tbody>
                         </table>
                     </div>
-                
-                <div class="row">
-                    <div class="col-sm-6 text-left"></div>
-                    <div class="col-sm-6 text-right">{$show}</div>
-                </div>
+              <div class="dataTables_paginate paging_simple_numbers">
+                  <button v-on:click="toPage( parseInt(page) - 1 )" class="btn btn-primary">上一页
+                  </button>
+                  <button v-on:click="toPage( parseInt(page) + 1 )" class="btn btn-primary">下一页
+                  </button>
+                  <span style="line-height: 30px;margin-left: 50px"><input id="ipt_page"
+                                                                           style="width:30px;"
+                                                                           type="text"
+                                                                           v-model="temp_page"> / {{ page_count }}</span>
+                  <span><button class="btn btn-primary"
+                                v-on:click="toPage( temp_page )">GO</button></span>
+              </div>
           
           </div>
         </div>
@@ -78,52 +83,103 @@
   </section>
   <!-- /.content --> 
 </div>
-<!-- /.content-wrapper --> 
- <script>
- // 删除操作
-function del(id)
-{
-	if(!confirm('确定要删除吗?'))
-		return false;		
-		$.ajax({
-			url:"/index.php?g=Shop&m=Brand&a=delBrand&id="+id,
-			success: function(v){	
-                            var v =  eval('('+v+')');                                 
-                            if(v.hasOwnProperty('status') && (v.status == 1))
-                               location.href="{:U('Brand/index')}";
-                            else                                
-								layer.msg(v.msg, {icon: 2,time: 1000}); //alert(v.msg);
-			}
-		}); 
-	 return false;
-}
- 
+<!-- /.content-wrapper -->
+<include file="Public/vue"/>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            where: {},
+            catList: [],
+            brandList: [],
+            page: 1,
+            page_count: 1,
+            temp_page: 1
+        },
+        methods: {
+            getList: function (){
+                var that = this;
+                $.ajax({
+                    url: '',
+                    type: 'post',
+                    data: that.where,
+                    dataType: 'json',
+                    success: function(res){
+                        that.catList = res.cat_list;
+                        that.brandList = res.brandList;
+                        that.page = res.page['page'];
+                        that.temp_page = res.page['page'];
+                        that.page_count = res.page['page_count'];
+                    }
+                });
+            },
+            changeHot: function(obj){
+                if (obj.is_hot == 1){
+                    obj.is_hot = 0;
+                } else {
+                    obj.is_hot = 1;
+                }
 
-//修改指定表的指定字段值
-function changeBrandField(field,id,obj)
-{
- 
-     var isshow = $(obj).data('isshow');
-     if(isshow == 1)
-     {
-         $(obj).data('isshow','0');    
-         var value = 0;
-         $(obj).attr('src','{$config_siteurl}statics/extres/shop/images/cancel.png');
-         
-     }else{
-         $(obj).data('isshow','1');
-         var value = 1;
-         $(obj).attr('src','{$config_siteurl}statics/extres/shop/images/yes.png');
-     }    
-     
-     $.ajax({
-             url:'/index.php?m=Admin&c=goods&a=changeBrandField&field='+field+'&id='+id+'&value='+value,			
-             success: function(data){					                                                                      
-                     //  
-             }
-     });		
-     
-}
- </script>
+                $.ajax({
+                    url: "{:U('Shop/AdminApi/changeTableVal')}",
+                    data: {
+                        'table': 'Brand',
+                        'id_name': 'id',
+                        'id_value': obj.id,
+                        'field': 'is_hot',
+                        'value': obj.is_hot
+                    },
+                    success: function(res){
+                        layer.msg('操作成功');
+                    }
+                });
+            },
+            updateSort: function (obj) {
+                $.ajax({
+                    url: "{:U('Shop/AdminApi/changeTableVal')}",
+                    data: {
+                        'table': 'Brand',
+                        'id_name': 'id',
+                        'id_value': obj.id,
+                        'field': 'sort',
+                        'value': obj.sort
+                    },
+                    success: function(res){
+                        layer.msg('操作成功');
+                    }
+                });
+            },
+            del: function(id){
+                layer.confirm('确定要删除该品牌吗？',{
+                    btn:['确定', '取消']
+                },function () {
+                    $.ajax({url: "{:U('Brand/delBrand')}", type: 'get', data: {'id': id}, dataType: 'json',
+                        success:function (res){
+                            layer.alert(res.info,{
+                                icon: res.status
+                            },function(){
+                                window.location.reload();
+                            });
+                        }
+                    });
+                });
+            },
+            toPage: function (page) {
+                page = parseInt(page);
+                if (page < 1) {
+                    page = 1;
+                }
+                if (page > this.page_count) {
+                    page = this.page_count;
+                }
+                this.where = $.extend({}, this.where, {'page': page}); // 合并对象
+                this.getList();
+            }
+        },
+        mounted: function(){
+            this.getList();
+        }
+    });
+</script>
 </body>
 </html>
