@@ -10,23 +10,28 @@ use Shop\Util\AjaxPage;
 
 class CommentController extends AdminBase {
     public function index(){
+        if (IS_POST) {
+            $data = $this->getList();
+            $this->ajaxReturn($data);
+        }
         $this->display();
     }
 
-    public function ajaxindex(){
+    public function getList(){
         $model = M('ShopComment');
-        $username = I('nickname','','trim');
+
+        $username = I('username','','trim');
         $content = I('content','','trim');
         $where=' parent_id = 0';
         if($username){
-            $where .= " AND username='$username'";
+            $where .= " AND username like '%{$username}%'";
         }
         if($content){
             $where .= " AND content like '%{$content}%'";
         }        
         $count = $model->where($where)->count();
         $Page  = new AjaxPage($count,16);
-        $show = $Page->show();
+
                 
         $comment_list = $model->where($where)->order('add_time DESC')->limit($Page->firstRow.','.$Page->listRows)->select();
         if(!empty($comment_list))
@@ -34,19 +39,29 @@ class CommentController extends AdminBase {
             $goods_id_arr = get_arr_column($comment_list, 'goods_id');
             $goods_list = M('Goods')->where("goods_id in (".  implode(',', $goods_id_arr).")")->getField("goods_id,goods_name");
         }
-        $this->assign('goods_list',$goods_list);
-        $this->assign('comment_list',$comment_list);
-        $this->assign('page',$show);// 赋值分页输出
-        $this->display();
+
+        return ['goods_list'=>$goods_list,'comment_list'=>$comment_list];
     } 
     
     public function detail(){
-        $id = I('get.id');
-        $res = M('ShopComment')->where(array('comment_id'=>$id))->find();
-        if(!$res){
-            exit($this->error('不存在该评论'));
+        $id = I('id');
+        if(IS_POST) {
+            $res = M('ShopComment')->where(array('comment_id' => $id))->find();
+            if (!$res) {
+                $this->ajaxReturn(['msg'=>'不存在该评论','status'=>false]);
+            }
+
+            $reply = M('ShopComment')->where(array('parent_id' => $id))->select(); // 评论回复列表
+
+            $this->ajaxReturn(['comment'=>$res,'reply'=>$reply,'status'=>true]);
         }
+        $this->assign('id',$id);
+        $this->display();
+    }
+    public function doReply(){
         if(IS_POST){
+            $id = I('id');
+            $res = M('ShopComment')->where(array('comment_id'=>$id))->find();
             $add['parent_id'] = $id;
             $add['content'] = I('post.content');
             $add['goods_id'] = $res['goods_id'];
@@ -57,19 +72,12 @@ class CommentController extends AdminBase {
 
             $row =  M('ShopComment')->add($add);
             if($row){
-                $this->success('添加成功');
-            }else{
-                $this->error('添加失败');
+                $this->ajaxReturn(['msg'=>'添加成功','icon'=>1]);
             }
-            exit;
+            $this->ajaxReturn(['msg'=>'添加失败','icon'=>2]);
 
         }
-        $reply = M('ShopComment')->where(array('parent_id'=>$id))->select(); // 评论回复列表
-         
-        $this->assign('comment',$res);
-        $this->assign('reply',$reply);
-        $this->display();
-    } 
+    }
     public function op(){
         $type = I('post.type');
         $selected_id = I('post.selected');
