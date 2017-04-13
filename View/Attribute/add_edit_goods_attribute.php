@@ -119,7 +119,7 @@
                                 window.location.href = "{:U('Attribute/index')}";
                             });
                         }else{
-                            layer.alert(res.msg);
+                            layer.alert('操作失败');
                         }
                     }
                 });

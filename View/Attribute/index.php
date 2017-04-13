@@ -180,7 +180,10 @@
                 if (page > this.page_count) {
                     page = this.page_count;
                 }
-                this.where = $.extend({}, this.where, {'page': page}); // 合并对象
+                var tempWhere = this.where;
+                var temp_page = {'page': page};
+                this.where = $.extend(tempWhere, temp_page);
+
                 this.getList();
             }
         },
