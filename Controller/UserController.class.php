@@ -12,42 +12,52 @@ class UserController extends AdminBase{
      * 会员列表
      */
     public function ajaxindex(){
-        // 搜索条件
-        $condition = array();
-        I('mobile') ? $condition['mobile'] = array('like',"%".I('mobile')."%") : false;
-        I('email') ? $condition['email'] =  array('like',"%".I('email')."%")  : false;
-        $sort_order = I('order_by','userid').' '.I('sort','desc');
-               
-        $model = M('ShopUsers');
-        $count = $model->where($condition)->count();
-        $Page  = new AjaxPage($count,10);
-        //  搜索条件下 分页赋值
-        foreach($condition as $key=>$val) {
-            $Page->parameter[$key]   =   urlencode($val);
-        }
-        
-        $userList = $model->where($condition)->order($sort_order)->limit($Page->firstRow.','.$Page->listRows)->select();
-                
-        $user_id_arr = get_arr_column($userList, 'userid');
+        $setWhere = I('where');
+        $phone = $setWhere['phone'];
+        $where['modelid'] = ['eq',0];
+        $where['username'] = ['like','%'.$phone.'%'];
+
+        $page = I('page',1);
+        $limit_start = 12*($page-1);
+        $limit_end = $page*12-1;
+        $limit = $limit_start . ',' . $limit_end;
+        $page_count = ceil(M('Member')->where($where)->count() / 12);
+
+        $order = I('order','userid');
+
+        $data = M('Member')->where($where)->order($order)->limit($limit)->select();
+
+        $user_id_arr = get_arr_column($data, 'userid');
         if(!empty($user_id_arr))
         {
             $first_leader = M('ShopUsers')->query("select first_leader,count(1) as count  from __PREFIX__shop_users where first_leader in(".  implode(',', $user_id_arr).")  group by first_leader");
             $first_leader = convert_arr_key($first_leader,'first_leader');
-            
+
             $second_leader = M('ShopUsers')->query("select second_leader,count(1) as count  from __PREFIX__shop_users where second_leader in(".  implode(',', $user_id_arr).")  group by second_leader");
-            $second_leader = convert_arr_key($second_leader,'second_leader');            
-            
+            $second_leader = convert_arr_key($second_leader,'second_leader');
+
             $third_leader = M('ShopUsers')->query("select third_leader,count(1) as count  from __PREFIX__shop_users where third_leader in(".  implode(',', $user_id_arr).")  group by third_leader");
-            $third_leader = convert_arr_key($third_leader,'third_leader');            
+            $third_leader = convert_arr_key($third_leader,'third_leader');
         }
-        $this->assign('first_leader',$first_leader);
-        $this->assign('second_leader',$second_leader);
-        $this->assign('third_leader',$third_leader);                                
-        $show = $Page->show();
-        $this->assign('userList',$userList);
-        $this->assign('level',M('user_level')->getField('level_id,level_name'));
-        $this->assign('page',$show);// 赋值分页输出
-        $this->display();
+
+        foreach ($data as $key=>&$val) {
+            $userid = $val['userid'];
+            $res = M('shopUsers')->where('userid = '.$userid)->find();
+            if ($res){
+                $val = array_merge($val,$res);
+            }
+        }
+
+        $level = M('userLevel')->getField('level_id,level_name');
+        $this->ajaxReturn([
+            'page' => $page,
+            'page_count' => $page_count,
+            'data'=>$data,
+            'level'=>$level,
+            'first_leader'=>$first_leader,
+            'second_leader'=>$second_leader,
+            'third_leader'=>$third_leader
+        ]);
     }
 
     /**
@@ -61,6 +71,15 @@ class UserController extends AdminBase{
             exit($this->error('会员不存在'));
         if(IS_POST){
             //  会员信息编辑
+            
+            $tempData = D('ShopUsers')->where(array('mobile'=>$_POST['mobile']))->find();
+            if ($tempData) {
+                if ($user['mobile'] != $tempData['mobile'] ) {
+                    exit($this->error('此手机号码已经存在'));
+                }
+            }
+
+            $_POST['username'] = 'mobile_'.$_POST['mobile'];
             $password = I('post.password');
             $password2 = I('post.password2');
             if($password != '' && $password != $password2){
@@ -73,14 +92,13 @@ class UserController extends AdminBase{
                 service("Passport")->userEdit($member['username'], '', $password, '', 1);
             }
             $row = M('ShopUsers')->where(array('userid'=>$uid))->save($_POST);
-            if($row)
+            if($row!==false) $row = M('Member')->where(array('userid'=>$uid))->save($_POST);
+            if($row!==false)
                 exit($this->success('修改成功'));
             exit($this->error('未作内容修改或修改失败'));
         }
-        
-        $user['first_lower'] = M('ShopUsers')->where("first_leader = {$user['userid']}")->count();
-        $user['second_lower'] = M('ShopUsers')->where("second_leader = {$user['userid']}")->count();
-        $user['third_lower'] = M('ShopUsers')->where("third_leader = {$user['userid']}")->count();
+
+        $user = array_merge($user,$member);
  
         $this->assign('user',$user);
         $this->display();
@@ -175,6 +193,60 @@ class UserController extends AdminBase{
         $this->assign('province',$province);
         $this->assign('city',$city);
         $this->assign('district',$district);
+        $this->display();
+    }
+
+    public function setDefault_address(){
+        if (IS_POST) {
+            // 设置默认地址
+            $default_id = I('default_id');
+            $address_id = I('address_id');
+            $res = M('UserAddress')->where(['address_id'=>$default_id])->save(['is_default'=>0]);
+            if ($res!==false) $res = M('UserAddress')->where(['address_id'=>$address_id])->save(['is_default'=>1]);
+            if ($res!==false) $this->ajaxReturn(['msg'=>'设置成功']);
+            $this->ajaxReturn(['msg'=>'设置失败']);
+        }
+    }
+
+    public function add_address(){
+        if(IS_POST){
+            $data = I('post.');
+            $res = M('userAddress')->add($data);
+            if($res){
+                $this->success('添加成功',U('User/address',['id'=>$data['userid']]));
+            }else{
+                $this->error('添加失败',U('User/address',['id'=>$data['userid']]));
+            }
+            exit;
+        }
+        $this->display();
+    }
+    public function del_address(){
+        if(IS_POST){
+            $id = I('id');
+            $res = M('userAddress')->where(['address_id'=>$id])->delete();
+            if($res){
+                $this->ajaxReturn(['msg'=>'删除成功']);
+            }
+            $this->ajaxReturn(['msg'=>'删除失败']);
+        }
+    }
+
+    public function update_address(){
+        if(IS_POST){
+            $data = I('post.');
+            $id = $data['id'];
+            $res = M('userAddress')->where(['address_id'=>$id])->save($data);
+            if($res){
+                $this->success('修改成功',U('User/address',['id'=>$data['userid']]));
+            }else{
+                $this->error('修改失败',U('User/address',['id'=>$data['userid']]));
+            }
+            exit;
+        }
+        $id = I('id');
+        $address = M('userAddress')->where(['address_id' => $id])->find();
+        $this->assign('address',$address);
         $this->display();
     }
 

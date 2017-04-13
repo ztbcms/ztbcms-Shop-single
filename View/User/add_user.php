@@ -44,13 +44,6 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td>QQ:</td>
-                        <td>
-                            <input class="form-control" type="text" name="qq">
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr>
                         <td>手机:</td>
                         <td>
                             <input type="text" class="form-control" name="mobile">
