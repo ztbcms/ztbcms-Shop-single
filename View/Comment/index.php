@@ -145,23 +145,8 @@
                     }
                 });
             },
-            /*updateOrder: function (obj) {
-                $.ajax({
-                    url: "{:U('Shop/AdminApi/changeTableVal')}",
-                    data: {
-                        'table': 'spec',
-                        'id_name': 'id',
-                        'id_value': obj.id,
-                        'field': 'order',
-                        'value': obj.order
-                    },
-                    success: function(res){
-                        layer.msg('操作成功');
-                    }
-                });
-            },*/
             delComment: function (id) {
-                layer.confirm('确定要删除该规格吗？',{
+                layer.confirm('确定要删除该评论吗？',{
                     btn:['确定', '取消']
                 },function () {
                     $.ajax({url: "{:U('Comment/del')}", type: 'get', data: {'id': id}, dataType: 'json',
