@@ -134,7 +134,7 @@
                 $.ajax({
                     url: "{:U('Shop/AdminApi/changeTableVal')}",
                     data: {
-                        'table': 'spec',
+                        'table': 'shopComment',
                         'id_name': 'comment_id',
                         'id_value': obj.comment_id,
                         'field': 'is_show',
