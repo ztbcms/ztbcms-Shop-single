@@ -30,3 +30,5 @@ DROP TABLE IF EXISTS `cms_brand`;
 DROP TABLE IF EXISTS `cms_account_log`;
 DROP TABLE IF EXISTS `cms_shop_recom`;
 DROP TABLE IF EXISTS `cms_shop_recom_item`;
+DROP TABLE IF EXISTS `cms_shop_coupon`;
+DROP TABLE IF EXISTS `cms_shop_usercoupon`;

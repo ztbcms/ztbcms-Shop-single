@@ -619,8 +619,8 @@ CREATE TABLE `cms_shop_recom_item` (
 -- ----------------------------
 -- 商城优惠券
 -- ----------------------------
-DROP TABLE IF EXISTS `bs_shop_coupon`;
-CREATE TABLE `bs_shop_coupon` (
+DROP TABLE IF EXISTS `cms_shop_coupon`;
+CREATE TABLE `cms_shop_coupon` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '优惠券id',
   `type` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '优惠券类型，0不可叠加，1可叠加',
   `discount_price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '优惠价格',
@@ -634,9 +634,9 @@ CREATE TABLE `bs_shop_coupon` (
 -- ----------------------------
 -- 用户优惠券
 -- ----------------------------
-DROP TABLE IF EXISTS `bs_shop_usercoupon`;
-CREATE TABLE `bs_shop_usercoupon` (
-  `id` mediumint(8) NOT NULL,
+DROP TABLE IF EXISTS `cms_shop_usercoupon`;
+CREATE TABLE `cms_shop_usercoupon` (
+`id` mediumint(8) NOT NULL,
   `coupon_id` mediumint(8) unsigned NOT NULL COMMENT '所属优惠券id',
   `coupon_num` varchar(20) NOT NULL DEFAULT '' COMMENT '优惠券编码',
   `order_sn` varchar(20) NOT NULL DEFAULT '' COMMENT '被使用订单号',
@@ -647,7 +647,7 @@ CREATE TABLE `bs_shop_usercoupon` (
   `full_pirce` decimal(10,0) unsigned NOT NULL DEFAULT '0' COMMENT '满减价格。例如100，满100才能减，无条件默认是0',
   `start_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '使用起始时间',
   `end_time` int(11) unsigned NOT NULL COMMENT '过期时间',
-  `status` tinyint(4) unsigned NOT NULL DEFAULT '1' COMMENT '优惠券状态，0 无效，1正常，2过期',
+  `status` tinyint(4) unsigned NOT NULL DEFAULT '1' COMMENT '优惠券状态，0 无效，1未使用，2已使用，3过期',
   PRIMARY KEY (`id`),
   UNIQUE KEY `coupon_num` (`coupon_num`) USING BTREE,
   KEY `coupon_id` (`coupon_id`) USING BTREE,
