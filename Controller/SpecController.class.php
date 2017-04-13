@@ -92,6 +92,10 @@ class SpecController extends AdminBase {
         if (IS_POST) {
             $post = I('post.');
 
+            if($post['detail']['type_id'] == ''){
+                $this->ajaxReturn(['msg'=>'没有选择商品类型','status'=>false]);
+            }
+
             $items = $post['items'];
             $itemsArr = explode('
 ',$items);
