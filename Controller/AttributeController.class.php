@@ -33,14 +33,20 @@ class AttributeController extends AdminBase {
         // 关键词搜索               
         $model = M('GoodsAttribute');
         $count = $model->where($where)->count();
-        $Page       = new AjaxPage($count,13);
+        $page = I('page',1);
+        $limit = I('limit',10);
+        $page_count = ceil ($count / $limit);
+        $pageArr = array(
+            'page' => $page,
+            'page_count' => $page_count,
+        );
 
-        $goodsAttributeList = $model->where($where)->order('`order` desc,attr_id DESC')->limit($Page->firstRow.','.$Page->listRows)->select();
+        $goodsAttributeList = $model->where($where)->order('`order` desc,attr_id DESC')->page($page,$limit)->select();
         $goodsTypeList = M("GoodsType")->select(); // 分类
         $goodsTypeList = convert_arr_key($goodsTypeList, 'id');
         $attr_input_type = array(0=>'手工录入',1=>' 从列表中选择',2=>' 多行文本框');
 
-        return ['attr_input_type'=>$attr_input_type,'goodsTypeList'=>$goodsTypeList,'goodsAttributeList'=>$goodsAttributeList];
+        return ['attr_input_type'=>$attr_input_type,'goodsTypeList'=>$goodsTypeList,'goodsAttributeList'=>$goodsAttributeList,'page'=>$pageArr];
     }  
      /**
      * 添加修改编辑  商品属性

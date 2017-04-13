@@ -30,17 +30,23 @@ class CommentController extends AdminBase {
             $where .= " AND content like '%{$content}%'";
         }        
         $count = $model->where($where)->count();
-        $Page  = new AjaxPage($count,16);
+        $page = I('page',1);
+        $limit = I('limit',10);
+        $page_count = ceil ($count / $limit);
+        $pageArr = array(
+            'page' => $page,
+            'page_count' => $page_count,
+        );
 
                 
-        $comment_list = $model->where($where)->order('add_time DESC')->limit($Page->firstRow.','.$Page->listRows)->select();
+        $comment_list = $model->where($where)->order('add_time DESC')->page($page,$limit)->select();
         if(!empty($comment_list))
         {
             $goods_id_arr = get_arr_column($comment_list, 'goods_id');
             $goods_list = M('Goods')->where("goods_id in (".  implode(',', $goods_id_arr).")")->getField("goods_id,goods_name");
         }
 
-        return ['goods_list'=>$goods_list,'comment_list'=>$comment_list];
+        return ['goods_list'=>$goods_list,'comment_list'=>$comment_list, 'page'=>$pageArr];
     } 
     
     public function detail(){
@@ -106,11 +112,17 @@ class CommentController extends AdminBase {
     	if($content){
     		$where .= " AND content like '%{$content}%'";
     	}
-        $count = $model->where($where)->count();        
-        $Page  = new AjaxPage($count,16);
+        $count = $model->where($where)->count();
+          $page = I('page',1);
+          $limit = I('limit',10);
+          $page_count = ceil ($count / $limit);
+          $pageArr = array(
+              'page' => $page,
+              'page_count' => $page_count,
+          );
 
     	
-        $comment_list = $model->where($where)->order('add_time DESC')->limit($Page->firstRow.','.$Page->listRows)->select(); 
+        $comment_list = $model->where($where)->order('add_time DESC')->page($page,$limit)->select();
     	if(!empty($comment_list))
     	{
     		$goods_id_arr = get_arr_column($comment_list, 'goods_id');
@@ -118,7 +130,7 @@ class CommentController extends AdminBase {
     	}
     	$consult_type = array(0=>'默认咨询',1=>'商品咨询',2=>'支付咨询',3=>'配送',4=>'售后');
 
-          return ['consult_type'=>$consult_type,'goods_list'=>$goods_list,'comment_list'=>$comment_list];
+          return ['consult_type'=>$consult_type,'goods_list'=>$goods_list,'comment_list'=>$comment_list,'page'=>$pageArr];
 
     }
      

@@ -69,9 +69,15 @@ class SpecController extends AdminBase {
         // 关键词搜索               
         $model = D('spec');
         $count = $model->where($where)->count();
-        $Page = new Page($count, 100);
+        $page = I('page',1);
+        $limit = I('limit',10);
+        $page_count = ceil ($count / $limit);
+        $pageArr = array(
+            'page' => $page,
+            'page_count' => $page_count,
+        );
 
-        $specList = $model->where($where)->order('`type_id` asc')->limit($Page->firstRow.','.$Page->listRows)->select();        
+        $specList = $model->where($where)->order('`type_id` asc')->page($page,$limit)->select();
         $GoodsLogic = new GoodsLogic();        
         foreach($specList as $k => $v)
         {       // 获取规格项     
@@ -83,7 +89,7 @@ class SpecController extends AdminBase {
         $goodsTypeList = M("GoodsType")->select(); // 规格分类
         $goodsTypeList = convert_arr_key($goodsTypeList, 'id');
 
-        return ['goodsTypeList'=>$goodsTypeList,'specList'=>$specList];
+        return ['goodsTypeList'=>$goodsTypeList,'specList'=>$specList, 'page'=>$pageArr];
     }
      /**
      * 添加修改编辑  商品规格

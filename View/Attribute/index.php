@@ -63,6 +63,18 @@
                       </table>
                   </div>
               </form>
+              <div class="dataTables_paginate paging_simple_numbers">
+                  <button v-on:click="toPage( parseInt(page) - 1 )" class="btn btn-primary">上一页
+                  </button>
+                  <button v-on:click="toPage( parseInt(page) + 1 )" class="btn btn-primary">下一页
+                  </button>
+                  <span style="line-height: 30px;margin-left: 50px"><input id="ipt_page"
+                                                                           style="width:30px;"
+                                                                           type="text"
+                                                                           v-model="temp_page"> / {{ page_count }}</span>
+                  <span><button class="btn btn-primary"
+                                v-on:click="toPage( temp_page )">GO</button></span>
+              </div>
           </div>
         </div>
       </div>
@@ -80,13 +92,16 @@
             where: [],
             goodsAttributeList: [],
             goodsTypeList: [],
-            attr_input_type: []
+            attr_input_type: [],
+            page: 1,
+            page_count: 1,
+            temp_page: 1
         },
         methods: {
             getList: function(){
                 var that = this;
                 $.ajax({
-                    url: '',
+                    url: "",
                     type: 'post',
                     data: that.where,
                     dataType: 'json',
@@ -95,6 +110,9 @@
                         that.goodsAttributeList = res.goodsAttributeList;
                         that.goodsTypeList = res.goodsTypeList;
                         that.attr_input_type = res.attr_input_type;
+                        that.page = res.page['page'];
+                        that.temp_page = res.page['page'];
+                        that.page_count = res.page['page_count'];
                     }
                 });
             },
@@ -153,7 +171,17 @@
                         }
                     });
                 });
-
+            },
+            toPage: function (page) {
+                page = parseInt(page);
+                if (page < 1) {
+                    page = 1;
+                }
+                if (page > this.page_count) {
+                    page = this.page_count;
+                }
+                this.where = $.extend({}, this.where, {'page': page}); // 合并对象
+                this.getList();
             }
         },
         mounted: function(){
