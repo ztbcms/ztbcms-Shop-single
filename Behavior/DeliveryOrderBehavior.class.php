@@ -6,6 +6,7 @@
 
 namespace Shop\Behavior;
 
+use Record\Model\RecordModel;
 use Record\Service\IntegralRecordService;
 use Think\Log;
 
@@ -25,6 +26,6 @@ class DeliveryOrderBehavior {
         //确认收货之后，获取积分。订单总价多少就获得多少积分。
         //TODO 根据业务需要可以更换代码
         return IntegralRecordService::createIntegralRecord($order['user_id'], 'buy_goods', $order['order_sn'],
-            $order['order_amount']);
+            $order['order_amount'], 0, RecordModel::STATUS_VAILD, '购买商品');
     }
 }

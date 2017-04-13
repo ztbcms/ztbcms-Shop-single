@@ -26,12 +26,15 @@ class UserService extends BaseService {
      * @param $username 用户名，默认是使用手机登录
      * @param $password
      * @param $password2
+     * @param $share_id 推荐人id
      * @return array
      */
-    public function register($username, $password, $password2) {
+
+    public function register($username, $password, $password2, $share_id = null) {
+
         $is_validated = 0;
         //检查是手机
-        if (self::check_mobile($username)) {
+        if (self::checkMobile($username)) {
             $is_validated = 1;
             $map['mobile_validated'] = 1;
             $map['nickname'] = $map['mobile'] = $username; //手机注册
@@ -80,6 +83,11 @@ class UserService extends BaseService {
                 return false;
             }
         }
+        //如果有推荐者id传入
+        if ($share_id) {
+            self::share($member_user_id, $share_id);
+        }
+
         $user = M('Member')->where(['userid' => $member_user_id])->find();
 
         return $user;
@@ -120,7 +128,7 @@ class UserService extends BaseService {
 
             return false;
         }
-        if (!self::check_mobile($post['mobile'])) {
+        if (!self::checkMobile($post['mobile'])) {
             $this->set_err_msg('手机号码格式有误' . $post['mobile']);
 
             return false;
@@ -187,11 +195,33 @@ class UserService extends BaseService {
      * @param $mobile
      * @return bool
      */
-    static function check_mobile($mobile) {
+    static function checkMobile($mobile) {
         if (preg_match('/1[34578]\d{9}$/', $mobile)) {
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * 上下级关系处理
+     *
+     * @param $userid   注册用户
+     * @param $share_id 上级用户
+     * @return bool
+     */
+    static function share($userid, $share_id) {
+        $share = M('ShopUsers')->where(['userid' => $share_id])->find();
+        if ($share) {
+            //如果找到该上级，将user的直接上级改成 $share_id
+            $update = [
+                'direct_leader' => $share['userid']
+            ];
+
+            //TODO 根据自己的页面还可以添加分级推荐关系
+            return M('ShopUsers')->where(['userid' => $userid])->save($update);
+        } else {
+            return false;
+        }
     }
 }

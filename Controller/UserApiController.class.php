@@ -10,6 +10,7 @@ class UserApiController extends BaseController {
      */
     public function index() {
         $userinfo = service("Passport")->getInfo();
+        $userinfo['shop_user'] = $this->shop_user;
         if ($userinfo) {
             unset($userinfo['password']);
             unset($userinfo['encrypt']);
@@ -44,8 +45,9 @@ class UserApiController extends BaseController {
         $username = I('post.username', '');
         $password = I('post.password', '');
         $password2 = I('post.password2', '');
+        $share_id = I('post.share_id', null);
         $user_service = new UserService();
-        $res = $user_service->register($username, $password, $password2);
+        $res = $user_service->register($username, $password, $password2, $share_id);
         if ($res) {
             session('user', $res);
             unset($res['password']);
