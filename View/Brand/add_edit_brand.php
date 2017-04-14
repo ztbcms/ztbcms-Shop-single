@@ -43,7 +43,7 @@
                                         <div class="col-sm-3">
 	                                        <select name="parent_cat_id" id="parent_id_1" v-model="brand.parent_cat_id" class="form-control" style="width:250px;margin-left:-15px;">
                                                 <option value="0">顶级分类</option>
-                                                <option v-for="item in catList" :value="item.id" v-bind:selected="item.id == brand['parent_cat_id'] ? 'selected' : ''">{{ item.name }}</option>
+                                                <option v-for="item in catList" v-if="item.parent_id == 0" :value="item.id" v-bind:selected="item.id == brand['parent_cat_id'] ? 'selected' : ''">{{ item.name }}</option>
 						                    </select>
 	                                    </div>                                    
 	                                    <div class="col-sm-3">
@@ -61,7 +61,7 @@
                                         	<input type="text" v-model="brand.logo" name="logo" id="logo" class="form-control" style="width:350px;margin-left:-15px;"/>
                                         </div>
                                         <div class="col-sm-3">
-                                        	<input onclick="GetUploadify(1,'logo','brand');" type="button" class="btn btn-default" value="上传logo"/>
+                                        	<input onclick="GetUploadify(1,'logo','brand','callback');" type="button" class="btn btn-default" value="上传logo"/>
                                         </div>
                                     </td>
                                 </tr> 
@@ -138,6 +138,11 @@
     $('#parent_id_1').change(function(){
         obj.brand['cat_id'] = 0;
     });
+
+    // 上传商品图片成功回调函数
+    function callback(fileurl_tmp) {
+        obj.brand['logo'] = fileurl_tmp;
+    }
 </script>
 </body>
 </html>

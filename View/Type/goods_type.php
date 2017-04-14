@@ -26,7 +26,7 @@
                                 <tr>
                                     <td>类型名称:</td>
                                     <td>
-                                        <input type="text" v-model="detail.name" name="name"/>
+                                        <input type="text" v-model="detail.name" name="name" class="form-control"/>
                                         <span id="err_name" style="color:#F00; display:none;">商品类型名称不能为空!!</span>
                                     </td>
                                 </tr>                                

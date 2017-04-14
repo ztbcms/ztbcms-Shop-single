@@ -95,7 +95,7 @@ function SetImgContent(obj){
 		return sLi;
 	}else{
 		//window.parent.message(obj.text,8,2);
-		alert(obj.text);
+		alert(obj.msg);
 		return;
 	}
 }
