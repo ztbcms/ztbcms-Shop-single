@@ -2,6 +2,7 @@
 /**
  * Created by PhpStorm.
  * User: Ningshenglee
+ * 商城优惠券和用户优惠券
  */
 
 namespace Shop\Controller;
@@ -19,7 +20,7 @@ class CouponApiController extends BaseController
         parent::_initialize();
     }
     /**
-     * 用户获得的优惠券列表
+     * 获取用户优惠券列表
      */
     public function coupon_lists()
     {
@@ -50,5 +51,40 @@ class CouponApiController extends BaseController
 
         $coupon_list = CouponService::getCounponList($where,$total_money);
         $this->success($coupon_list,'',true);
+    }
+
+    /**
+     * 获取用户优惠券详情
+     */
+    public function coupon_info()
+    {
+        $id = I('id');//用户优惠券
+        $user_coupon = M('ShopUsercoupon')->where("id = $id")->find();//用户优惠券详情
+        $this->success($user_coupon,'',true);
+    }
+
+    /**
+     * 减去优惠价后的应付价格
+     */
+    public function cut_discount_price()
+    {
+        $id = I('id');//用户优惠券
+        $user_coupon = M('ShopUsercoupon')->where("id = $id")->find();//用户优惠券详情
+        $where_cart['userid'] = $this->userid;
+        $where_cart['id'] = array('in', I('cart_ids'));
+        $order_goods = M('Cart')->where($where_cart)->select();
+        //检测购物车是否有选择商品
+        if (count($order_goods) == 0) {
+            $this->error('你的购物车没有选中商品');
+        } // 返回结果状态
+        $order_service = new OrderService();
+        //按选中购物车的商品，计算出各个部分的价格
+        $result = $order_service->calculate_price($this->userid, $order_goods);
+        if (!$result) {
+            $this->error($order_service->get_err_msg());
+        }
+        $total_money = $result['order_amount'];//支付总金额
+        $result_total_money = $total_money - $user_coupon['discount_price'];
+        $this->success($result_total_money,'',true);
     }
 }
