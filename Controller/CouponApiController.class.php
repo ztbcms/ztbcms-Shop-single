@@ -68,8 +68,14 @@ class CouponApiController extends BaseController
      */
     public function cut_discount_price()
     {
-        $id = I('id');//用户优惠券
-        $user_coupon = M('ShopUsercoupon')->where("id = $id")->find();//用户优惠券详情
+        if(I('id')){
+            $id = I('id');//用户优惠券
+            $user_coupon = M('ShopUsercoupon')->where("id = $id")->find();//用户优惠券详情
+            $discount_price = $user_coupon['discount_price'];
+        }else{
+            $discount_price = 0;
+        }
+
         $where_cart['userid'] = $this->userid;
         $where_cart['id'] = array('in', I('cart_ids'));
         $order_goods = M('Cart')->where($where_cart)->select();
@@ -84,7 +90,7 @@ class CouponApiController extends BaseController
             $this->error($order_service->get_err_msg());
         }
         $total_money = $result['order_amount'];//支付总金额
-        $result_total_money = $total_money - $user_coupon['discount_price'];
+        $result_total_money = $total_money - $discount_price;
         $this->success($result_total_money,'',true);
     }
 }
