@@ -1,12 +1,13 @@
 <?php
 namespace Shop\Controller;
 
+use Shop\Service\CouponService;
 use Shop\Service\OrderService;
 
 class OrderApiController extends BaseController {
-    /*
-   * 初始化操作
-   */
+    /**
+     * 初始化操作
+     */
     public function _initialize() {
         parent::_initialize();
     }
@@ -93,6 +94,13 @@ class OrderApiController extends BaseController {
         $invoice_title = I('invoice_title'); // 发票抬头
         $pay_points = I("pay_points", 0); //  使用积分
         $user_money = I("user_money", 0); //  使用余额
+        $discount = 0; //优惠价格，默认为没有使用优惠券
+
+        //检测是否使用优惠券
+        if(I('usercoupon_id')){
+            $coupon_info = CouponService::getUserCouponInfo(I('usercoupon_id'),$this->userid);
+            $discount = $coupon_info['discount_price'];
+        }
 
         $where_cart['userid'] = $this->userid;
         $where_cart['id'] = array('in', I('cart_ids'));
@@ -110,7 +118,7 @@ class OrderApiController extends BaseController {
         $order_service = new OrderService();
 
         //按选中购物车的商品，计算出各个部分的价格
-        $result = $order_service->calculate_price($this->userid, $order_goods, 0, $pay_points, $user_money);
+        $result = $order_service->calculate_price($this->userid, $order_goods, 0, $pay_points, $user_money, $discount);
         if (!$result) {
             $this->error($order_service->get_err_msg());
         }
@@ -124,6 +132,7 @@ class OrderApiController extends BaseController {
             'goodsFee' => $result['goods_price'],// 商品价格
             'order_prom_id' => $result['order_prom_id'], // 订单优惠活动id
             'order_prom_amount' => $result['order_prom_amount'], // 订单优惠活动优惠了多少钱
+            'discount' => $result['discount'], // 优惠券抵扣价格
         );
         $result = $order_service->addOrder($this->userid, $order_goods, $address_id, '', $invoice_title, 0,
             $cart_price); // 添加订单

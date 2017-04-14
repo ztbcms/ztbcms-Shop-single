@@ -101,6 +101,7 @@ class OrderService extends BaseService {
             'add_time' => time(), // 下单时间
             'order_prom_id' => $cart_price['order_prom_id'],//'订单优惠活动id',
             'order_prom_amount' => $cart_price['order_prom_amount'],//'订单优惠活动优惠了多少钱',
+            'discount' => $cart_price['discount'],//'优惠券抵扣价格'
         );
 
         $order_id = M("Order")->data($data)->add();
@@ -197,6 +198,7 @@ class OrderService extends BaseService {
      * @param int $shipping_price
      * @param int $pay_points
      * @param int $user_money
+     * @param int $discount_price
      * @return array|bool
      */
     public function calculate_price(
@@ -204,7 +206,8 @@ class OrderService extends BaseService {
         $order_goods,
         $shipping_price = 0,
         $pay_points = 0,
-        $user_money = 0
+        $user_money = 0,
+        $discount = 0
     ) {
         $user = M('ShopUsers')->where("userid = $user_id")->find(); // 找出这个用户
 
@@ -269,6 +272,9 @@ class OrderService extends BaseService {
         $user_money = ($user_money > $order_amount) ? $order_amount : $user_money; // 余额支付原理等同于积分
         $order_amount = $order_amount - $user_money; //  余额支付抵应付金额
 
+        $discount = ($discount > $order_amount) ? $order_amount : $discount; //优惠价格
+        $order_amount = $order_amount - $discount;// 减去优惠价
+
         $total_amount = $goods_price + $shipping_price;
         //订单总价  应付金额  物流费  商品总价 节约金额 共多少件商品 积分  余额  优惠券
         $result = array(
@@ -282,6 +288,7 @@ class OrderService extends BaseService {
             'user_money' => $user_money, // 使用余额
             'coupon_price' => 0, // 优惠券抵消金额
             'order_goods' => $order_goods, // 商品列表 多加几个字段原样返回
+            'discount' => $discount //优惠价格
         );
 
         return $result;
