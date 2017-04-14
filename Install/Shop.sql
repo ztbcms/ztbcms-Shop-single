@@ -124,6 +124,7 @@ CREATE TABLE `cms_shop_users` (
   `first_leader` int(11) DEFAULT '0' COMMENT '第一个上级',
   `second_leader` int(11) DEFAULT '0' COMMENT '第二个上级',
   `third_leader` int(11) DEFAULT '0' COMMENT '第三个上级',
+  `direct_leader` int(11) DEFAULT '0' COMMENT '直接上级',
   `token` varchar(64) DEFAULT '' COMMENT '用于app 授权类似于session_id',
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
