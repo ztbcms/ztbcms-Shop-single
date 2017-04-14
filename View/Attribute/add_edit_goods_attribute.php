@@ -26,14 +26,14 @@
                                 <tr>
                                     <td>属性名称：</td>
                                     <td>
-                                        <input type="text" v-model="detail.attr_name" name="attr_name"/>
+                                        <input type="text" v-model="detail.attr_name" name="attr_name" class="form-control"/>
                                         <span id="err_attr_name" style="color:#F00; display:none;"></span>                                        
                                     </td>
                                 </tr>  
                                 <tr>
                                     <td>所属商品类型：</td>
                                     <td>
-                                        <select name="type_id" id="type_id" v-model="detail.type_id">
+                                        <select name="type_id" id="type_id" v-model="detail.type_id" class="form-control">
                                             <option value="">请选择</option>
                                             <option v-for="item in goodsType" :value="item.id" v-bind:selected="item.id == detail.type_id ? 'selected' : ''">{{ item.name }}</option>
                                         </select>
@@ -43,23 +43,28 @@
                                 <tr>
                                     <td>能否进行检索：</td>
                                     <td>
-                                        <input type="radio" value="0" name="attr_index" v-bind:checked="detail.attr_index == 0 ? 'checked' : ''" >不需要检索
-                                        <input type="radio" value="1" name="attr_index" v-bind:checked="detail.attr_index == 1 || detail.attr_index == '' ? 'checked' : ''" />关键字检索
+                                        <input type="radio" value="0" name="attr_index" v-bind:checked="detail.attr_index == 0 ? 'checked' : ''" id="attr_index0"><label
+                                            for="attr_index0">不需要检索</label>
+                                        <input type="radio" value="1" name="attr_index" v-bind:checked="detail.attr_index == 1 || detail.attr_index == '' ? 'checked' : ''" id="attr_index1"/><label
+                                            for="attr_index1">关键字检索</label>
                                         <!--<input type="radio" value="2" name="attr_index" <if condition="$goodsAttribute[attr_index] eq 2">checked="checked"</if>  />范围检索-->
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>该属性值的录入方式：</td>
                                     <td>
-                                        <input type="radio" value="0" name="attr_input_type" v-bind:checked="detail.attr_input_type == 0 || detail.attr_input_type == '' ? 'checked' : ''"/>手工录入
-                                        <input type="radio" value="1" name="attr_input_type" v-bind:checked="detail.attr_input_type == 1 ? 'checked' : ''"/>从下面的列表中选择（一行代表一个可选值）
-                                        <input type="radio" value="2" name="attr_input_type" v-bind:checked="detail.attr_input_type == 2 ? 'checked' : ''"/>多行文本框
+                                        <input id="attr_input_type0" type="radio" value="0" name="attr_input_type" v-bind:checked="detail.attr_input_type == 0 || detail.attr_input_type == '' ? 'checked' : ''"/><label
+                                            for="attr_input_type0">手工录入</label>
+                                        <input id="attr_input_type1" type="radio" value="1" name="attr_input_type" v-bind:checked="detail.attr_input_type == 1 ? 'checked' : ''"/><label
+                                            for="attr_input_type1">从下面的列表中选择（一行代表一个可选值）</label>
+                                        <input id="attr_input_type2" type="radio" value="2" name="attr_input_type" v-bind:checked="detail.attr_input_type == 2 ? 'checked' : ''"/><label
+                                            for="attr_input_type2">多行文本框</label>
                                     </td>
                                 </tr>  
                                 <tr>
                                     <td>可选值列表：</td> 
                                     <td>
-                                    <textarea rows="5" cols="30" name="attr_values" id="attr_values">{{detail.attr_values}}</textarea>
+                                    <textarea rows="5" cols="30" name="attr_values" id="attr_values" class="form-control">{{detail.attr_values}}</textarea>
                                     录入方式为手工或者多行文本时，此输入框不需填写。
                                     <span id="err_attr_values" style="color:#F00; display:none;"></span>
                                     </td>

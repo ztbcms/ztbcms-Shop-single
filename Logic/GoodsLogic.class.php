@@ -85,17 +85,17 @@ class GoodsLogic extends RelationModel{
                 $sql = "SELECT * FROM  __PREFIX__goods_category ORDER BY parent_id , sort_order ASC";
                 $goods_category = D('goods_category')->query($sql);
                 $goods_category = convert_arr_key($goods_category, 'id');
-                
+
                 foreach ($goods_category AS $key => $value)
                 {
                     if($value['level'] == 1)
-                        $this->get_cat_tree($value['id']);                                
+                        $this->get_cat_tree($value['id']);
                 }
                 /*
                 foreach ($goods_category2 AS $key => $value)
                 {
                         $strpad_count = $value['level']*10;
-                        echo str_pad('',$strpad_count,"-",STR_PAD_LEFT);             
+                        echo str_pad('',$strpad_count,"-",STR_PAD_LEFT);
                         echo $value['name'];
                         echo "<br/>";
                 }*/

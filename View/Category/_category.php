@@ -3,7 +3,7 @@
 		<section class="content">
             <div class="row">
                 <div class="col-sm-12">
-                    <div class="box">
+                    <div class="box" id="app">
                         <div class="box-header">
                             <h3 class="box-title">增加分类</h3>
 			                <div class="pull-right">
@@ -17,46 +17,39 @@
                                 <div class="form-group">
                                      <label class="col-sm-2 control-label">分类名称</label>
                                      <div class="col-sm-6">
-                                        <input type="text" placeholder="名称" class="form-control large" name="name" value="{$goods_category_info.name}">
+                                        <input type="text" placeholder="名称" class="form-control large" name="name" v-model="detail.name">
                                         <span class="help-inline" style="color:#F00; display:none;" id="err_name"></span>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-sm-2">手机分类名称</label>
                                     <div class="col-sm-6">
-                                        <input type="text" placeholder="手机分类名称" class="form-control large" name="mobile_name" value="{$goods_category_info.mobile_name}">
+                                        <input type="text" placeholder="手机分类名称" class="form-control large" name="mobile_name" v-model="detail.mobile_name">
                                         <span class="help-inline" style="color:#F00; display:none;" id="err_mobile_name"></span>
                                     </div>
                                 </div> 
                                 <div class="form-group">
-                                    <label0 class="control-label col-sm-2">上级分类</label0>
-
+                                    <label class="control-label col-sm-2">上级分类</label>
                                     <div class="col-sm-3">
-                                        <select name="parent_id_1" id="parent_id_1" onchange="get_category(this.value,'parent_id_2','0');" class="small form-control">
-	                                        <option value="0">顶级分类</option>
-                                            <foreach name="cat_list" item="v" >                                            
-                                                <option value="{$v[id]}">{$v[name]}</option>
-                                            </foreach>                                            
-										</select>
-                                    </div>                                    
+                                        <select name="parent_cat_id" id="parent_id_1" v-model="pid" class="form-control">
+                                            <option value="0">顶级分类</option>
+                                            <option v-for="item in catList" v-if="item.parent_id == 0" :value="item.id" v-bind:selected="item.id == pid ? 'selected' : ''">{{ item.name }}</option>
+                                        </select>
+                                    </div>
                                     <div class="col-sm-3">
-                                      <select name="parent_id_2" id="parent_id_2"  class="small form-control">
-                                        <option value="0">请选择商品分类</option>
-                                      </select>  
-                                    </div>                                      
+                                        <select name="cat_id" id="parent_id_2" v-model="detail.parent_id" class="form-control" style="width:250px;">
+                                            <option value="0">顶级分类</option>
+                                            <option v-for="item in catList" v-if="item.parent_id == pid" :value="item.id" v-bind:selected="item.id == detail['parent_id'] ? 'selected' : ''">{{ item.name }}</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-sm-2">导航显示</label>
 									
                                     <div class="col-sm-10">
-                                        <label> 
-                                            <if condition="($goods_category_info[is_show] eq 1) or ($goods_category_info[is_show] eq NULL)"> 
-                                                <input checked="checked" type="radio" name="is_show" value="1"> 是
-                                                <input type="radio" name="is_show" value="0"> 否
-                                            <else /> 
-                                                <input type="radio" name="is_show" value="1"> 是
-                                                <input checked="checked" type="radio" name="is_show" value="0"> 否
-                                            </if>                                                                                                                                    
+                                        <label>
+                                                <input v-model="detail.is_show" v-bind:checked="detail.is_show == 1 || detail.is_show == '' ? 'checked' : ''" type="radio" name="is_show" value="1"> 是
+                                                <input v-model="detail.is_show" v-bind:checked="detail.is_show == 0 ? 'checked' : ''"type="radio" name="is_show" value="0"> 否
                                         </label>
                                     </div>
                                 </div>
@@ -64,28 +57,9 @@
                                     <label class="control-label col-sm-2">分类分组:</label>
 									
                                     <div class="col-sm-1">
-                                      <select name="cat_group" id="cat_group" class="form-control">
+                                      <select name="cat_group" id="cat_group" class="form-control" v-model="detail.cat_group">
                                         <option value="0">0</option>                                        
-                                        <option value='1' <if condition="$goods_category_info[cat_group] eq 1"> selected='selected'</if>>1</option>"
-                                        <option value='2' <if condition="$goods_category_info[cat_group] eq 2"> selected='selected'</if>>2</option>"
-                                        <option value='3' <if condition="$goods_category_info[cat_group] eq 3"> selected='selected'</if>>3</option>"
-                                        <option value='4' <if condition="$goods_category_info[cat_group] eq 4"> selected='selected'</if>>4</option>"
-                                        <option value='5' <if condition="$goods_category_info[cat_group] eq 5"> selected='selected'</if>>5</option>"
-                                        <option value='6' <if condition="$goods_category_info[cat_group] eq 6"> selected='selected'</if>>6</option>"
-                                        <option value='7' <if condition="$goods_category_info[cat_group] eq 7"> selected='selected'</if>>7</option>"
-                                        <option value='8' <if condition="$goods_category_info[cat_group] eq 8"> selected='selected'</if>>8</option>"
-                                        <option value='9' <if condition="$goods_category_info[cat_group] eq 9"> selected='selected'</if>>9</option>"
-                                        <option value='10' <if condition="$goods_category_info[cat_group] eq 10"> selected='selected'</if>>10</option>"
-                                        <option value='11' <if condition="$goods_category_info[cat_group] eq 11"> selected='selected'</if>>11</option>"
-                                        <option value='12' <if condition="$goods_category_info[cat_group] eq 12"> selected='selected'</if>>12</option>"
-                                        <option value='13' <if condition="$goods_category_info[cat_group] eq 13"> selected='selected'</if>>13</option>"
-                                        <option value='14' <if condition="$goods_category_info[cat_group] eq 14"> selected='selected'</if>>14</option>"
-                                        <option value='15' <if condition="$goods_category_info[cat_group] eq 15"> selected='selected'</if>>15</option>"
-                                        <option value='16' <if condition="$goods_category_info[cat_group] eq 16"> selected='selected'</if>>16</option>"
-                                        <option value='17' <if condition="$goods_category_info[cat_group] eq 17"> selected='selected'</if>>17</option>"
-                                        <option value='18' <if condition="$goods_category_info[cat_group] eq 18"> selected='selected'</if>>18</option>"
-                                        <option value='19' <if condition="$goods_category_info[cat_group] eq 19"> selected='selected'</if>>19</option>"
-                                        <option value='20' <if condition="$goods_category_info[cat_group] eq 20"> selected='selected'</if>>20</option>"
+                                        <option v-for="item in 20" :value='item'>{{item}}</option>
                                       </select>                                        
                                     </div>                                    
                                 </div>   
@@ -95,20 +69,20 @@
 
                                     <div class="col-sm-10">
                                         <input class="btn btn-default" onclick="GetUploadify(1,'image','category');" type="button" value="上传图片"/>
-                                        <input type="text" value="{$goods_category_info.image}" name="image" id="image" class="form-control large" readonly="readonly"  style="width:500px;display:initial;"/>
+                                        <input type="text" v-model="detail.image" name="image" id="image" class="form-control large" style="width:500px;display:initial;"/>
                                     </div>
                                 </div>                                
                                <div class="form-group">
                                     <label class="control-label col-sm-2">显示排序</label>
                                     <div class="col-sm-1">
-                                        <input type="text" placeholder="50" class="form-control large" name="sort_order" value="{$goods_category_info.sort_order}"/>
+                                        <input type="text" placeholder="50" class="form-control large" name="sort_order" v-model="detail.sort_order"/>
                                         <span class="help-inline" style="color:#F00; display:none;" id="err_sort_order"></span>
                                     </div>
                                 </div>
 								<div class="form-group">
                                     <label class="control-label col-sm-2">分佣比例</label>
                                     <div class="col-sm-1">
-                                        <input type="text" placeholder="50" class="form-control large" name="commission_rate" id="commission_rate" value="{$goods_category_info.commission_rate|default='0'}" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')"/>
+                                        <input type="text" placeholder="50" class="form-control large" name="commission_rate" id="commission_rate" v-model="detail.commission_rate"/>
                                     </div>
                                     <div class="col-sm-1" style="margin-top: 6px;margin-left: -20px;">
                                         <span>%</span> 
@@ -118,7 +92,7 @@
                         <div class="box-footer">                        	
                             <input type="hidden" name="id" value="{$goods_category_info.id}">                           
                         	<button type="reset" class="btn btn-primary pull-left"><i class="icon-ok"></i>重填  </button>                       	                 
-                            <button type="button" onclick="ajax_submit_form('category_form','{:U('Category/addEditCategory?is_ajax=1')}');" class="btn btn-primary pull-right"><i class="icon-ok"></i>提交  </button>
+                            <button type="button" v-on:click="addEditCate()" class="btn btn-primary pull-right"><i class="icon-ok"></i>提交  </button>
                         </div> 
                         </form>
                     </div>
@@ -126,23 +100,56 @@
             </div>
         </section>
 </div>
-<script>  
-    
-/** 以下是编辑时默认选中某个商品分类*/
-$(document).ready(function(){
-	<if condition="$level_cat['2'] gt 0">	
-		 // 如果当前是二级分类就让一级父id默认选中
-		 $("#parent_id_1").val('{$level_cat[1]}'); 
-		 get_category('{$level_cat[1]}','parent_id_2','0');		 
-	</if>	 
-	<if condition="$level_cat['3'] gt 0">
-		 // 如果当前是三级分类就一级和二级父id默认 都选中
-		 $("#parent_id_1").val('{$level_cat[1]}');		 	
-		 get_category('{$level_cat[1]}','parent_id_2','{$level_cat[2]}');	
-	</if>	
-});
- 
+<include file="Public/vue"/>
+<script>
+    var obj = new Vue({
+        el: '#app',
+        data: {
+            catList: [],
+            detail: [],
+            pid: 0
+        },
+        methods: {
+            getDetail: function(){
+                var that = this;
+                $.ajax({url: "{:U('Category/getCategoryDetail')}", type: 'post', data: {'id': '<?php echo $id;?>'}, dataType: 'json',
+                    success:function (res){
+                        console.log(res);
+                        that.catList = res.cat_list;
+                        that.detail = res.goods_category_info;
+                        that.pid = res.pid;
+                    }
+                });
+            },
+            addEditCate: function(){
+                var that = this;
+                var data = {
+                    'detail': that.detail,
+                    'pid': that.pid,
+                    'id': '<?php echo $id;?>'
+                };
+
+                $.ajax({url: "{:U('Category/addEditCategory')}", type: 'post', data: data, dataType: 'json',
+                    success:function (res){
+                        if(res.status){
+                            layer.alert(res.msg,function(){
+                                window.location.href = "{:U('Category/index')}";
+                            });
+                        }else{
+                            layer.alert(res.msg);
+                        }
+                    }
+                });
+            }
+        },
+        mounted: function(){
+            this.getDetail();
+        }
+    });
+
+    $('#parent_id_1').change(function(){
+        obj.detail.parent_id = 0;
+    });
 </script>
-   
 </body>
 </html>

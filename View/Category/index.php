@@ -4,14 +4,14 @@
     <section class="content">
         <div class="row">
             <div class="col-xs-12">
-                <div class="box">
+                <div class="box" id="app">
                     <div class="box-header">
                         <div class="row">
                             <div class="col-md-1" style="display: inline-block;">
                                 <button class="btn btn-default" type="button" onclick="tree_open(this);"><i class="fa fa-angle-double-down"></i>展开</button>
                             </div>
                             <div class="col-md-2 pull-right">
-                                <a href="{:U('Category/addEditCategory')}" class="btn btn-primary "><i class="fa fa-plus"></i>新增分类</a>
+                                <a href="{:U('Category/getCategoryDetail')}" class="btn btn-primary "><i class="fa fa-plus"></i>新增分类</a>
                             </div>
                         </div>
                     </div>
@@ -33,34 +33,30 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <foreach name="cat_list" item="vo" key="k">
-                                            <tr role="row" align="center" class="{$vo.level}" id="{$vo.level}_{$vo.id}" <if condition="$vo[level] gt 1">style="display:none"</if>>
-                                                <td>{$vo.id}</td>
-                                                <td align="left" style="padding-left:<?php echo ($vo[level] * 5); ?>em">
-                                                    <if condition="$vo.have_son eq 1">
-                                                        <span class="glyphicon glyphicon-plus btn-warning" style="padding:2px; font-size:12px;" id="icon_{$vo.level}_{$vo.id}" aria-hidden="false" onclick="rowClicked(this)"></span>&nbsp;
-                                                    </if>
-                                                    <span>{$vo.name}</span>
-                                                </td>
-                                                <td><span>{$vo.mobile_name}</span></td>
-                                                <td>
-                                                    <img width="20" height="20" src="{$config_siteurl}statics/extres/shop/images/<if condition='$vo[is_hot] eq 1'>yes.png<else />cancel.png</if>" onclick="changeTableVal('goods_category','id','{$vo.id}','is_hot',this)" />
-                                                </td>
-                                                <td>
-                                                    <img width="20" height="20" src="{$config_siteurl}statics/extres/shop/images/<if condition='$vo[is_show] eq 1'>yes.png<else />cancel.png</if>" onclick="changeTableVal('goods_category','id','{$vo.id}','is_show',this)" />
-                                                </td>
-                                                <td>
-                                                    <input type="text" onchange="updateSort('goods_category','id','{$vo.id}','cat_group',this)" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onpaste="this.value=this.value.replace(/[^\d]/g,'')" size="4" value="{$vo.cat_group}" class="input-sm" />
-                                                </td>
-                                                <td>
-                                                    <input type="text" onchange="updateSort('goods_category','id','{$vo.id}','sort_order',this)" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onpaste="this.value=this.value.replace(/[^\d]/g,'')" size="4" value="{$vo.sort_order}" class="input-sm" />
-                                                </td>
-                                                <td>
-                                                    <a class="btn btn-primary" href="{:U('Category/addEditCategory',array('id'=>$vo['id']))}"><i class="fa fa-pencil"></i></a>
-                                                    <a class="btn btn-danger" href="javascript:del_fun('{:U('Category/delGoodsCategory',array('id'=>$vo['id']))}');"><i class="fa fa-trash-o"></i></a>
-                                                </td>
-                                            </tr>
-                                        </foreach>
+                                    <tr v-for="item in catList" role="row" align="center" :class="item.level" :id="item.level+'_'+item.id" v-bind:style="item.level > 1 ? 'display:none' : ''">
+                                    <td>{{item.id}}</td>
+                                    <td align="left" :style="'padding-left:'+item.level*5+'em'">
+                                        <span v-if="item.have_son == 1" class="glyphicon glyphicon-plus btn-warning" style="padding:2px; font-size:12px;" :id="'icon_'+item.level+'_'+item.id" aria-hidden="false" onclick="rowClicked(this)"></span>&nbsp;
+                                        <span>{{item.name}}</span>
+                                    </td>
+                                    <td><span>{{item.mobile_name}}</span></td>
+                                    <td>
+                                        <img v-on:click="change(item,'is_hot')" width="20" height="20" v-bind:src="item.is_hot == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
+                                    </td>
+                                    <td>
+                                        <img v-on:click="change(item,'is_show')" width="20" height="20" v-bind:src="item.is_show == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control input-sm" v-on:change="update(item,'cat_group')" size="4" v-model="item.cat_group" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control input-sm" v-on:change="update(item,'sort_order')" size="4" v-model="item.sort_order" />
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-primary" :href="'{:U('Category/getCategoryDetail')}&id='+item.id"><i class="fa fa-pencil"></i></a>
+                                        <a class="btn btn-danger" href="javascript:;" v-on:click="delGoodsCategory(item.id)"><i class="fa fa-trash-o"></i></a>
+                                    </td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -78,6 +74,82 @@
         </div>
     </section>
 </div>
+<include file="Public/vue"/>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            where: {},
+            catList: [],
+            page: 1,
+            temp_page: 1,
+            page_count: 1
+        },
+        methods: {
+            getList: function(){
+                var that = this;
+                $.ajax({
+                    url: '',
+                    type: 'post',
+                    data: that.where,
+                    dataType: 'json',
+                    success: function(res){
+                        console.log(res);
+                        that.catList = res.cat_list;
+                        /*that.page = res.page['page'];
+                        that.temp_page = res.page['page'];
+                        that.page_count = res.page['page_count'];*/
+                    }
+                });
+            },
+            change: function(obj,field){
+                if (obj[field] == 1){
+                    obj[field] = 0;
+                } else {
+                    obj[field] = 1;
+                }
+
+                this.update(obj,field);
+            },
+            update: function(obj,field){
+                console.log(obj);
+                $.ajax({
+                    url: "{:U('Shop/AdminApi/changeTableVal')}",
+                    data: {
+                        'table': 'goodsCategory',
+                        'id_name': 'id',
+                        'id_value': obj.id,
+                        'field': field,
+                        'value': obj[field]
+                    },
+                    success: function(res){
+                        layer.msg('操作成功');
+                    }
+                });
+            },
+            delGoodsCategory: function(id){
+                var that = this;
+                layer.confirm('确定要删除该分类吗？',{
+                    btn:['确定', '取消']
+                },function () {
+                    $.ajax({url: "{:U('Category/delGoodsCategory')}", type: 'get', data: {'id': id}, dataType: 'json',
+                        success:function (res){
+                            layer.alert(res.info,{
+                                icon: res.status
+                            },function(){
+                                layer.closeAll();
+                                that.getList();
+                            });
+                        }
+                    });
+                });
+            }
+        },
+        mounted: function(){
+            this.getList();
+        }
+    });
+</script>
 <script type="text/javascript">
     // 展开收缩
     function tree_open(obj) {
