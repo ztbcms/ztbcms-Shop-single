@@ -66,7 +66,7 @@ class BrandController extends AdminBase {
         $id = I('id');
         if (IS_POST){
             $model = M("Brand");
-            $cat_list = M('goods_category')->select(); // 已经改成联动菜单
+            $cat_list = M('goods_category')->where("parent_id = 0")->select(); // 已经改成联动菜单
 
             $brand = $model->find($id);
             if ($brand) {
