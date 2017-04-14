@@ -80,10 +80,7 @@
         el: '#app',
         data: {
             where: {},
-            catList: [],
-            page: 1,
-            temp_page: 1,
-            page_count: 1
+            catList: []
         },
         methods: {
             getList: function(){
@@ -96,9 +93,6 @@
                     success: function(res){
                         console.log(res);
                         that.catList = res.cat_list;
-                        /*that.page = res.page['page'];
-                        that.temp_page = res.page['page'];
-                        that.page_count = res.page['page_count'];*/
                     }
                 });
             },
