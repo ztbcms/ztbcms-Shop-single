@@ -1,13 +1,15 @@
 <?php
 
 namespace Shop\Controller;
+
 use Common\Controller\AdminBase;
 
 use Shop\Util\File;
 use Shop\Util\Upload;
 use Think\Log;
 
-class UeditorController extends AdminBase{
+class UeditorController extends AdminBase
+{
     private $sub_name = array('date', 'Y/m-d');
     private $savePath = 'temp/';
 
@@ -16,12 +18,12 @@ class UeditorController extends AdminBase{
         parent::__construct();
 
         date_default_timezone_set("Asia/Shanghai");
-        
-        $this->savePath = I('GET.savepath','temp').'/';
-        
+
+        $this->savePath = I('GET.savepath', 'temp') . '/';
+
         error_reporting(E_ERROR | E_WARNING);
     }
-    
+
     public function getContent()
     {
         echo '<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
@@ -41,8 +43,8 @@ class UeditorController extends AdminBase{
     {
         $config = array(
             "savePath" => 'File/',
-            "maxSize" =>  20000000, // 单位B
-            "exts" => explode(",",  'zip,rar,doc,docx,zip,pdf,txt,ppt,pptx,xls,xlsx'),
+            "maxSize" => 20000000, // 单位B
+            "exts" => explode(",", 'zip,rar,doc,docx,zip,pdf,txt,ppt,pptx,xls,xlsx'),
             "subName" => $this->sub_name,
         );
 
@@ -59,7 +61,7 @@ class UeditorController extends AdminBase{
         $return_data['fileType'] = $info['upfile']['ext'];
         $return_data['original'] = $info['upfile']['name'];
         $return_data['state'] = $state;
-        $this->ajaxReturn($return_data,'JSON');
+        $this->ajaxReturn($return_data, 'JSON');
     }
 
     /**
@@ -108,7 +110,7 @@ class UeditorController extends AdminBase{
                     continue;
                 }
             }
-            
+
             //格式验证(扩展名验证和Content-Type验证)
             $fileType = strtolower(strrchr($imgUrl, '.'));
             if (!in_array($fileType, $config['allowFiles']) || stristr($heads['Content-Type'], "image")) {
@@ -194,7 +196,7 @@ class UeditorController extends AdminBase{
         $key = C("tudouSearchKey");
         $type = I('post.videoType');
         $html = file_get_contents('http://api.tudou.com/v3/gw?method=item.search&appKey=myKey&format=json&kw=' .
-        $key . '&pageNo=1&pageSize=20&channelId=' . $type . '&inDays=7&media=v&sort=s');
+            $key . '&pageNo=1&pageSize=20&channelId=' . $type . '&inDays=7&media=v&sort=s');
         echo $html;
     }
 
@@ -252,46 +254,49 @@ class UeditorController extends AdminBase{
     {
         // 上传图片框中的描述表单名称，
         $title = htmlspecialchars($_POST['pictitle'], ENT_QUOTES);
-        $path = htmlspecialchars($_POST['dir'], ENT_QUOTES);        
+        $path = htmlspecialchars($_POST['dir'], ENT_QUOTES);
         $config = array(
             "savePath" => $this->savePath,
-            "maxSize" =>  20000000, // 单位B
+            "maxSize" => 20000000, // 单位B
             "exts" => explode(",", 'gif,png,jpg,jpeg,bmp'),
             "subName" => $this->sub_name,
         );
 
         $upload = new Upload($config);
         $info = $upload->upload();
+
         if ($info) {
-            $state = "SUCCESS";         
+            $state = "SUCCESS";
+            $status = true;
         } else {
             $state = "ERROR" . $upload->getError();
+            $status = false;
         }
-        if(!isset($info['upfile'])){
-        	$info['upfile'] = $info['Filedata'];
-        }else{
-        	//编辑器插入图片水印处理
-        	// if($this->savePath=='Goods/'){
-        	// 	$image = new \Think\Image();
-        	// 	$water = tpCache('water');
-        	// 	$imgresource = ".".$info['upfile']['urlpath'];
-        	// 	$image->open($imgresource);
-        	// 	if($water['is_mark']==1 && $image->width()>$water['mark_width'] && $image->height()>$water['mark_height']){
-        	// 		if($water['mark_type'] == 'text'){
-        	// 			$image->text($water['mark_txt'],'./hgzb.ttf',20,'#000000',9)->save($imgresource);
-        	// 		}else{
-        	// 			$image->water(".".$water['mark_img'],9,$water['mark_degree'])->save($imgresource);
-        	// 		}
-        	// 	}
-        	// }
+        if (!isset($info['upfile'])) {
+            $info['upfile'] = $info['Filedata'];
+        } else {
+            //编辑器插入图片水印处理
+            // if($this->savePath=='Goods/'){
+            // 	$image = new \Think\Image();
+            // 	$water = tpCache('water');
+            // 	$imgresource = ".".$info['upfile']['urlpath'];
+            // 	$image->open($imgresource);
+            // 	if($water['is_mark']==1 && $image->width()>$water['mark_width'] && $image->height()>$water['mark_height']){
+            // 		if($water['mark_type'] == 'text'){
+            // 			$image->text($water['mark_txt'],'./hgzb.ttf',20,'#000000',9)->save($imgresource);
+            // 		}else{
+            // 			$image->water(".".$water['mark_img'],9,$water['mark_degree'])->save($imgresource);
+            // 		}
+            // 	}
+            // }
         }
-        
+
+        $return_data['status'] = $status;
         $return_data['url'] = $info['upfile']['urlpath'];
         $return_data['title'] = $title;
         $return_data['original'] = $info['upfile']['name'];
-        $return_data['state'] = $state;
-        $return_data['status']=true;
-        $this->ajaxReturn($return_data,'json');
+        $return_data['msg'] = $state;
+        $this->ajaxReturn($return_data, 'json');
     }
 
 }

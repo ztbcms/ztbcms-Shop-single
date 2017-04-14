@@ -26,14 +26,14 @@
                                 <tr>
                                     <td>规格名称：</td>
                                     <td>
-                                        <input type="text" v-model="detail.name" name="name"/>
+                                        <input type="text" v-model="detail.name" name="name" class="form-control"/>
                                         <span id="err_name" style="color:#F00; display:none;"></span>
                                     </td>
                                 </tr>  
                                 <tr>
                                     <td>所属商品类型：</td>
                                     <td>
-                                        <select name="type_id" id="type_id" v-model="detail.type_id">
+                                        <select name="type_id" id="type_id" v-model="detail.type_id" class="form-control">
                                             <option value="">请选择</option>
                                             <option v-for="item in goodsType" :value="item.id" v-bind:selected="item.id == detail.type_id ? 'selected' : ''">{{ item.name }}</option>
                                         </select>
@@ -43,7 +43,7 @@
                                 <tr>
                                     <td>规格项：</td> 
                                     <td>
-                                    <textarea rows="5" cols="30" name="items" id="items">{{ specItemStr }}</textarea>
+                                    <textarea rows="5" cols="30" name="items" id="items" class="form-control">{{ specItemStr }}</textarea>
 									一行为一个规格项
                                     <span id="err_items" style="color:#F00; display:none;"></span>
                                     </td>
@@ -51,7 +51,7 @@
                                 <tr>
                                     <td>排序：</td>
                                     <td>
-                                        <input type="text" v-model="detail.order" name="order"/>
+                                        <input type="text" v-model="detail.order" name="order" class="form-control"/>
                                         <span id="err_order" style="color:#F00; display:none;"></span>                                        
                                     </td>
                                 </tr>                                                           
