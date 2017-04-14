@@ -59,7 +59,7 @@ class CouponApiController extends BaseController
     public function coupon_info()
     {
         $id = I('id');//用户优惠券
-        $user_coupon = M('ShopUsercoupon')->where("id = $id")->find();//用户优惠券详情
+        $user_coupon = CouponService::getUserCouponInfo($id,$this->userid);
         $this->success($user_coupon,'',true);
     }
 

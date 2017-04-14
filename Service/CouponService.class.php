@@ -25,4 +25,20 @@ class CouponService extends BaseService
         $res = M('ShopUsercoupon')->where($where)->select();
         return $res;
     }
+
+    /**
+     * 获取用户优惠券详情
+     * @param int $id 用户优惠券ID
+     * @param int $userid 所属用户ID
+     * @return mixed
+     */
+    static function getUserCouponInfo($id,$userid)
+    {
+        $where = array(
+            'id' => $id,
+            'userid' => $userid
+        );
+        $res = M('ShopUsercoupon')->where($where)->find();//用户优惠券详情
+        return $res;
+    }
 }
