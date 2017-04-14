@@ -126,8 +126,7 @@ class OrderController extends AdminBase {
     /*
      * ajax 发货订单列表
     */
-    public function ajaxdelivery() {
-        $orderLogic = new OrderLogic();
+    public function getDeliveryList() {
         $condition = array();
         I('consignee') ? $condition['consignee'] = trim(I('consignee')) : false;
         I('order_sn') != '' ? $condition['order_sn'] = trim(I('order_sn')) : false;
@@ -135,16 +134,16 @@ class OrderController extends AdminBase {
         $condition['shipping_status'] = empty($shipping_status) ? array('neq', 1) : $shipping_status;
         $condition['order_status'] = array('in', '1,2,4');
         $count = M('order')->where($condition)->count();
-        $Page = new AjaxPage($count, 10);
-        //搜索条件下 分页赋值
-        foreach ($condition as $key => $val) {
-            $Page->parameter[$key] = urlencode($val);
-        }
-        $show = $Page->show();
-        $orderList = M('order')->where($condition)->limit($Page->firstRow . ',' . $Page->listRows)->order('add_time DESC')->select();
-        $this->assign('orderList', $orderList);
-        $this->assign('page', $show);// 赋值分页输出
-        $this->display();
+        $page = I('page',1);
+        $limit = I('limit',10);
+        $page_count = ceil ($count / $limit);
+        $pageArr = array(
+            'page' => $page,
+            'page_count' => $page_count,
+        );
+        $orderList = M('order')->where($condition)->page($page,$limit)->order('add_time DESC')->select();
+
+        $this->ajaxReturn(['orderList'=>$orderList, 'page'=>$pageArr]);
     }
 
     /**
@@ -555,25 +554,27 @@ class OrderController extends AdminBase {
         $data = I('post.');
         $res = $orderLogic->deliveryHandle($data);
         if ($res) {
-            $this->success('操作成功', U('Shop/Order/delivery_info', array('order_id' => $data['order_id'])));
+            $this->ajaxReturn(['msg'=>'操作成功', 'status'=>true, 'icon'=>1]);
         } else {
-            $this->success('操作失败', U('Shop/Order/delivery_info', array('order_id' => $data['order_id'])));
+            $this->ajaxReturn(['msg'=>'操作失败', 'status'=>false, 'icon'=>2]);
         }
     }
 
 
     public function delivery_info() {
         $order_id = I('order_id');
-        $orderLogic = new OrderLogic();
-        $order = $orderLogic->getOrderInfo($order_id);
-        $orderGoods = $orderLogic->getOrderGoods($order_id);
-        $delivery_record = M('delivery_doc')->where('order_id=' . $order_id)->select();
-        if ($delivery_record) {
-            $order['invoice_no'] = $delivery_record[count($delivery_record) - 1]['invoice_no'];
+        if (IS_POST) {
+            $orderLogic = new OrderLogic();
+            $order = $orderLogic->getOrderInfo($order_id);
+            $orderGoods = $orderLogic->getOrderGoods($order_id);
+            $delivery_record = M('delivery_doc')->where('order_id=' . $order_id)->select();
+            if ($delivery_record) {
+                $order['invoice_no'] = $delivery_record[count($delivery_record) - 1]['invoice_no'];
+            }
+
+            $this->ajaxReturn(['order'=> $order, 'orderGoods'=> $orderGoods, 'delivery_record'=> $delivery_record]);
         }
-        $this->assign('order', $order);
-        $this->assign('orderGoods', $orderGoods);
-        $this->assign('delivery_record', $delivery_record);//发货记录
+        $this->assign('order_id',$order_id);
         $this->display();
     }
 
@@ -588,7 +589,7 @@ class OrderController extends AdminBase {
      * ajax 退货订单列表
      */
     public function ajax_return_list() {
-        // 搜索条件        
+        // 搜索条件
         $order_sn = trim(I('order_sn'));
         $order_by = I('order_by') ? I('order_by') : 'id';
         $sort_order = I('sort_order') ? I('sort_order') : 'desc';

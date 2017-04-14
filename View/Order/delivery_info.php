@@ -4,8 +4,8 @@
     <section class="content">
         <!-- Main content -->
         <!--<div class="container-fluid">-->
-        <div class="container-fluid">
-            <form id="delivery-form" action="{:U('Order/deliveryHandle')}" method="post">
+        <div class="container-fluid" id="app">
+            <form id="delivery-form" action="" method="post" onsubmit="return false;">
                 <!--新订单列表 基本信息-->
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -15,7 +15,7 @@
                         <nav class="navbar navbar-default">
                             <div class="collapse navbar-collapse">
                                 <div class="navbar-form pull-right margin">
-                                    <a href="{:U('Order/order_print',array('order_id'=>$order['order_id'],'template'=>'picking'))}"
+                                    <a :href="'{:U('Order/order_print')}&template=picking&order_id='+order.order_id"
                                        target="_blank" data-toggle="tooltip" title="" class="btn btn-primary"
                                        data-original-title="打印订单">
                                         <i class="fa fa-print"></i>打印配货单
@@ -30,9 +30,9 @@
 
                             <tr>
                                 <td class="text-right">订单号:</td>
-                                <td class="text-center">{$order.order_sn}</td>
+                                <td class="text-center">{{order.order_sn}}</td>
                                 <td class="text-right">下单时间:</td>
-                                <td class="text-center">{$order.add_time|date='Y-m-d H:i',###}</td>
+                                <td class="text-center">{{order.add_time|getFormatTime}}</td>
                             </tr>
                             <tr>
                                 <td class="text-right">配送方式:</td>
@@ -54,13 +54,13 @@
                                     <input type="hidden" name="shipping_name" id="shipping_name" value="shentong">
                                 </td>
                                 <td class="text-right">配送费用:</td>
-                                <td class="text-center">{$order.shipping_price}</td>
+                                <td class="text-center">{{order.shipping_price}}</td>
                             </tr>
                             <tr>
                                 <td class="text-right">配送单号:</td>
                                 <td class="text-center">
                                     <input style="width: 200px;" class="form-control" name="invoice_no" id="invoice_no"
-                                           value="{$order.invoice_no}">
+                                           v-model="order.invoice_no">
                                 </td>
                             </tr>
                             </tbody>
@@ -78,15 +78,15 @@
                             <tbody>
                             <tr>
                                 <td class="text-right">收货人:</td>
-                                <td class="text-center">{$order.consignee}</td>
+                                <td class="text-center">{{order.consignee}}</td>
                             </tr>
                             <tr>
                                 <td class="text-right">地址:</td>
-                                <td class="text-center">{$order.address}</td>
+                                <td class="text-center">{{order.address}}</td>
                             </tr>
                             <tr>
                                 <td class="text-right">电话:</td>
-                                <td class="text-center">{$order.mobile}</td>
+                                <td class="text-center">{{order.mobile}}</td>
                             </tr>
                             </tbody>
                         </table>
@@ -110,24 +110,19 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <volist name="orderGoods" id="good">
-                                <tr>
+                                <tr v-for="item in orderGoods">
                                     <td class="text-left"><a
-                                                href="{:U('Goods/addEditGoods',array('id'=>$good[goods_id]))}">{$good.goods_name}</a>
+                                                :href="'{:U('Goods/addEditGoods')}&id='+item.goods_id">{{item.goods_name}}</a>
                                     </td>
-                                    <td class="text-left">{$good.spec_key_name}</td>
-                                    <td class="text-left">{$good.goods_num}</td>
-                                    <td class="text-right">{$good.goods_price}</td>
-                                    <td class="text-right">
-                                        <if condition="$good['is_send'] eq 1">
-                                            已发货
-                                            <else/>
-                                            <input type="checkbox" name="goods[]" value="{$good.rec_id}"
-                                                   checked="checked">
-                                        </if>
+                                    <td class="text-left">{{item.spec_key_name}}</td>
+                                    <td class="text-left">{{item.goods_num}}</td>
+                                    <td class="text-left">{{item.goods_price}}</td>
+                                    <td v-if="item.is_send == 1" class="text-left">已发货</td>
+                                    <td v-else class="text-left">
+                                        <input type="checkbox" name="goods[]" :value="item.rec_id"
+                                               checked="checked">
                                     </td>
                                 </tr>
-                            </volist>
                             </tbody>
                         </table>
 
@@ -146,15 +141,15 @@
                                 <tr>
                                     <td class="text-right col-sm-2 margin">发货单备注：</td>
                                     <td colspan="3">
-                                        <input type="hidden" name="order_id" value="{$order.order_id}">
+                                        <input type="hidden" name="order_id" :value="order.order_id">
                                         <textarea name="note" placeholder="请输入操作备注" rows="3"
-                                                  class="form-control"></textarea>
+                                                  class="form-control" v-model="order.note"></textarea>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="4">
                                         <div class="form-group text-center">
-                                            <button onclick="dosubmit()" class="btn btn-primary" type="button">确认发货
+                                            <button v-on:click="dosubmit()" class="btn btn-primary" type="button">确认发货
                                             </button>
                                             <button onclick="history.go(-1)" class="btn btn-primary" type="button">返回
                                             </button>
@@ -185,17 +180,15 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <volist name="delivery_record" id="log">
-                                <tr>
-                                    <td class="text-center">{$log.create_time|date='Y-m-d H:i:s',###}</td>
-                                    <td class="text-center">{$log.invoice_no}</td>
-                                    <td class="text-center">{$log.consignee}</td>
-                                    <td class="text-center">{$log.shipping_name}</td>
-                                    <td class="text-center">{$log.note}</td>
+                                <tr v-for="item in delivery_record">
+                                    <td class="text-center">{{item.create_time|getFormatTime}}</td>
+                                    <td class="text-center">{{item.invoice_no}}</td>
+                                    <td class="text-center">{{item.consignee}}</td>
+                                    <td class="text-center">{{item.shipping_name}}</td>
+                                    <td class="text-center">{{item.note}}</td>
                                     <td class="text-center"><a href="http://www.kuaidi100.com/" target="_blank">查看物流</a>
                                     </td>
                                 </tr>
-                            </volist>
                             </tbody>
                         </table>
                     </div>
@@ -204,8 +197,66 @@
         </div>
     </section>
 </div>
+<include file="Public/vue"/>
 <script>
-    $('#shipping_code').change(function () {
+    new Vue({
+        el: '#app',
+        data: {
+            'order': [],
+            'orderGoods': [],
+            'delivery_record': []
+        },
+        mixins: [window.__baseMethods, window.__baseFilters],
+        methods: {
+            getDetail: function(){
+                var that = this;
+                that.httpPost('{:U("Shop/Order/delivery_info")}', {'order_id': '<?php echo $order_id;?>'}, function (res) {
+                    console.log(res);
+                    that.order = res.order;
+                    that.orderGoods = res.orderGoods;
+                    that.delivery_record = res.delivery_record;
+                })
+            },
+            dosubmit: function(){
+                var that = this;
+                if (!that.order['invoice_no']){
+                    layer.alert('请输入配送单号', {icon: 2});
+                    return;
+                }
+                var goods = [];
+                $('input[name="goods[]"]:checked').each(function(i){
+                    goods[i] = $(this).val();
+                });
+                if (goods.length == 0) {
+                    layer.alert('请选择发货商品', {icon: 2});
+                    return;
+                }
+
+                //order_id,goods,shipping_code,shipping_name,note 参数
+                var data = {
+                    'order_id': that.order.order_id,
+                    'goods': goods,
+                    'shipping_code': $("#shipping_code").val(),
+                    'shipping_name': $("#shipping_code option:selected").html(),
+                    'note': that.order.note
+                };
+                console.log(data);
+
+                that.httpPost('{:U("Shop/Order/deliveryHandle")}', data, function (res) {
+                    layer.alert(res.msg, {
+                        icon: res.icon
+                    });
+                    window.location.reload();
+                });
+            }
+        },
+        mounted: function(){
+            this.getDetail();
+        }
+    });
+</script>
+<script>
+/*    $('#shipping_code').change(function () {
         var text = $("#shipping_code").find("option:selected").text();
         $("#shipping_name").val(text)
     })
@@ -225,7 +276,7 @@
             return;
         }
         $('#delivery-form').submit();
-    }
+    }*/
 </script>
 </body>
 </html>
