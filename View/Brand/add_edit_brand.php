@@ -61,7 +61,7 @@
                                         	<input type="text" v-model="brand.logo" name="logo" id="logo" class="form-control" style="width:350px;margin-left:-15px;"/>
                                         </div>
                                         <div class="col-sm-3">
-                                        	<input onclick="GetUploadify(1,'logo','brand');" type="button" class="btn btn-default" value="上传logo"/>
+                                        	<input onclick="GetUploadify(1,'logo','brand','callback');" type="button" class="btn btn-default" value="上传logo"/>
                                         </div>
                                     </td>
                                 </tr> 
@@ -138,6 +138,11 @@
     $('#parent_id_1').change(function(){
         obj.brand['cat_id'] = 0;
     });
+
+    // 上传商品图片成功回调函数
+    function callback(fileurl_tmp) {
+        obj.brand['logo'] = fileurl_tmp;
+    }
 </script>
 </body>
 </html>

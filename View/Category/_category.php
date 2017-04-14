@@ -68,7 +68,7 @@
 	                                    <label class="control-label col-sm-2">分类展示图片</label>
 
                                     <div class="col-sm-10">
-                                        <input class="btn btn-default" onclick="GetUploadify(1,'image','category');" type="button" value="上传图片"/>
+                                        <input class="btn btn-default" onclick="GetUploadify(1,'image','category','callback');" type="button" value="上传图片"/>
                                         <input type="text" v-model="detail.image" name="image" id="image" class="form-control large" style="width:500px;display:initial;"/>
                                     </div>
                                 </div>                                
@@ -150,6 +150,11 @@
     $('#parent_id_1').change(function(){
         obj.detail.parent_id = 0;
     });
+
+    // 上传商品图片成功回调函数
+    function callback(fileurl_tmp) {
+        obj.detail['image'] = fileurl_tmp;
+    }
 </script>
 </body>
 </html>
