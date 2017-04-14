@@ -4,9 +4,9 @@ namespace Shop\Controller;
 use Shop\Service\OrderService;
 
 class OrderApiController extends BaseController {
-    /*
-   * 初始化操作
-   */
+    /**
+     * 初始化操作
+     */
     public function _initialize() {
         parent::_initialize();
     }
