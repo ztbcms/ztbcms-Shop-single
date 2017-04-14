@@ -93,4 +93,16 @@ class CouponApiController extends BaseController
         $result_total_money = $total_money - $discount_price;
         $this->success($result_total_money,'',true);
     }
+
+    /**
+     * 使用优惠券
+     */
+    public function use_coupon()
+    {
+        $id = I('usercoupon_id');//优惠券ID
+        $order_id = I('order_id');//订单ID
+        $order_type = I('order_type','order');//订单类型
+        $result = CouponService::useCoupon($id,$this->userid,$order_id,$order_type);
+        $this->success($result,"",true);
+    }
 }
