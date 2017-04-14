@@ -10,28 +10,25 @@
                     	<i class="fa fa-list"></i>&nbsp;评论列表
                     </h3>
                 </div>
-                <div class="panel-body">
+                <div class="panel-body" id="app">
                 <nav class="navbar navbar-default">	     
 			        <div class="collapse navbar-collapse">
-			          <form action="{:U('Comment/index')}" id="search-form2" class="navbar-form form-inline" role="search" method="post">
-			            <div class="form-group">
-			              	<input type="text" class="form-control" name="content" placeholder="搜索评论内容">
-			            </div>
+			          <form action="" id="search-form2" class="navbar-form form-inline" role="search" method="post" onsubmit="return false;">
                           <div class="form-group">
-                              <input type="text" class="form-control" name="nickname" placeholder="搜索用户">
+                              <input type="text" v-model="where.username" class="form-control" name="nickname" placeholder="搜索用户">
                           </div>
-                          <button type="button" onclick="ajax_get_table('search-form2',1)" class="btn btn-info"><i class="fa fa-search"></i> 筛选</button>
+                          <div class="form-group">
+                              <input type="text" v-model="where.content" class="form-control" name="content" placeholder="搜索评论内容">
+                          </div>
+                          <button type="button" v-on:click="filter()" class="btn btn-info"><i class="fa fa-search"></i> 筛选</button>
 			          </form>		
 			      </div>
     			</nav>
-                    <div id="ajax_return">
+                    <div>
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover">
                                 <thead>
                                 <tr>
-                                    <td style="width: 1px;" class="text-center">
-                                        <input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);">
-                                    </td>
                                     <td class="text-center">
                                         用户
                                     </td>
@@ -55,44 +52,39 @@
                                 </thead>
                                 <tbody>
 
-                                <volist name="comment_list" id="list">
-                                    <tr>
+                                    <tr v-for="item in commentList">
+                                        <td class="text-center">{{item.username}}</td>
+                                        <td class="text-center">{{item.content}}</td>
                                         <td class="text-center">
-                                            <input type="checkbox" name="selected[]" value="{$list.comment_id}">
+                                            <!--<a target="_blank" href="{:U('Home/Goods/goodsInfo',array('id'=>$list[goods_id]))}">{$goods_list[$list[goods_id]]}</a>-->
+                                            {{ goodsList[item.goods_id] }}
                                         </td>
-                                        <td class="text-center">{$list.username}</td>
-                                        <td class="text-left">{$list.content}</td>
-                                        <td class="text-left"><a target="_blank" href="{:U('Home/Goods/goodsInfo',array('id'=>$list[goods_id]))}">{$goods_list[$list[goods_id]]}</a></td>
                                         <td class="text-center">
-                                            <img width="20" height="20" src="__PUBLIC__/images/<if condition='$list[is_show] eq 1'>yes.png<else />cancel.png</if>" onclick="changeTableVal('comment','comment_id','{$list.comment_id}','is_show',this)"/>
+                                            <img v-on:click="changeShow(item)" width="20" height="20" v-bind:src="item.is_show == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
                                         </td>
-                                        <td class="text-center">{$list.add_time|date='Y-m-d H:i:s',###}</td>
-                                        <td class="text-center">{$list.ip_address}</td>
+                                        <td class="text-center">{{ item.add_time | getFormatTime }}</td>
+                                        <td class="text-center">{{item.ip_address}}</td>
 
                                         <td class="text-center">
-                                            <a href="{:U('Admin/comment/detail',array('id'=>$list[comment_id]))}" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="编辑"><i class="fa fa-eye"></i></a>
-                                            <a href="javascript:void(0);" data-href="{:U('Admin/comment/del',array('id'=>$list[comment_id]))}" onclick="del('{$list[comment_id]}',this)" id="button-delete6" data-toggle="tooltip" title="" class="btn btn-danger" data-original-title="删除"><i class="fa fa-trash-o"></i></a>
+                                            <a :href="'{:U('Comment/detail')}&id='+item.comment_id" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="编辑"><i class="fa fa-eye"></i></a>
+                                            <a href="javascript:void(0);" v-on:click="delComment(item.comment_id)" id="button-delete6" data-toggle="tooltip" title="" class="btn btn-danger" data-original-title="删除"><i class="fa fa-trash-o"></i></a>
                                         </td>
                                     </tr>
-                                </volist>
 
                                 </tbody>
                             </table>
-                            <select name="operate" id="operate">
-                                <option value="0">操作选择</option>
-                                <option value="show">显示</option>
-                                <option value="hide">隐藏</option>
-                                <option value="del">删除</option>
-                            </select>
-                            <button onclick="op()">确定</button>
-                            <form id="op" action="{:U('Comment/op')}" method="post">
-                                <input type="hidden" name="selected">
-                                <input type="hidden" name="type">
-                            </form>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6 text-left"></div>
-                            <div class="col-sm-6 text-right">{$page}</div>
+                            <div class="dataTables_paginate paging_simple_numbers">
+                                <button v-on:click="toPage( parseInt(page) - 1 )" class="btn btn-primary">上一页
+                                </button>
+                                <button v-on:click="toPage( parseInt(page) + 1 )" class="btn btn-primary">下一页
+                                </button>
+                                <span style="line-height: 30px;margin-left: 50px"><input id="ipt_page"
+                                                                                         style="width:30px;"
+                                                                                         type="text"
+                                                                                         v-model="temp_page"> / {{ page_count }}</span>
+                                <span><button class="btn btn-primary"
+                                              v-on:click="toPage( temp_page )">GO</button></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -104,56 +96,103 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<include file="Public/vue"/>
 <script>
-    // 删除操作
-    function del(id,t)
-    {
-        if(!confirm('确定要删除吗?'))
-            return false;
-        location.href = $(t).data('href');
-    }
-
-    function op(){
-        //获取操作
-        var op_type = $('#operate').find('option:selected').val();
-        if(op_type == 0){
-			layer.msg('请选择操作', {icon: 1,time: 1000});   //alert('请选择操作');
-            return;
-        }
-        //获取选择的id
-        var selected = $('input[name*="selected"]:checked');
-        var selected_id = [];
-        if(selected.length < 1){
-
-			layer.msg('请选择项目', {icon: 1,time: 1000}); //            alert('请选择项目');
-            return;
-        }
-        $(selected).each(function(){
-            selected_id.push($(this).val());
-        })
-        $('#op').find('input[name="selected"]').val(selected_id);
-        $('#op').find('input[name="type"]').val(op_type);
-        $('#op').submit();
-    }
-
-    $(document).ready(function(){
-        ajax_get_table('search-form2',1);
-    });
-
-
-    // ajax 抓取页面
-    function ajax_get_table(tab,page){
-        cur_page = page; //当前页面 保存为全局变量
-        $.ajax({
-            type : "POST",
-            url:"{:U('Comment/ajaxindex')}&p="+page,//+tab,
-            data : $('#'+tab).serialize(),// 你的formid
-            success: function(data){
-                $("#ajax_return").html('');
-                $("#ajax_return").append(data);
+    new Vue({
+        el: '#app',
+        data: {
+            where: {},
+            goodsList: [],
+            commentList: [],
+            page: 1,
+            page_count: 1,
+            temp_page: 1
+        },
+        filters: {
+            getFormatTime: function (value) {
+                var time = new Date(parseInt(value * 1000));
+                var y = time.getFullYear();
+                var m = time.getMonth() + 1;
+                var d = time.getDate();
+                var h = time.getHours();
+                var i = time.getMinutes();
+                var res = y + '-' + (m < 10 ? '0' + m : m) + '-' + (d < 10 ? '0' + d : d)
+                res += '  ' + (h < 10 ? '0' + h : h) + ':' + (i < 10 ? '0' + i : i);
+                return res;
             }
-        });
-    }
+        },
+        methods: {
+            getList: function(){
+                var that = this;
+                $.ajax({
+                    url: '',
+                    type: 'post',
+                    data: that.where,
+                    dataType: 'json',
+                    success: function(res){
+                        that.goodsList = res.goods_list;
+                        that.commentList = res.comment_list;
+                        that.page = res.page['page'];
+                        that.temp_page = res.page['page'];
+                        that.page_count = res.page['page_count'];
+                    }
+                });
+            },
+            filter: function () {
+                this.getList();
+            },
+            changeShow: function(obj){
+                if (obj.is_show == 1){
+                    obj.is_show = 0;
+                } else {
+                    obj.is_show = 1;
+                }
+
+                $.ajax({
+                    url: "{:U('Shop/AdminApi/changeTableVal')}",
+                    data: {
+                        'table': 'shopComment',
+                        'id_name': 'comment_id',
+                        'id_value': obj.comment_id,
+                        'field': 'is_show',
+                        'value': obj.is_show
+                    },
+                    success: function(res){
+                        layer.msg('操作成功');
+                    }
+                });
+            },
+            delComment: function (id) {
+                layer.confirm('确定要删除该评论吗？',{
+                    btn:['确定', '取消']
+                },function () {
+                    $.ajax({url: "{:U('Comment/del')}", type: 'get', data: {'id': id}, dataType: 'json',
+                        success:function (res){
+                            layer.alert(res.info,{
+                                icon: res.status
+                            },function(){
+                                window.location.reload();
+                            });
+                        }
+                    });
+                });
+            },
+            toPage: function (page) {
+                page = parseInt(page);
+                if (page < 1) {
+                    page = 1;
+                }
+                if (page > this.page_count) {
+                    page = this.page_count;
+                }
+                this.where = $.extend({}, this.where, {'page': page}); // 合并对象
+                this.getList();
+            }
+        },
+        mounted: function(){
+            this.getList();
+        }
+    });
 
 </script>
 

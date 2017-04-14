@@ -11,7 +11,7 @@
                         <a data-original-title="返回" class="btn btn-default pull-right" style="margin-top:-8px;" title="" data-toggle="tooltip" href="javascript:history.go(-1)"><i class="fa fa-reply"></i></a>
                     </h3>
                 </div>
-                <div class="panel-body">
+                <div class="panel-body" id="app">
                     <div class="row">
                     <div class="col-md-2"></div>
                         <div class="col-md-8">
@@ -35,26 +35,25 @@
                                         <div class="direct-chat-msg">
                                             <div class="direct-chat-info clearfix">
                                                 <span class="direct-chat-name pull-left"><!--用户名 --></span>
-                                                <span class="direct-chat-timestamp pull-right">{$comment.add_time|date="Y-m-d H:i",###}</span>
+                                                <span class="direct-chat-timestamp pull-right">{{ comment.add_time | getFormatTime }}</span>
                                             </div><!-- /.direct-chat-info -->
-                                            <img alt="{$comment.username}" src="{$config_siteurl}statics/extres/shop/dist/img/user2-160x160.jpg" class="direct-chat-img"><!-- /.direct-chat-img -->
+                                            <img :alt="comment.username" src="{$config_siteurl}statics/extres/shop/dist/img/user2-160x160.jpg" class="direct-chat-img"><!-- /.direct-chat-img -->
                                             <div class="direct-chat-text">
-                                                 {$comment.content}
+                                                 {{comment.content}}
                                             </div><!-- /.direct-chat-text -->
                                         </div><!-- /.direct-chat-msg -->
 
-                                       <foreach name="reply" item="v" >
-                                        <div class="direct-chat-msg right">
+                                        <div class="direct-chat-msg right" v-for="item in reply">
                                             <div class="direct-chat-info clearfix">
                                                 <span class="direct-chat-name pull-right"><!--管理员 --></span>
-                                                <span class="direct-chat-timestamp pull-left">{$v.add_time|date="Y-m-d H:i",###}</span>
+                                                <span class="direct-chat-timestamp pull-left">{{ item.add_time | getFormatTime }}</span>
                                             </div><!-- /.direct-chat-info -->
                                             <img alt="管理员" src="{$config_siteurl}statics/extres/shop/dist/img/user2-160x160.jpg" class="direct-chat-img"><!-- /.direct-chat-img -->
                                             <div class="direct-chat-text">
-                                                 {$v.content}
+                                                 {{item.content}}
                                             </div>
                                         </div>
-                                        </foreach>                                                                                
+
                                     </div> 
                                     <!-- /.direct-chat-pane -->
                                 </div><!-- /.box-body -->
@@ -67,14 +66,12 @@
                                 <div class="row">
                                 <div class="col-md-2"></div>
                                 <div class="col-md-8">
-                                <form method="post">
-                                            <textarea class="form-control" rows="3" placeholder="请输入回复内容" name="content"></textarea>                                
-			             					<div class="form-group"><button type="submit" class="btn btn-primary pull-right margin">回复</button></div>
+                                <form method="post" onsubmit="return false;">
+                                    <textarea class="form-control" rows="3" placeholder="请输入回复内容" id="content"></textarea>
+                                    <div class="form-group"><button type="submit" v-on:click="doReply()" class="btn btn-primary pull-right margin">回复</button></div>
                                 </form>            
                                 </div>
-                                <div class="col-md-2"></div>   
-                                                                                             
-                                </div>
+                                <div class="col-md-2"></div></div>
                           </div>
                         </div>
                     </div>
@@ -86,15 +83,65 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<include file="Public/vue"/>
 <script>
-    // 删除操作
-    function del(id,t)
-    {
-        if(!confirm('确定要删除吗?'))
-            return false;
-
-        location.href = $(t).data('href');
-    }
+    new Vue({
+        el: '#app',
+        data:{
+            comment: [],
+            reply:[]
+        },
+        filters: {
+            getFormatTime: function (value) {
+                var time = new Date(parseInt(value * 1000));
+                var y = time.getFullYear();
+                var m = time.getMonth() + 1;
+                var d = time.getDate();
+                var h = time.getHours();
+                var i = time.getMinutes();
+                var res = y + '-' + (m < 10 ? '0' + m : m) + '-' + (d < 10 ? '0' + d : d)
+                res += '  ' + (h < 10 ? '0' + h : h) + ':' + (i < 10 ? '0' + i : i);
+                return res;
+            }
+        },
+        methods: {
+            getDetail: function(){
+                var that = this;
+                $.ajax({url: "{:U('Comment/detail')}", type: 'post', data: {'id': '<?php echo $id;?>'}, dataType: 'json',
+                    success:function (res){
+                        if(res.status){
+                            that.comment = res.comment;
+                            that.reply = res.reply;
+                        }else{
+                            layer.alert(res.msg,function(){
+                                window.location.href = "{:U('Comment/index')}";
+                            });
+                        }
+                    }
+                });
+            },
+            doReply: function () {
+                var that = this;
+                var content = $('#content').val();
+                if (content == '') {
+                    layer.alert('没有输入内容');
+                    return;
+                }
+                $.ajax({url: "{:U('Comment/doReply')}", type: 'post', data: {'id': '<?php echo $id;?>', 'content': content}, dataType: 'json',
+                    success:function (res){
+                        $('#content').val('');
+                        layer.alert(res.msg,{
+                            icon: res.icon
+                        });
+                        that.getDetail();
+                    }
+                });
+            }
+        },
+        mounted: function(){
+            this.getDetail();
+        }
+    });
 </script>
 </body>
 </html>

@@ -34,6 +34,7 @@
                                     <td>所属商品类型：</td>
                                     <td>
                                         <select name="type_id" id="type_id" v-model="detail.type_id">
+                                            <option value="">请选择</option>
                                             <option v-for="item in goodsType" :value="item.id" v-bind:selected="item.id == detail.type_id ? 'selected' : ''">{{ item.name }}</option>
                                         </select>
                                         <span id="err_type_id" style="color:#F00; display:none;"></span>                                        
@@ -105,6 +106,8 @@
                             layer.alert('操作成功',function(){
                                 window.location.href = "{:U('Spec/index')}";
                             });
+                        }else{
+                            layer.alert(res.msg);
                         }
                     }
                 });

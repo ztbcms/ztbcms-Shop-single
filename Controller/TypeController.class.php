@@ -16,12 +16,19 @@ class TypeController extends AdminBase {
         if (IS_POST){
             $model = M("GoodsType");
             $count = $model->count();
-            $Page = new Page($count, 100);
-            $res = $model->order("id desc")->limit($Page->firstRow . ',' . $Page->listRows)->select();
+
+            $page = I('page',1);
+            $limit = I('limit',10);
+            $page_count = ceil ($count / $limit);
+            $pageArr = array(
+                'page' => $page,
+                'page_count' => $page_count,
+            );
+            $res = $model->order("id desc")->page($page,$limit)->select();
             if ($res) {
-                $this->ajaxReturn(['status'=>true, 'data'=>$res]);
+                $this->ajaxReturn(['status'=>true, 'data'=>$res, 'page'=>$pageArr]);
             }
-            $this->ajaxReturn(['status'=>false, 'data'=>[]]);
+            $this->ajaxReturn(['status'=>false, 'data'=>[], 'page'=>$pageArr]);
         }
         $this->display('index');
     }
