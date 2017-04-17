@@ -343,7 +343,7 @@ class OrderLogic extends RelationModel {
      * @return bool
      */
     function delOrder($order_id) {
-        $order = M('order')->where(array('order_id' => $order_id));
+        $order = M('order')->where(array('order_id' => $order_id))->find();
         if ($order['order_status'] == 3 || $order['order_status'] == 5) {
             return false;
         }
