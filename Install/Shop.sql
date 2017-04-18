@@ -20,8 +20,8 @@ CREATE TABLE `cms_user_level` (
   `level_id` smallint(4) unsigned NOT NULL AUTO_INCREMENT COMMENT '表id',
   `level_name` varchar(30) DEFAULT NULL COMMENT '头衔名称',
   `amount` decimal(10,2) DEFAULT NULL COMMENT '等级必要金额',
-  `discount` smallint(4) DEFAULT NULL COMMENT '折扣',
-  `describe` varchar(200) DEFAULT NULL COMMENT '头街 描述',
+  `discount` decimal(10,2) DEFAULT NULL COMMENT '折扣',
+  `description` varchar(200) DEFAULT NULL COMMENT '头街 描述',
   PRIMARY KEY (`level_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------

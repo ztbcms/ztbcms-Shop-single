@@ -282,4 +282,76 @@ class UserController extends AdminBase {
         $this->display();
     }
 
+    /**
+     * 登录列表
+     */
+    public function ajaxLevel() {
+        $where = [];
+        $page = I('get.page', 1);
+        $limit = I('get.limit', 20);
+        $order = 'level_id desc';
+        $levels = M('ShopUserLevel')->where($where)->page($page, $limit)->order($order)->select();
+        $total = M('ShopUserLevel')->where($where)->count();
+        $data = [
+            'lists' => $levels ? $levels : [],
+            'page' => $page,
+            'limit' => $limit,
+            'total' => $total,
+            'page_count' => ceil($total / $limit)
+        ];
+
+        return $this->success($data);
+    }
+
+    public function addLevel() {
+        $post = I('post.');
+        $data = [
+            'level_name' => $post['level_name'],
+            'amount' => $post['amount'],
+            'discount' => $post['discount'],
+            'description' => $post['description']
+        ];
+        $res = M('ShopUserLevel')->add($data);
+        if ($res) {
+            return $this->success($post);
+        } else {
+            return $this->error('系统繁忙，请稍后再试');
+        }
+    }
+
+    public function editLevel() {
+        $post = I('post.');
+        $data = [
+            'level_name' => $post['level_name'],
+            'amount' => $post['amount'],
+            'discount' => $post['discount'],
+            'description' => $post['description']
+        ];
+        $res = M('ShopUserLevel')->where(['level_id' => $post['level_id']])->save($data);
+        if ($res) {
+            return $this->success($post);
+        } else {
+            return $this->error('系统繁忙，请稍后再试');
+        }
+    }
+
+    public function deleteLevel() {
+        $level_id = I('post.level_id');
+        if (!$level_id) {
+            return $this->error('请输入删除id');
+        }
+        $is_users = M('ShopUsers')->where(['level' => $level_id])->count();
+        if (!$is_users) {
+            //等级下没有用户
+            $res = M('ShopUserLevel')->where(['level_id' => $level_id])->delete();
+            if ($res) {
+                return $this->success('删除成功');
+            } else {
+                return $this->error('系统繁忙，请稍后');
+            }
+        } else {
+            return $this->error('该等级下有用户，不能删除');
+        }
+    }
+
 }
