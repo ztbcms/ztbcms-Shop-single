@@ -21,15 +21,10 @@ class UserController extends AdminBase {
         $where['username'] = ['like', '%' . $phone . '%'];
 
         $page = I('page', 1);
-        $limit_start = 12 * ($page - 1);
-        $limit_end = $page * 12 - 1;
-        $limit = $limit_start . ',' . $limit_end;
-        $page_count = ceil(M('Member')->where($where)->count() / 12);
-
+        $limit = I('limit', 20);
         $order = I('order', 'userid');
-
-        $data = M('Member')->where($where)->order($order)->limit($limit)->select();
-
+        $page_count = ceil(M('Member')->where($where)->count() / $limit);
+        $data = M('Member')->where($where)->order($order)->page($page, $limit)->select();
         $user_id_arr = get_arr_column($data, 'userid');
         if (!empty($user_id_arr)) {
             $first_leader = M('ShopUsers')->query("select first_leader,count(1) as count  from __PREFIX__shop_users where first_leader in(" . implode(',',
@@ -59,6 +54,7 @@ class UserController extends AdminBase {
             'page_count' => $page_count,
             'data' => $data,
             'level' => $level,
+            'limit' => $limit,
             'first_leader' => $first_leader,
             'second_leader' => $second_leader,
             'third_leader' => $third_leader

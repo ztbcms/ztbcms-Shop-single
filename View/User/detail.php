@@ -92,30 +92,16 @@
                                     </td>
                                     <td></td>
                                 </tr>
-
                                 <tr>
-                                    <td>是否分销:</td>
-                                    <td id="order-status">
-                                        <input name="is_distribut" type="radio" value="1"
-                                        <if condition="$user['is_distribut'] eq 1">checked</if>
-                                        >是
-                                        <input name="is_distribut" type="radio" value="0"
-                                        <if condition="$user['is_distribut'] eq 0">checked</if>
-                                        >否
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td width="300">上一级编号</td>
+                                    <td width="300">一级上线</td>
                                     <td>
                                         <input type="text" class="form-control" name="first_leader"
                                                value="{$user.first_leader}">
                                     </td>
                                     <td></td>
                                 </tr>
-
                                 <tr>
-                                    <td>上二级编号</td>
+                                    <td>二级上线</td>
                                     <td>
                                         <input type="text" class="form-control" name="second_leader"
                                                value="{$user.second_leader}">
@@ -123,10 +109,18 @@
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td>上三级编号</td>
+                                    <td>三级上线</td>
                                     <td>
                                         <input type="text" class="form-control" name="third_leader"
                                                value="{$user.third_leader}">
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>直接上级编号</td>
+                                    <td>
+                                        <input type="text" class="form-control" name="direct_leader"
+                                               value="{$user.direct_leader}">
                                     </td>
                                     <td></td>
                                 </tr>

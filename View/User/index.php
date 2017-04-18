@@ -56,13 +56,16 @@
                                             <a href="javascript:void(0);">三级上线</a>
                                         </td>
                                         <td class="text-left">
+                                            <a href="javascript:void(0);">直接上线</a>
+                                        </td>
+                                        <td class="text-left">
                                             <a href="javascript:;" v-on:click="orderBy('lastdate');">最后登录时间</a>
                                         </td>
                                         <td class="text-right">操作</td>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr v-for="item in userList">
+                                    <tr v-for="item in lists">
                                         <td class="text-right">{{item.userid}}</td>
                                         <td class="text-left">{{item.nickname}}</td>
                                         <td class="text-left">{{item.mobile}}
@@ -76,6 +79,7 @@
                                         <td class="text-left">{{item.first_leader}}</td>
                                         <td class="text-left">{{item.second_leader}}</td>
                                         <td class="text-left">{{item.third_leader}}</td>
+                                        <td class="text-left">{{item.direct_leader}}</td>
                                         <td class="text-left">{{getFormatTime(item.lastdate)}}</td>
                                         <td class="text-right">
                                             <a :href="'{:U('Shop/User/detail')}&id='+item.userid" data-toggle="tooltip"
@@ -92,20 +96,9 @@
                                 </table>
                             </div>
                         </form>
-                        <div class="row">
-                            <div class="col-sm-3 text-left">
-                            </div>
-                            <div class="col-sm-6 text-right">
-                                <button v-on:click="toPage( parseInt(page) - 1 )" class="btn btn-primary">上一页</button>
-                                <button v-on:click="toPage( parseInt(page) + 1 )" class="btn btn-primary">下一页</button>
-                                <span style="line-height: 30px;margin-left: 50px">
-                                    <input id="ipt_page" class="form-control" style="width:40px;" type="text"
-                                           v-model="temp_page">
-                                    / {{ page_count }}</span>
-                                <span>
-                                    <button class="btn btn-primary" @click="toPage( temp_page )">GO</button></span>
-                            </div>
-                        </div>
+                        <!--     分页-->
+                        <v-page :page="page" v-on:update="getList" :page_count="page_count"></v-page>
+                        <!--   /分页-->
                     </div>
                 </div>
             </div>
@@ -120,14 +113,14 @@
         var vue = new Vue({
             el: '#app',
             data: {
-                userList: [],
+                lists: [],
                 level: [],
                 page: 1,
-                temp_page: 1,
                 page_count: 1,
                 order: 'userid',
                 temp_order: 'userid',
                 sort: ' asc',
+                limit: 20,
                 where: {
                     'phone': ''
                 }
@@ -137,15 +130,16 @@
                     var that = this;
                     $.ajax({
                         url: "{:U('User/ajaxindex')}",
-                        data: {'page': that.page, 'order': that.order, 'where': that.where},
+                        data: {'page': that.page, 'limit': that.limit, 'order': that.order, 'where': that.where},
                         dataType: 'json',
                         success: function (res) {
                             console.log(res);
-                            vue.userList = res.data;
-                            vue.level = res.level;
-                            vue.page = res.page;
-                            vue.temp_page = res.page;
-                            vue.page_count = res.page_count;
+                            that.lists = res.data;
+                            that.level = res.level;
+                            that.page = res.page;
+                            that.limit = res.limit;
+                            that.page_count = res.page_count;
+                            that.limit = res.limit
                         }
                     });
                 },
@@ -195,6 +189,8 @@
             },
             mounted: function () {
                 this.getList();
+            }, components: {
+                'v-page': pageComponent
             }
         });
     });
