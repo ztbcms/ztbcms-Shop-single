@@ -21,6 +21,15 @@ class UserApiController extends BaseController {
     }
 
     /**
+     * 获取用户的余额
+     */
+    public function get_balance() {
+        $user_service = new UserService();
+        $res = $user_service->getBalance($this->userid);
+        $this->success($res);
+    }
+
+    /**
      * 用户登录api
      */
     public function login() {

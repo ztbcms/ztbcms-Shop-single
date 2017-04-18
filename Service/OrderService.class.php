@@ -1,6 +1,8 @@
 <?php
 namespace Shop\Service;
 
+use Record\Model\RecordModel;
+use Record\Service\TradeRecordService;
 use Shop\Model\OrderModel;
 use Think\Hook;
 
@@ -143,6 +145,11 @@ class OrderService extends BaseService {
         }
         //TODO 扣除积分 扣除余额
         //TODO 抵扣余额
+        if ($cart_price['balance'] > 0) {
+            //使用后的余额进行抵扣
+            TradeRecordService::createTradeRecord($user_id, 'pay_order', $order['order_sn'], 0, $cart_price['balance'],
+                RecordModel::STATUS_VAILD, '购买商品抵扣');
+        }
         // 4 删除已提交订单商品
 
         $where = array('userid' => $user_id, 'goods_id' => array('in', $order_goods_ids));
@@ -213,7 +220,7 @@ class OrderService extends BaseService {
         // 检查账户余额的情况
         if ($user_money) {
             $user_service = new UserService();
-            $balance = $user_service->getBalance();
+            $balance = $user_service->getBalance($userid);
             if ($balance < $user_money) {
                 //余额不足
                 $this->set_err_msg('余额不足');
