@@ -15,7 +15,7 @@ CREATE TABLE `cms_user_message` (
 -- ----------------------------
 -- 用户等级表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_user_level`;
+DROP TABLE IF EXISTS `cms_shop_user_level`;
 CREATE TABLE `cms_user_level` (
   `level_id` smallint(4) unsigned NOT NULL AUTO_INCREMENT COMMENT '表id',
   `level_name` varchar(30) DEFAULT NULL COMMENT '头衔名称',

@@ -79,7 +79,6 @@
                                                 <a :href="'{:U('Shop/User/detail')}&id='+item.userid" data-toggle="tooltip" title="" class="btn btn-info" data-original-title="查看详情"><i class="fa fa-eye"></i></a>
                                                 <a :href="'{:U('Shop/User/address')}&id='+item.userid" data-toggle="tooltip" title="" class="btn btn-info" data-original-title="收货地址"><i class="fa fa-home"></i></a>
                                                 <!--<a href="{:U('Admin/order/index',array('userid'=>$list['userid']))}" data-toggle="tooltip" title="" class="btn btn-info" data-original-title="订单查看"><i class="fa fa-shopping-cart"></i></a>-->
-                                                <a :href="'{:U('Shop/User/account_log')}&id='+item.userid" data-toggle="tooltip" title="" class="btn btn-info" data-original-title="账户"><i class="glyphicon glyphicon-yen"></i></a>
                                                 <!--<a href="{:U('Shop/User/delete',array('id'=>$list['userid']))}" id="button-delete6" data-toggle="tooltip" title="" class="btn btn-danger" data-original-title="删除"><i class="fa fa-trash-o"></i></a>-->
                                             </td>
                                         </tr>
