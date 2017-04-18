@@ -18,6 +18,24 @@ class CouponController extends AdminBase
     }
 
     /**
+     * 添加优惠券
+     */
+    public function add_coupon()
+    {
+        if(IS_POST){
+            $post = I('post.');
+            $res = M('ShopCoupon')->add($post);
+            if($res){
+                $this->ajaxReturn(['status'=>1,'msg'=>'添加成功']);
+            }else{
+                $this->ajaxReturn(['status'=>0,'msg'=>'操作失败']);
+            }
+        }else{
+            $this->display();
+        }
+    }
+
+    /**
      * 获取商城优惠券列表
      */
     public function couponList()
