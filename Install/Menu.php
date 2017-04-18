@@ -144,6 +144,32 @@ return array(
                     ),
                 ),
             ),
+            array(
+                "route" => "Shop/Coupon/index",
+                "type" => 1,
+                "status" => 1,
+                "name" => "优惠券管理",
+                "child" => array(
+                    array(
+                        "route" => "Shop/Coupon/index",
+                        "type" => 1,
+                        "status" => 1,
+                        "name" => "商城优惠券",
+                    ),
+                    array(
+                        "route" => "Shop/Coupon/add_coupon",
+                        "type" => 1,
+                        "status" => 1,
+                        "name" => "添加优惠券",
+                    ),
+                    array(
+                        "route" => "Shop/Coupon/user_coupon",
+                        "type" => 1,
+                        "status" => 1,
+                        "name" => "用户优惠券",
+                    ),
+                ),
+            ),
         ),
     ),
 );

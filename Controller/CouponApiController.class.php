@@ -50,7 +50,7 @@ class CouponApiController extends BaseController
         }
 
         $coupon_list = CouponService::getCounponList($where,$total_money);
-        $this->success($coupon_list,'',true);
+        $this->success($coupon_list['data'],'',true);
     }
 
     /**
@@ -60,7 +60,7 @@ class CouponApiController extends BaseController
     {
         $id = I('id');//用户优惠券
         $user_coupon = CouponService::getUserCouponInfo($id,$this->userid);
-        $this->success($user_coupon,'',true);
+        $this->success($user_coupon['data'],'',true);
     }
 
     /**

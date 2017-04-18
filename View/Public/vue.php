@@ -22,6 +22,17 @@
                 var res = y + '-' + (m < 10 ? '0' + m : m) + '-' + (d < 10 ? '0' + d : d);
                 res += '  ' + (h < 10 ? '0' + h : h) + ':' + (min < 10 ? '0' + min : min)
                 return res;
+            },
+            //不显示时分秒
+            getFormatTime2: function (value) {
+                var time = new Date(parseInt(value * 1000));
+                var y = time.getFullYear();
+                var m = time.getMonth() + 1;
+                var d = time.getDate();
+                var h = time.getHours()
+                var min = time.getMinutes()
+                var res = y + '-' + (m < 10 ? '0' + m : m) + '-' + (d < 10 ? '0' + d : d);
+                return res;
             }
         }
     }

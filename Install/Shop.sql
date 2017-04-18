@@ -627,8 +627,8 @@ CREATE TABLE `cms_shop_coupon` (
   `discount_price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '优惠价格',
   `full_price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '满减价格。例如100，满100才能减，无条件默认是0',
   `description` text COMMENT '优惠券说明',
-  `start_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '使用起始时间',
-  `end_time` int(11) unsigned NOT NULL COMMENT '过期时间',
+  `start_time` VARCHAR(20) unsigned NOT NULL DEFAULT '0' COMMENT '使用起始时间',
+  `end_time` VARCHAR(20) unsigned NOT NULL COMMENT '过期时间',
   `status` tinyint(4) unsigned NOT NULL DEFAULT '1' COMMENT '优惠券状态，0 无效，1正常，2过期',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
@@ -648,8 +648,8 @@ CREATE TABLE `cms_shop_usercoupon` (
   `discount_price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '优惠价格',
   `full_price` decimal(10,0) unsigned NOT NULL DEFAULT '0' COMMENT '满减价格。例如100，满100才能减，无条件默认是0',
   `description` text COMMENT '优惠券说明',
-  `start_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '使用起始时间',
-  `end_time` int(11) unsigned NOT NULL COMMENT '过期时间',
+  `start_time` VARCHAR (20) unsigned NOT NULL DEFAULT '0' COMMENT '使用起始时间',
+  `end_time` VARCHAR (20) unsigned NOT NULL COMMENT '过期时间',
   `status` tinyint(4) unsigned NOT NULL DEFAULT '1' COMMENT '优惠券状态，0 无效，1未使用，2已使用，3过期',
   PRIMARY KEY (`id`),
   UNIQUE KEY `coupon_num` (`coupon_num`) USING BTREE,
