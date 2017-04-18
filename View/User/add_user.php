@@ -24,6 +24,13 @@
                         <td></td>
                     </tr>
                     <tr>
+                        <td>手机:</td>
+                        <td>
+                            <input type="text" class="form-control" name="mobile">
+                        </td>
+                        <td>前台登陆账号</td>
+                    </tr>
+                    <tr>
                         <td>登陆密码:</td>
                         <td><input type="password" class="form-control" name="password"></td>
                         <td>6-16位字母数字符号组合</td>
@@ -31,9 +38,7 @@
                     <tr>
                         <td>邮件地址:</td>
                         <td><input type="text" class="form-control" name="email" value=""></td>
-                        <td>前台登陆账号，手机邮箱任意一项都可以</td>
                     </tr>
-
                     <tr>
                         <td>性别:</td>
                         <td id="order-status">
@@ -43,14 +48,6 @@
                         </td>
                         <td></td>
                     </tr>
-                    <tr>
-                        <td>手机:</td>
-                        <td>
-                            <input type="text" class="form-control" name="mobile">
-                        </td>
-                        <td>前台登陆账号，手机邮箱任意一项都可以</td>
-                    </tr>
-          
                     <tr>
                         <td></td>
                         <td>
