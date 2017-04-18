@@ -92,4 +92,64 @@ class CouponController extends AdminBase
             $this->ajaxReturn(['status'=>0, 'msg'=>'操作失败']);
         }
     }
+
+    /**
+     * 用户优惠券列表
+     */
+    public function user_coupon()
+    {
+        if(IS_POST){
+            $where = [];
+            $model = M('ShopUsercoupon');
+            $page = I('post.page');
+            $limit = I('post.limit');
+            $total = $model->where($where)->count();
+            $page_count = ceil($total / $limit);
+            $lists = $model->where($where)->order('id DESC')->page($page, $limit)->select();
+            $result = [
+                'lists' => $lists ? $lists : [],
+                'page' => $page,
+                'total' => $total,
+                'page_count' => $page_count
+            ];
+            $this->success($result,'',true);
+        }else{
+            $this->display();
+        }
+    }
+
+    /**
+     * 选择优惠券
+     */
+    public function getCouponLists()
+    {
+        $res = M('ShopCoupon')->where('status = 1')->select();//查出所有正常的优惠券
+        if($res){
+            $this->ajaxReturn(['status'=>1,'info'=>$res,'msg'=>'ok']);
+        }
+    }
+
+    /**
+     * 选择会员
+     */
+    public function getUserLists()
+    {
+        $res = M('ShopUsers')->where('is_lock = 0')->select();//查出所有未冻结的会员
+        if($res){
+            $this->ajaxReturn(['status'=>1,'info'=>$res,'msg'=>'ok']);
+        }
+    }
+
+    /**
+     * 添加用户优惠券
+     */
+    public function add_user_coupon()
+    {
+        if(IS_POST){
+            $coupon_info = M('ShopCoupon')->where('id='.I('post.coupon_id'))->find();
+            $coupon_info['coupon_id'] = $coupon_info['id'];
+        }else{
+            $this->display();
+        }
+    }
 }
