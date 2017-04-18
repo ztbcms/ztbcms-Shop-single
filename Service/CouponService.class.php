@@ -7,8 +7,7 @@
 namespace Shop\Service;
 
 
-class CouponService extends BaseService
-{
+class CouponService extends BaseService {
     /**
      * 优惠券状态
      */
@@ -19,48 +18,54 @@ class CouponService extends BaseService
 
     /**
      * 获取用户优惠券列表
-     * @param array $where 查询条件
+     *
+     * @param array $where       查询条件
      * @param array $total_money 支付总金额
      * @return mixed
      */
-    static function getCounponList($where,$total_money)
-    {
-        if($total_money){
+    static function getCounponList($where, $total_money) {
+        if ($total_money) {
             //判断优惠券是否满足使用条件：支付总金额超过满减价格并且优惠价格不能超过支付总金额
-            $where['full_price'] = array('lt',$total_money);
-            $where['discount_price'] = array('lt',$total_money);
+            $where['full_price'] = array('lt', $total_money);
+            $where['discount_price'] = array('lt', $total_money);
         }
         $res = M('ShopUsercoupon')->where($where)->select();
-        return $res;
+
+        return self::createReturn(true, $res ? $res : [], 'ok');
     }
 
     /**
      * 获取用户优惠券详情
-     * @param int $id 用户优惠券ID
+     *
+     * @param int $id     用户优惠券ID
      * @param int $userid 所属用户ID
-     * @return mixed
+     * @param int $status
+     * @return array
      */
-    static function getUserCouponInfo($id,$userid)
-    {
+    static function getUserCouponInfo($id, $userid, $status = self::COUPON_STATUS_NOTUSE) {
         $where = array(
             'id' => $id,
-            'userid' => $userid
+            'userid' => $userid,
+            'status' => $status
         );
         $res = M('ShopUsercoupon')->where($where)->find();//用户优惠券详情
-        return $res;
+        if ($res) {
+            return self::createReturn(true, $res, 'ok');
+        } else {
+            return self::createReturn(false, $res, '该优惠券不存在');
+        }
     }
 
 
     /**
-     * @param $id
-     * @param $userid
-     * @param $order_id
-     * @param $order_type
+     * @param     $id
+     * @param     $userid
+     * @param     $order_id
+     * @param     $order_type
      * @param int $status
      * @return bool
      */
-    static function useCoupon($id, $userid, $order_id, $order_type, $status = self::COUPON_STATUS_ISUSE)
-    {
+    static function useCoupon($id, $userid, $order_id, $order_type, $status = self::COUPON_STATUS_ISUSE) {
         $where = array(
             'id' => $id,
             'userid' => $userid
@@ -72,6 +77,11 @@ class CouponService extends BaseService
             'status' => $status
         );
         $res = M('ShopUsercoupon')->where($where)->save($data);
-        return $res;
+
+        if ($res) {
+            return self::createReturn(true, $id, 'ok');
+        } else {
+            return self::createReturn(false, '', '没有数据修改');
+        }
     }
 }
