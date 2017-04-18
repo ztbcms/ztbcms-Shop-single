@@ -15,13 +15,13 @@ CREATE TABLE `cms_user_message` (
 -- ----------------------------
 -- 用户等级表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_user_level`;
+DROP TABLE IF EXISTS `cms_shop_user_level`;
 CREATE TABLE `cms_user_level` (
   `level_id` smallint(4) unsigned NOT NULL AUTO_INCREMENT COMMENT '表id',
   `level_name` varchar(30) DEFAULT NULL COMMENT '头衔名称',
   `amount` decimal(10,2) DEFAULT NULL COMMENT '等级必要金额',
-  `discount` smallint(4) DEFAULT NULL COMMENT '折扣',
-  `describe` varchar(200) DEFAULT NULL COMMENT '头街 描述',
+  `discount` decimal(10,2) DEFAULT NULL COMMENT '折扣',
+  `description` varchar(200) DEFAULT NULL COMMENT '头街 描述',
   PRIMARY KEY (`level_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
@@ -118,7 +118,7 @@ CREATE TABLE `cms_shop_users` (
   `city` int(6) DEFAULT '0' COMMENT '市区',
   `district` int(6) DEFAULT '0' COMMENT '县',
   `email_validated` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否验证电子邮箱',
-  `level` tinyint(1) DEFAULT '1' COMMENT '会员等级',
+  `level` int(11) DEFAULT '1' COMMENT '会员等级',
   `discount` decimal(10,2) DEFAULT '1.00' COMMENT '会员折扣，默认1不享受',
   `is_distribut` tinyint(1) DEFAULT '0' COMMENT '是否为分销商 0 否 1 是',
   `first_leader` int(11) DEFAULT '0' COMMENT '第一个上级',

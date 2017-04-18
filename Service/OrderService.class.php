@@ -63,18 +63,9 @@ class OrderService extends BaseService {
         $coupon_id = 0,
         $cart_price
     ) {
-
-        // 仿制灌水 1天只能下 50 单  // select * from `tp_order` where user_id = 1  and order_sn like '20151217%'
-        $order_count = M('Order')->where("user_id= $user_id and order_sn like '" . date('Ymd') . "%'")->count(); // 查找购物车商品总数量
-        if ($order_count >= 50) {
-            $this->set_err_msg('一天只能下50个订单');
-
-            return false;
-        }
-
         // 0插入订单 order
         $address = M('UserAddress')->where("address_id = $address_id")->find();
-        $shipping = M('Plugin')->where("code = '$shipping_code'")->find();
+        $shipping = [];
         $data = array(
             'order_sn' => date('YmdHis') . rand(1000, 9999), // 订单编号
             'user_id' => $user_id, // 用户id
@@ -110,7 +101,6 @@ class OrderService extends BaseService {
 
             return false;
         }
-
         // 记录订单操作日志
         logOrder($order_id, '您提交了订单，请等待系统确认', '提交订单', $user_id);
         $order = M('Order')->where("order_id = $order_id")->find();
@@ -209,8 +199,6 @@ class OrderService extends BaseService {
         $user_money = 0,
         $coupon_price = 0
     ) {
-        $user = M('ShopUsers')->where("userid = $user_id")->find(); // 找出这个用户
-
         if (empty($order_goods)) {
             $this->set_err_msg('商品列表不能为空');
 
@@ -224,11 +212,7 @@ class OrderService extends BaseService {
         $goods_weight = 0;
         $goods_price = 0;
         foreach ($order_goods as $key => $val) {
-            // 如果传递过来的商品列表没有定义会员价
-            if (!array_key_exists('member_goods_price', $val)) {
-                $user['discount'] = $user['discount'] ? $user['discount'] : 1; // 会员折扣 不能为 0
-                $order_goods[$key]['member_goods_price'] = $val['member_goods_price'] = $val['goods_price'] * $user['discount'];
-            }
+
             //如果商品不是包邮的
             if ($goods_arr[$val['goods_id']]['is_free_shipping'] == 0) {
                 $goods_weight += $goods_arr[$val['goods_id']]['weight'] * $val['goods_num'];
@@ -250,22 +234,13 @@ class OrderService extends BaseService {
             $anum += $val['goods_num']; // 购买数量
         }
 
-        if ($pay_points && ($pay_points > $user['pay_points'])) {
-            $this->set_err_msg("你的账户可用积分为:" . $user['pay_points']);
+        //TODO 检查账户余额的情况
 
-            return false;
-        }
-        // 返回结果状态
-        if ($user_money && ($user_money > $user['user_money'])) {
-            $this->set_err_msg("你的账户可用余额为:" . $user['user_money']);
-
-            return false;
-        }
         // 返回结果状态
 
         $order_amount = $goods_price + $shipping_price; // 应付金额 = 商品价格 + 物流费
 
-        $pay_points = ($pay_points / 100); // 积分支付 100 积分等于 1块钱
+        $pay_points = 0; // TODO 积分抵扣暂时不涉及
         $pay_points = ($pay_points > $order_amount) ? $order_amount : $pay_points; // 假设应付 1块钱 而用户输入了 200 积分 2块钱, 那么就让 $pay_points = 1块钱 等同于强制让用户输入1块钱
         $order_amount = $order_amount - $pay_points; //  积分抵消应付金额
 

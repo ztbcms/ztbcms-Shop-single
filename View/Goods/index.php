@@ -184,7 +184,6 @@
                                 </table>
                             </div>
                         </form>
-
                         <!--     分页-->
                         <v-page :page="page" v-on:update="getList" :page_count="page_count"></v-page>
                         <!--   /分页-->

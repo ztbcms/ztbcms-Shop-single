@@ -136,6 +136,12 @@ return array(
                         "status" => 1,
                         "name" => "会员列表",
                     ),
+                    array(
+                        "route" => "Shop/User/level",
+                        "type" => 1,
+                        "status" => 1,
+                        "name" => "会员等级",
+                    ),
                 ),
             ),
             array(

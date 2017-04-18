@@ -97,8 +97,8 @@ class OrderApiController extends BaseController {
         $coupon_price = 0; //优惠价格，默认为没有使用优惠券
 
         //检测是否使用优惠券
-        if(I('usercoupon_id')){
-            $coupon_info = CouponService::getUserCouponInfo(I('usercoupon_id'),$this->userid);
+        if (I('usercoupon_id')) {
+            $coupon_info = CouponService::getUserCouponInfo(I('usercoupon_id'), $this->userid);
             $coupon_price = $coupon_info['discount_price'];
         }
 
@@ -110,7 +110,7 @@ class OrderApiController extends BaseController {
             $this->error('你的购物车没有选中商品');
         } // 返回结果状态
         //检测地址是否存在
-        $address = M('UserAddress')->where("address_id = '%d'", $address_id)->find();
+        $address = M('UserAddress')->where(['address_id' => $address_id])->find();
         if (!$address || !$address_id) {
             $this->error('请先填写收货人信息');
         } // 返回结果状态
@@ -118,7 +118,8 @@ class OrderApiController extends BaseController {
         $order_service = new OrderService();
 
         //按选中购物车的商品，计算出各个部分的价格
-        $result = $order_service->calculate_price($this->userid, $order_goods, 0, $pay_points, $user_money, $coupon_price);
+        $result = $order_service->calculate_price($this->userid, $order_goods, 0, $pay_points, $user_money,
+            $coupon_price);
         if (!$result) {
             $this->error($order_service->get_err_msg());
         }
