@@ -217,8 +217,25 @@ class UserService extends BaseService {
             $update = [
                 'direct_leader' => $share['userid']
             ];
-
-            //TODO 根据自己的页面还可以添加分级推荐关系
+            //TODO 根据自己的页面还可以添加分级推荐关系  以下是举例
+            if ($share['level'] == 1) {
+                //分享人是一级
+                $update['first_leader'] = $share['userid'];
+            } elseif ($share['level'] == 2) {
+                //分享人是二级
+                $update['first_leader'] = $share['first_leader'];
+                $update['second_leader'] = $share['userid'];
+            } elseif ($share['level'] == 3) {
+                //分享人是三级
+                $update['first_leader'] = $share['first_leader'];
+                $update['second_leader'] = $share['second_leader'];
+                $update['third_leader'] = $share['userid'];
+            } else {
+                //无等级
+                $update['first_leader'] = $share['first_leader'];
+                $update['second_leader'] = $share['second_leader'];
+                $update['third_leader'] = $share['third_leader'];
+            }
             return M('ShopUsers')->where(['userid' => $userid])->save($update);
         } else {
             return false;
