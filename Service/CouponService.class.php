@@ -58,11 +58,12 @@ class CouponService extends BaseService {
 
 
     /**
-     * @param     $id
-     * @param     $userid
-     * @param     $order_id
-     * @param     $order_type
-     * @param int $status
+     * 使用优惠券
+     * @param int $id 优惠券ID
+     * @param int $userid 用户ID
+     * @param int $order_id 订单ID
+     * @param int $order_type 订单类型
+     * @param int $status 优惠券状态
      * @return bool
      */
     static function useCoupon($id, $userid, $order_id, $order_type, $status = self::COUPON_STATUS_ISUSE) {
@@ -74,7 +75,8 @@ class CouponService extends BaseService {
         $data = array(
             'order_sn' => $order['order_sn'],
             'order_type' => $order_type,
-            'status' => $status
+            'status' => $status,
+            'use_time' => time()//使用时间
         );
         $res = M('ShopUsercoupon')->where($where)->save($data);
 

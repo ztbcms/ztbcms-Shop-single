@@ -651,6 +651,7 @@ CREATE TABLE `cms_shop_usercoupon` (
   `start_time` VARCHAR (20) unsigned NOT NULL DEFAULT '0' COMMENT '使用起始时间',
   `end_time` VARCHAR (20) unsigned NOT NULL COMMENT '过期时间',
   `status` tinyint(4) unsigned NOT NULL DEFAULT '1' COMMENT '优惠券状态，0 无效，1未使用，2已使用，3过期',
+  `use_time` datetime NOT NULL COMMENT '使用时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `coupon_num` (`coupon_num`) USING BTREE,
   KEY `coupon_id` (`coupon_id`) USING BTREE,
