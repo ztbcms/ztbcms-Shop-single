@@ -1,6 +1,9 @@
 <?php
 namespace Shop\Service;
 
+use Record\Records\TradeRecord;
+use Record\Service\TradeRecordService;
+
 class UserService extends BaseService {
     public function login($username, $password) {
         if (!$username || !$password) {
@@ -236,9 +239,25 @@ class UserService extends BaseService {
                 $update['second_leader'] = $share['second_leader'];
                 $update['third_leader'] = $share['third_leader'];
             }
+
             return M('ShopUsers')->where(['userid' => $userid])->save($update);
         } else {
             return false;
         }
+    }
+
+    /**
+     * 获取用户的余额
+     *
+     * @param $userid
+     * @return int
+     */
+    public function getBalance($userid) {
+        $trade_recorde = new TradeRecord();
+        $trade_recorde->setTo($userid);
+        $trade_recorde->setToType('member');
+        $res = TradeRecordService::getBalance();
+
+        return $res['status'] ? $res['data'] : 0;
     }
 }
