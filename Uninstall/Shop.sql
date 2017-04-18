@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS `cms_user_message`;
-DROP TABLE IF EXISTS `cms_user_level`;
+DROP TABLE IF EXISTS `cms_shop_user_level`;
 DROP TABLE IF EXISTS `cms_user_address`;
 DROP TABLE IF EXISTS `cms_suppliers`;
 DROP TABLE IF EXISTS `cms_spec_item`;
