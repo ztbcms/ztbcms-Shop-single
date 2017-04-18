@@ -118,6 +118,20 @@
                             that.page_count = data.page_count
                         }
                     })
+                },
+                delCoupon:function (id) {
+                    var that = this
+                    layer.confirm('是否确定删除？', function () {
+                        that.httpPost('index.php?g=Shop&m=Coupon&a=delete_coupon',{id:id},function (res) {
+                            if(res.status == 1){
+                                layer.msg(res.msg,function () {
+                                    window.location.href = "{:U('Coupon/index')}";
+                                })
+                            }else{
+                                layer.msg(res.msg)
+                            }
+                        })
+                    })
                 }
             },
             mounted: function () {

@@ -61,4 +61,17 @@ class CouponController extends AdminBase
             $this->display();
         }
     }
+
+    /**
+     * 删除商城优惠
+     */
+    public function delete_coupon()
+    {
+        $res = M('ShopCoupon')->where('id='.I('post.id'))->delete();
+        if($res){
+            $this->ajaxReturn(['status'=>1, 'msg'=>'删除成功']);
+        }else{
+            $this->ajaxReturn(['status'=>0, 'msg'=>'操作失败']);
+        }
+    }
 }

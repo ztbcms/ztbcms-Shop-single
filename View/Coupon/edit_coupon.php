@@ -24,7 +24,7 @@
                                             <div class="col-xs-2">
                                                 <input name="discount_price" id="discount_price" value="{$coupon.discount_price}" class="form-control" placeholder="优惠价格" />
                                             </div>
-                                            <div class="col-xs-2">
+                                            <div class="col-xs-4">
                                                 <span id="err_discount_price" style="color:#F00; display:none;">优惠价格不能为空</span>
                                             </div>
                                         </div>
@@ -59,7 +59,7 @@
                                     <td>
                                         <div class="form-group ">
                                             <div class="col-xs-2">
-                                                <select id="type" name="type" class="form-control">
+                                                <select id="status" name="status" class="form-control">
                                                     <option <if condition="$coupon[status] eq 0">selected</if> value="0" >无效</option>
                                                     <option <if condition="$coupon[status] eq 1">selected</if> value="1" >正常</option>
                                                     <option <if condition="$coupon[status] eq 2">selected</if> value="2" >过期</option>
@@ -94,10 +94,10 @@
                                     <td>优惠券说明:</td>
                                     <td>
                                         <div class="form-group ">
-                                            <div class="col-xs-4">
-                                                <textarea style="width:440px; height:150px;" name="description" id="description">{$coupon.description}</textarea>
+                                            <div class="col-xs-5">
+                                                <textarea style="width:300px; height:150px;" name="description" id="description">{$coupon.description}</textarea>
                                             </div>
-                                            <div class="col-xs-2">
+                                            <div class="col-xs-4">
                                                 <span id="err_description" style="color:#F00; display:none;">优惠券说明不能为空</span>
                                             </div>
                                         </div>
