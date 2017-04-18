@@ -256,7 +256,7 @@ class UserService extends BaseService {
         $trade_recorde = new TradeRecord();
         $trade_recorde->setTo($userid);
         $trade_recorde->setToType('member');
-        $res = TradeRecordService::getBalance();
+        $res = TradeRecordService::getBalance($trade_recorde);
 
         return $res['status'] ? $res['data'] : 0;
     }
