@@ -134,34 +134,25 @@ class OrderService extends BaseService {
                 M('Goods')->where("goods_id = " . $val['goods_id'])->setDec('store_count', $val['goods_num']); // 商品减少库存
             }
         }
-        // 如果应付金额为0  可能是余额支付 + 积分 + 优惠券 这里订单支付状态直接变成已支付
-        if ($data['order_amount'] == 0) {
-            update_pay_status($order['order_sn'], 1);
-        }
 
-        // 3 扣除积分 扣除余额
-        if ($cart_price['pointsFee'] > 0) {
-            M('ShopUsers')->where("userid = $user_id")->setDec('pay_points',
-                ($cart_price['pointsFee'] * tpCache('shopping.point_rate')));
-        } // 消费积分
-        if ($cart_price['balance'] > 0) {
-            M('ShopUsers')->where("userid = $user_id")->setDec('user_money', $cart_price['balance']);
-        } // 抵扣余额
+        //优惠券抵扣
+        if ($coupon_id) {
+            //将优惠券的状态修改成 已使用
+            CouponService::useCoupon($coupon_id, $user_id, $order['order_sn'], 'order',
+                CouponService::COUPON_STATUS_ISUSE);
+        }
+        //TODO 扣除积分 扣除余额
+        //TODO 抵扣余额
         // 4 删除已提交订单商品
 
         $where = array('userid' => $user_id, 'goods_id' => array('in', $order_goods_ids));
         M('Cart')->where($where)->delete();
 
-        // 5 记录log 日志
-        $data4['user_id'] = $user_id;
-        $data4['user_money'] = -$cart_price['balance'];
-        $data4['pay_points'] = -($cart_price['pointsFee'] * tpCache('shopping.point_rate'));
-        $data4['change_time'] = time();
-        $data4['desc'] = '下单消费';
-        $data4['order_sn'] = $order['order_sn'];
-        $data4['order_id'] = $order_id;
-        // 如果使用了积分或者余额才记录
-        ($data4['user_money'] || $data4['pay_points']) && M("AccountLog")->add($data4);
+
+        // 如果应付金额为0  可能是余额支付 + 积分 + 优惠券 这里订单支付状态直接变成已支付
+        if ($data['order_amount'] == 0) {
+            update_pay_status($order['order_sn'], 1);
+        }
 
         return $order_id;
     }
