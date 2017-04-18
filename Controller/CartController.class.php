@@ -122,6 +122,10 @@ class CartController extends BaseController {
                 $this->userid); // 将商品加入购物车
             $result_arr[] = $result;
         }
-        $this->success($result_arr);
+        if ($result) {
+            $this->success($result_arr);
+        } else {
+            $this->error($cart_service->get_err_msg());
+        }
     }
 }
