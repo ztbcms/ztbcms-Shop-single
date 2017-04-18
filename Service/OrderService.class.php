@@ -108,23 +108,23 @@ class OrderService extends BaseService {
         $order_goods_ids = array();
         foreach ($cartList as $key => $val) {
             $order_goods_ids[] = $val['goods_id'];
-            $goods = M('goods')->where("goods_id = {$val['goods_id']} ")->find();
-            $data2['order_id'] = $order_id; // 订单id
-            $data2['goods_id'] = $val['goods_id']; // 商品id
-            $data2['goods_name'] = $val['goods_name']; // 商品名称
-            $data2['goods_sn'] = $val['goods_sn']; // 商品货号
-            $data2['goods_num'] = $val['goods_num']; // 购买数量
-            $data2['market_price'] = $val['market_price']; // 市场价
-            $data2['goods_price'] = $val['goods_price']; // 商品价
-            $data2['spec_key'] = $val['spec_key']; // 商品规格
-            $data2['spec_key_name'] = $val['spec_key_name']; // 商品规格名称
-            $data2['sku'] = $val['sku']; // 商品sku
-            $data2['member_goods_price'] = $val['member_goods_price']; // 会员折扣价
-            $data2['cost_price'] = $goods['cost_price']; // 成本价
-            $data2['give_integral'] = $goods['give_integral']; // 购买商品赠送积分
-            $data2['prom_type'] = $val['prom_type']; // 0 普通订单,1 限时抢购, 2 团购 , 3 促销优惠
-            $data2['prom_id'] = $val['prom_id']; // 活动id
-            M("OrderGoods")->data($data2)->add();
+            $goods = M('goods')->where(['goods_id' => $val['goods_id']])->find();
+            $order_goods['order_id'] = $order_id; // 订单id
+            $order_goods['goods_id'] = $val['goods_id']; // 商品id
+            $order_goods['goods_name'] = $val['goods_name']; // 商品名称
+            $order_goods['goods_sn'] = $val['goods_sn']; // 商品货号
+            $order_goods['goods_num'] = $val['goods_num']; // 购买数量
+            $order_goods['market_price'] = $val['market_price']; // 市场价
+            $order_goods['goods_price'] = $val['goods_price']; // 商品价
+            $order_goods['spec_key'] = $val['spec_key']; // 商品规格
+            $order_goods['spec_key_name'] = $val['spec_key_name']; // 商品规格名称
+            $order_goods['sku'] = $val['sku']; // 商品sku
+            $order_goods['member_goods_price'] = $val['member_goods_price']; // 会员折扣价
+            $order_goods['cost_price'] = $goods['cost_price']; // 成本价
+            $order_goods['give_integral'] = $goods['give_integral']; // 购买商品赠送积分
+            $order_goods['prom_type'] = $val['prom_type']; // 0 普通订单,1 限时抢购, 2 团购 , 3 促销优惠
+            $order_goods['prom_id'] = $val['prom_id']; // 活动id
+            M("OrderGoods")->data($order_goods)->add();
             //扣除商品库存
             if ($val['spec_key']) {
                 //如果存在sku库存
@@ -134,34 +134,25 @@ class OrderService extends BaseService {
                 M('Goods')->where("goods_id = " . $val['goods_id'])->setDec('store_count', $val['goods_num']); // 商品减少库存
             }
         }
-        // 如果应付金额为0  可能是余额支付 + 积分 + 优惠券 这里订单支付状态直接变成已支付
-        if ($data['order_amount'] == 0) {
-            update_pay_status($order['order_sn'], 1);
-        }
 
-        // 3 扣除积分 扣除余额
-        if ($cart_price['pointsFee'] > 0) {
-            M('ShopUsers')->where("userid = $user_id")->setDec('pay_points',
-                ($cart_price['pointsFee'] * tpCache('shopping.point_rate')));
-        } // 消费积分
-        if ($cart_price['balance'] > 0) {
-            M('ShopUsers')->where("userid = $user_id")->setDec('user_money', $cart_price['balance']);
-        } // 抵扣余额
+        //优惠券抵扣
+        if ($coupon_id) {
+            //将优惠券的状态修改成 已使用
+            CouponService::useCoupon($coupon_id, $user_id, $order['order_sn'], 'order',
+                CouponService::COUPON_STATUS_ISUSE);
+        }
+        //TODO 扣除积分 扣除余额
+        //TODO 抵扣余额
         // 4 删除已提交订单商品
 
         $where = array('userid' => $user_id, 'goods_id' => array('in', $order_goods_ids));
         M('Cart')->where($where)->delete();
 
-        // 5 记录log 日志
-        $data4['user_id'] = $user_id;
-        $data4['user_money'] = -$cart_price['balance'];
-        $data4['pay_points'] = -($cart_price['pointsFee'] * tpCache('shopping.point_rate'));
-        $data4['change_time'] = time();
-        $data4['desc'] = '下单消费';
-        $data4['order_sn'] = $order['order_sn'];
-        $data4['order_id'] = $order_id;
-        // 如果使用了积分或者余额才记录
-        ($data4['user_money'] || $data4['pay_points']) && M("AccountLog")->add($data4);
+
+        // 如果应付金额为0  可能是余额支付 + 积分 + 优惠券 这里订单支付状态直接变成已支付
+        if ($data['order_amount'] == 0) {
+            update_pay_status($order['order_sn'], 1);
+        }
 
         return $order_id;
     }
@@ -183,26 +174,52 @@ class OrderService extends BaseService {
     /**
      * 计算订单的价格
      *
-     * @param int $user_id
+     * @param int $userid
      * @param     $order_goods
      * @param int $shipping_price
      * @param int $pay_points
      * @param int $user_money
-     * @param int $coupon_price
+     * @param int $coupon_id
      * @return array|bool
      */
     public function calculate_price(
-        $user_id = 0,
+        $userid = 0,
         $order_goods,
         $shipping_price = 0,
         $pay_points = 0,
         $user_money = 0,
-        $coupon_price = 0
+        $coupon_id = 0
     ) {
         if (empty($order_goods)) {
             $this->set_err_msg('商品列表不能为空');
 
             return false;
+        }
+
+        //检测是否使用优惠券
+        if ($coupon_id) {
+            $coupon_res = CouponService::getUserCouponInfo(I('usercoupon_id'), $userid);
+            if ($coupon_res['status']) {
+                $this->set_err_msg($coupon_res['msg']);
+
+                return false;
+            }
+            $coupon_info = $coupon_res['data'];
+            $coupon_price = $coupon_info['discount_price'];
+        } else {
+            $coupon_price = 0;
+        }
+
+        // 检查账户余额的情况
+        if ($user_money) {
+            $user_service = new UserService();
+            $balance = $user_service->getBalance();
+            if ($balance < $user_money) {
+                //余额不足
+                $this->set_err_msg('余额不足');
+
+                return false;
+            }
         }
 
         $goods_id_arr = get_arr_column($order_goods, 'goods_id');
@@ -234,13 +251,12 @@ class OrderService extends BaseService {
             $anum += $val['goods_num']; // 购买数量
         }
 
-        //TODO 检查账户余额的情况
 
         // 返回结果状态
 
         $order_amount = $goods_price + $shipping_price; // 应付金额 = 商品价格 + 物流费
 
-        $pay_points = 0; // TODO 积分抵扣暂时不涉及
+        // TODO 积分抵扣暂时不涉及 $pay_points = 0;
         $pay_points = ($pay_points > $order_amount) ? $order_amount : $pay_points; // 假设应付 1块钱 而用户输入了 200 积分 2块钱, 那么就让 $pay_points = 1块钱 等同于强制让用户输入1块钱
         $order_amount = $order_amount - $pay_points; //  积分抵消应付金额
 

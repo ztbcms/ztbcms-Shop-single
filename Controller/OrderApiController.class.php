@@ -94,13 +94,7 @@ class OrderApiController extends BaseController {
         $invoice_title = I('invoice_title'); // 发票抬头
         $pay_points = I("pay_points", 0); //  使用积分
         $user_money = I("user_money", 0); //  使用余额
-        $coupon_price = 0; //优惠价格，默认为没有使用优惠券
-
-        //检测是否使用优惠券
-        if (I('usercoupon_id')) {
-            $coupon_info = CouponService::getUserCouponInfo(I('usercoupon_id'), $this->userid);
-            $coupon_price = $coupon_info['discount_price'];
-        }
+        $coupon_id = I("usercoupon_id", 0); //用户的优惠券id
 
         $where_cart['userid'] = $this->userid;
         $where_cart['id'] = array('in', I('cart_ids'));
@@ -118,8 +112,7 @@ class OrderApiController extends BaseController {
         $order_service = new OrderService();
 
         //按选中购物车的商品，计算出各个部分的价格
-        $result = $order_service->calculate_price($this->userid, $order_goods, 0, $pay_points, $user_money,
-            $coupon_price);
+        $result = $order_service->calculate_price($this->userid, $order_goods, 0, $pay_points, $user_money, $coupon_id);
         if (!$result) {
             $this->error($order_service->get_err_msg());
         }
