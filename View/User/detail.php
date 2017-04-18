@@ -12,7 +12,7 @@
                         <h3 class="panel-title"><i class="fa fa-list"></i> 用户信息</h3>
                     </div>
                     <div class="panel-body">
-                        <form action="" method="post" onsubmit="return checkUserUpdate(this);">
+                        <form method="post" id="form">
                             <table class="table table-bordered">
                                 <tbody>
                                 <tr>
@@ -39,10 +39,18 @@
                                     <td><input type="password" class="form-control" name="password2"></td>
                                     <td>留空表示不修改密码</td>
                                 </tr>
-                                <!--<tr>-->
-                                <!--<td>会员等级:</td>-->
-                                <!--<td>{$user.user_rank}</td>-->
-                                <!--</tr>-->
+                                <tr>
+                                    <td>会员等级:</td>
+                                    <td>
+                                        <select name="level" id="level" class="form-control">
+                                            <?php foreach ($level as $key => $value) { ?>
+                                                <option
+                                                <if condition="$user.level eq $key">selected='selected'
+                                                </if>  value="<?= $key ?>"><?= $value ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td>性别:</td>
                                     <td id="order-status">
@@ -125,9 +133,9 @@
                                 <tr>
                                     <td></td>
                                     <td>
-                                        <button type="submit" class="btn btn-info">
+                                        <a onclick="checkUserUpdate()" class="btn btn-info">
                                             <i class="ace-icon fa fa-check bigger-110"></i> 保存
-                                        </button>
+                                        </a>
                                         <a href="javascript:history.go(-1)" data-toggle="tooltip" title=""
                                            class="btn btn-default pull-right" data-original-title="返回"><i
                                                     class="fa fa-reply"></i></a>
@@ -136,7 +144,6 @@
                                 </tbody>
                             </table>
                         </form>
-
                     </div>
                 </div>
             </div>
@@ -168,8 +175,20 @@
             layer.alert(error, {icon: 2});  //alert(error);
             return false;
         }
-        return true;
-
+        $.ajax({
+            url: '{:U("Shop/User/detail",array("id"=>$user["userid"]))}',
+            data: $('#form').serialize(),
+            type: 'post',
+            dataType: 'json',
+            success: function (res) {
+                console.log(res)
+                if (res.status) {
+                    layer.msg('修改成功')
+                } else {
+                    layer.msg(res.info)
+                }
+            }
+        })
     }
 </script>
 

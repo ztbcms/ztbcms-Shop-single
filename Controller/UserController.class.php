@@ -73,7 +73,7 @@ class UserController extends AdminBase {
         $user = D('ShopUsers')->where(array('userid' => $uid))->find();
         $member = D('Member')->where(array('userid' => $uid))->find();
         if (!$user && !$member) {
-            exit($this->error('会员不存在'));
+            return $this->error('会员不存在');
         }
         if (IS_POST) {
             //  会员信息编辑
@@ -81,7 +81,7 @@ class UserController extends AdminBase {
             $tempData = D('ShopUsers')->where(array('mobile' => $_POST['mobile']))->find();
             if ($tempData) {
                 if ($user['mobile'] != $tempData['mobile']) {
-                    exit($this->error('此手机号码已经存在'));
+                    return $this->error('此手机号码已经存在');
                 }
             }
 
@@ -89,7 +89,7 @@ class UserController extends AdminBase {
             $password = I('post.password');
             $password2 = I('post.password2');
             if ($password != '' && $password != $password2) {
-                exit($this->error('两次输入密码不同'));
+                return $this->error('两次输入密码不同');
             }
             if ($password == '' || $password2 == '') {
                 unset($_POST['password']);
@@ -102,53 +102,20 @@ class UserController extends AdminBase {
                 $row = M('Member')->where(array('userid' => $uid))->save($_POST);
             }
             if ($row !== false) {
-                exit($this->success('修改成功'));
+                return $this->success('修改成功');
             }
-            exit($this->error('未作内容修改或修改失败'));
+
+            return $this->error('未作内容修改或修改失败');
         }
 
         $user = array_merge($user, $member);
 
+        $level = M('ShopUserLevel')->getField('level_id,level_name');
         $this->assign('user', $user);
+        $this->assign('level', $level);
         $this->display();
     }
 
-    /**
-     * 账户资金调节
-     */
-    public function account_edit() {
-        $user_id = I('get.id');
-        if (!$user_id > 0) {
-            $this->error("参数有误");
-        }
-        if (IS_POST) {
-            //获取操作类型
-            $m_op_type = I('post.money_act_type');
-            $user_money = I('post.user_money');
-            $user_money = $m_op_type ? $user_money : 0 - $user_money;
-
-            $p_op_type = I('post.point_act_type');
-            $pay_points = I('post.pay_points');
-            $pay_points = $p_op_type ? $pay_points : 0 - $pay_points;
-
-            $f_op_type = I('post.frozen_act_type');
-            $frozen_money = I('post.frozen_money');
-            $frozen_money = $f_op_type ? $frozen_money : 0 - $frozen_money;
-
-            $desc = I('post.desc');
-            if (!$desc) {
-                $this->error("请填写操作说明");
-            }
-            if (accountLog($user_id, $user_money, $pay_points, $desc)) {
-                $this->success("操作成功", U("User/account_log", array('id' => $user_id)));
-            } else {
-                $this->error("操作失败");
-            }
-            exit;
-        }
-        $this->assign('user_id', $user_id);
-        $this->display();
-    }
 
     /**
      * 搜索用户名

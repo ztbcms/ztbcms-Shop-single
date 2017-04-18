@@ -118,7 +118,7 @@ CREATE TABLE `cms_shop_users` (
   `city` int(6) DEFAULT '0' COMMENT '市区',
   `district` int(6) DEFAULT '0' COMMENT '县',
   `email_validated` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否验证电子邮箱',
-  `level` tinyint(1) DEFAULT '1' COMMENT '会员等级',
+  `level` int(11) DEFAULT '1' COMMENT '会员等级',
   `discount` decimal(10,2) DEFAULT '1.00' COMMENT '会员折扣，默认1不享受',
   `is_distribut` tinyint(1) DEFAULT '0' COMMENT '是否为分销商 0 否 1 是',
   `first_leader` int(11) DEFAULT '0' COMMENT '第一个上级',

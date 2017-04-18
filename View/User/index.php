@@ -44,7 +44,7 @@
                                             <a href="javascript:;">手机号码</a>
                                         </td>
                                         <td class="text-left">
-                                            <a href="javascript:;" v-on:click="orderBy('email');">邮件地址</a>
+                                            <a href="javascript:;" v-on:click="orderBy('level');">等级</a>
                                         </td>
                                         <td class="text-left">
                                             <a href="javascript:void(0);">一级上线</a>
@@ -70,10 +70,8 @@
                                                     (未验证)
                                                 </span>
                                         </td>
-                                        <td class="text-left">{{item.email}}
-                                            <span v-if="item.email_validated == 0 && item.email">
-                                                    (未验证)
-                                                </span>
+                                        <td class="text-left">
+                                            {{ item.level > 0 ? level[item.level] : '暂无' }}
                                         </td>
                                         <td class="text-left">{{item.first_leader}}</td>
                                         <td class="text-left">{{item.second_leader}}</td>
@@ -101,7 +99,8 @@
                                 <button v-on:click="toPage( parseInt(page) - 1 )" class="btn btn-primary">上一页</button>
                                 <button v-on:click="toPage( parseInt(page) + 1 )" class="btn btn-primary">下一页</button>
                                 <span style="line-height: 30px;margin-left: 50px">
-                                    <input id="ipt_page" class="form-control" style="width:40px;" type="text" v-model="temp_page">
+                                    <input id="ipt_page" class="form-control" style="width:40px;" type="text"
+                                           v-model="temp_page">
                                     / {{ page_count }}</span>
                                 <span>
                                     <button class="btn btn-primary" @click="toPage( temp_page )">GO</button></span>
