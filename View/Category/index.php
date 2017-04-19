@@ -1,6 +1,6 @@
-<include file="Public/min-header" />
+<include file="Public/min-header"/>
 <div class="wrapper">
-    <include file="Public/breadcrumb" />
+    <include file="Public/breadcrumb"/>
     <section class="content">
         <div class="row">
             <div class="col-xs-12">
@@ -8,10 +8,13 @@
                     <div class="box-header">
                         <div class="row">
                             <div class="col-md-1" style="display: inline-block;">
-                                <button class="btn btn-default" type="button" onclick="tree_open(this);"><i class="fa fa-angle-double-down"></i>展开</button>
+                                <button class="btn btn-default" type="button" onclick="tree_open(this);"><i
+                                            class="fa fa-angle-double-down"></i>展开
+                                </button>
                             </div>
                             <div class="col-md-2 pull-right">
-                                <a href="{:U('Category/getCategoryDetail')}" class="btn btn-primary "><i class="fa fa-plus"></i>新增分类</a>
+                                <a href="javascript:;" @click="addBtn" class="btn btn-primary "><i
+                                            class="fa fa-plus"></i>新增分类</a>
                             </div>
                         </div>
                     </div>
@@ -19,43 +22,57 @@
                     <div class="box-body">
                         <div class="row">
                             <div class="col-sm-12">
-                                <table id="list-table" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
+                                <table id="list-table" class="table table-bordered table-striped dataTable" role="grid"
+                                       aria-describedby="example1_info">
                                     <thead>
-                                        <tr role="row">
-                                            <th valign="middle">分类ID</th>
-                                            <th valign="middle">分类名称</th>
-                                            <th valign="middle">手机显示名称</th>
-                                            <th valign="middle">是否推荐</th>
-                                            <th valign="middle">是否显示</th>
-                                            <th valign="middle">分组</th>
-                                            <th valign="middle">排序</th>
-                                            <th valign="middle">操作</th>
-                                        </tr>
+                                    <tr role="row">
+                                        <th valign="middle">分类ID</th>
+                                        <th valign="middle">分类名称</th>
+                                        <th valign="middle">手机显示名称</th>
+                                        <th valign="middle">是否推荐</th>
+                                        <th valign="middle">是否显示</th>
+                                        <th valign="middle">分组</th>
+                                        <th valign="middle">排序</th>
+                                        <th valign="middle">操作</th>
+                                    </tr>
                                     </thead>
                                     <tbody>
-                                    <tr v-for="item in catList" role="row" align="center" :class="item.level" :id="item.level+'_'+item.id" v-bind:style="item.level > 1 ? 'display:none' : ''">
-                                    <td>{{item.id}}</td>
-                                    <td align="left" :style="'padding-left:'+item.level*5+'em'">
-                                        <span v-if="item.have_son == 1" class="glyphicon glyphicon-plus btn-warning" style="padding:2px; font-size:12px;" :id="'icon_'+item.level+'_'+item.id" aria-hidden="false" onclick="rowClicked(this)"></span>&nbsp;
-                                        <span>{{item.name}}</span>
-                                    </td>
-                                    <td><span>{{item.mobile_name}}</span></td>
-                                    <td>
-                                        <img v-on:click="change(item,'is_hot')" width="20" height="20" v-bind:src="item.is_hot == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
-                                    </td>
-                                    <td>
-                                        <img v-on:click="change(item,'is_show')" width="20" height="20" v-bind:src="item.is_show == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control input-sm" v-on:change="update(item,'cat_group')" size="4" v-model="item.cat_group" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control input-sm" v-on:change="update(item,'sort_order')" size="4" v-model="item.sort_order" />
-                                    </td>
-                                    <td>
-                                        <a class="btn btn-primary" :href="'{:U('Category/getCategoryDetail')}&id='+item.id"><i class="fa fa-pencil"></i></a>
-                                        <a class="btn btn-danger" href="javascript:;" v-on:click="delGoodsCategory(item.id)"><i class="fa fa-trash-o"></i></a>
-                                    </td>
+                                    <tr v-for="item in catList" role="row" align="center" :class="item.level"
+                                        :id="item.level+'_'+item.id"
+                                        v-bind:style="item.level > 1 ? 'display:none' : ''">
+                                        <td>{{item.id}}</td>
+                                        <td align="left" :style="'padding-left:'+item.level*5+'em'">
+                                            <span v-if="item.have_son == 1" class="glyphicon glyphicon-plus btn-warning"
+                                                  style="padding:2px; font-size:12px;"
+                                                  :id="'icon_'+item.level+'_'+item.id" aria-hidden="false"
+                                                  onclick="rowClicked(this)"></span>&nbsp;
+                                            <span>{{item.name}}</span>
+                                        </td>
+                                        <td><span>{{item.mobile_name}}</span></td>
+                                        <td>
+                                            <img v-on:click="change(item,'is_hot')" width="20" height="20"
+                                                 v-bind:src="item.is_hot == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
+                                        </td>
+                                        <td>
+                                            <img v-on:click="change(item,'is_show')" width="20" height="20"
+                                                 v-bind:src="item.is_show == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control input-sm"
+                                                   v-on:change="update(item,'cat_group')" size="4"
+                                                   v-model="item.cat_group"/>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control input-sm"
+                                                   v-on:change="update(item,'sort_order')" size="4"
+                                                   v-model="item.sort_order"/>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-primary" @click="editBtn(item.id)" href="javascript:;"><i
+                                                        class="fa fa-pencil"></i></a>
+                                            <a class="btn btn-danger" href="javascript:;"
+                                               v-on:click="delGoodsCategory(item.id)"><i class="fa fa-trash-o"></i></a>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -76,6 +93,7 @@
 </div>
 <include file="Public/vue"/>
 <script>
+    var open_window = null;
     new Vue({
         el: '#app',
         data: {
@@ -83,29 +101,57 @@
             catList: []
         },
         methods: {
-            getList: function(){
+            editBtn: function (id) {
+                var that = this
+                open_window = layer.open({
+                    title: '添加分类',
+                    type: 2,
+                    area: ['800px', '630px'],
+                    fixed: false, //不固定
+                    maxmin: false,
+                    content: "{:U('Category/getCategoryDetail')}&id=" + id,
+                    end: function () {
+                        that.getList()
+                    }
+                });
+            },
+            addBtn: function () {
+                var that = this
+                open_window = layer.open({
+                    title: '添加分类',
+                    type: 2,
+                    area: ['800px', '630px'],
+                    fixed: false, //不固定
+                    maxmin: false,
+                    content: "{:U('Category/getCategoryDetail')}",
+                    end: function () {
+                        that.getList()
+                    }
+                });
+            },
+            getList: function () {
                 var that = this;
                 $.ajax({
                     url: '',
                     type: 'post',
                     data: that.where,
                     dataType: 'json',
-                    success: function(res){
+                    success: function (res) {
                         console.log(res);
                         that.catList = res.cat_list;
                     }
                 });
             },
-            change: function(obj,field){
-                if (obj[field] == 1){
+            change: function (obj, field) {
+                if (obj[field] == 1) {
                     obj[field] = 0;
                 } else {
                     obj[field] = 1;
                 }
 
-                this.update(obj,field);
+                this.update(obj, field);
             },
-            update: function(obj,field){
+            update: function (obj, field) {
                 console.log(obj);
                 $.ajax({
                     url: "{:U('Shop/AdminApi/changeTableVal')}",
@@ -116,21 +162,22 @@
                         'field': field,
                         'value': obj[field]
                     },
-                    success: function(res){
+                    success: function (res) {
                         layer.msg('操作成功');
                     }
                 });
             },
-            delGoodsCategory: function(id){
+            delGoodsCategory: function (id) {
                 var that = this;
-                layer.confirm('确定要删除该分类吗？',{
-                    btn:['确定', '取消']
-                },function () {
-                    $.ajax({url: "{:U('Category/delGoodsCategory')}", type: 'get', data: {'id': id}, dataType: 'json',
-                        success:function (res){
-                            layer.alert(res.info,{
+                layer.confirm('确定要删除该分类吗？', {
+                    btn: ['确定', '取消']
+                }, function () {
+                    $.ajax({
+                        url: "{:U('Category/delGoodsCategory')}", type: 'get', data: {'id': id}, dataType: 'json',
+                        success: function (res) {
+                            layer.alert(res.info, {
                                 icon: res.status
-                            },function(){
+                            }, function () {
                                 layer.closeAll();
                                 that.getList();
                             });
@@ -139,7 +186,7 @@
                 });
             }
         },
-        mounted: function(){
+        mounted: function () {
             this.getList();
         }
     });
