@@ -9,14 +9,49 @@
             </div>
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-list"></i> 修改商城优惠券信息</h3>
+                    <h3 class="panel-title"><i class="fa fa-list"></i> 用户优惠券信息</h3>
                 </div>
                 <div class="panel-body">
                     <!--表单数据-->
-                    <form id="coupon-edit">
+                    <form id="usercoupon-edit">
                         <div class="tab-pane">
                             <table class="table table-bordered">
                                 <tbody>
+                                <tr>
+                                    <td>优惠券编码:</td>
+                                    <td>
+                                        <div class="form-group">
+                                            <div class="col-xs-2">
+                                                <p>{$coupon.coupon_num}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>使用时间:</td>
+                                    <td>
+                                        <div class="form-group">
+                                            <div class="col-xs-4">
+                                                <?php
+                                                if($coupon['use_time'] != 0){
+                                                    echo date('Y-m-d H:i',$coupon['use_time']);
+                                                }
+                                                ?>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>被使用的订单:</td>
+                                    <td>
+                                        <div class="form-group">
+                                            <div class="col-xs-10">
+                                                <label>订单号：<input name="order_sn" id="order_sn" value="{$coupon.order_sn}" class="form-control" placeholder="被使用的订单号" /></label>
+                                                <label>订单类型：<input name="order_type" id="order_type" value="{$coupon.order_type}" class="form-control" placeholder="被使用的订单类型" /></label>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td>优惠价格:</td>
                                     <td>
@@ -61,8 +96,9 @@
                                             <div class="col-xs-2">
                                                 <select id="status" name="status" class="form-control">
                                                     <option <if condition="$coupon[status] eq 0">selected</if> value="0" >无效</option>
-                                                    <option <if condition="$coupon[status] eq 1">selected</if> value="1" >正常</option>
-                                                    <option <if condition="$coupon[status] eq 2">selected</if> value="2" >过期</option>
+                                                    <option <if condition="$coupon[status] eq 1">selected</if> value="1" >未使用</option>
+                                                    <option <if condition="$coupon[status] eq 2">selected</if> value="2" >已使用</option>
+                                                    <option <if condition="$coupon[status] eq 3">selected</if> value="3" >过期</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -127,8 +163,8 @@
         }else if($('#description').val() == ''){
             $('#err_description').show()
         }else{
-            var data = $("#coupon-edit").serialize()
-            $.post("{:U('Coupon/edit_coupon')}",data,function (res) {
+            var data = $("#usercoupon-edit").serialize()
+            $.post("{:U('Coupon/edit_user_coupon')}",data,function (res) {
                 if(res.status){
                     layer.alert(res.msg)
                     setTimeout(function () {

@@ -104,33 +104,19 @@
                         userid:that.selectUserId
                     }
                     that.httpPost('index.php?g=Shop&m=Coupon&a=add_user_coupon',data,function (res) {
-                        
+                        if(res.status == 1){
+                            layer.msg(res.msg)
+                            setTimeout(function () {
+                                window.location.href = "{:U('Coupon/user_coupon')}";
+                            }, 1500)
+                        }else{
+                            layer.msg(res.msg)
+                        }
                     })
                 }
             }
         }
     })
-//    function checkSubmit() {
-//        $("span[id^='err_']").each(function() {
-//            $(this).hide()
-//        });
-//        if($('#discount_price').val() == '') {
-//            $('#err_discount_price').show()
-//        }else if($('#description').val() == ''){
-//            $('#err_description').show()
-//        }else{
-//            var data = $("#coupon-add").serialize()
-//            $.post("{:U('Coupon/add_coupon')}",data,function (res) {
-//                if(res.status){
-//                    layer.alert(res.msg,function(){
-//                        window.location.href = "{:U('Coupon/index')}";
-//                    });
-//                }else{
-//                    layer.alert(res.msg);
-//                }
-//            },'json')
-//        }
-//    }
 </script>
 </body>
 

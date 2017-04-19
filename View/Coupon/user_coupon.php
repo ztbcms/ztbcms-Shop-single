@@ -76,11 +76,14 @@
                                         </td>
                                         <td class="text-center">{{ item.start_time }}</td>
                                         <td class="text-center">{{ item.end_time }}</td>
-                                        <td class="text-center">{{ item.use_time | getFormatTime }}</td>
+                                        <td class="text-center">
+                                            <template v-if="item.use_time == 0">0</template>
+                                            <template v-else>{{ item.use_time | getFormatTime }}</template>
+                                        </td>
                                         <td class="text-right">
                                             <!--<a target="_blank" href="{:U('Home/Goods/goodsInfo',array('id'=>$list['goods_id']))}" class="btn btn-info" title="查看详情"><i class="fa fa-eye"></i></a>-->
-                                            <a :href="'{:U('Coupon/edit_coupon')}&id='+item.id"
-                                               class="btn btn-primary" title="编辑"><i class="fa fa-pencil"></i></a>
+                                            <a :href="'{:U('Coupon/edit_user_coupon')}&id='+item.id"
+                                               class="btn btn-primary" title="编辑"><i class="fa fa-eye"></i></a>
                                             <a href="javascript:void(0);" v-on:click="delCoupon(item.id)"
                                                class="btn btn-danger" title="删除"><i class="fa fa-trash-o"></i></a>
                                             <!--<a href="javascript:void(0);" onclick="ClearGoodsHtml('{$list[goods_id]}')" class="btn btn-default" title="清除静态缓存页面"><i class="fa fa-fw fa-refresh"></i></a>-->
@@ -135,11 +138,12 @@
                 delCoupon:function (id) {
                     var that = this
                     layer.confirm('是否确定删除？', function () {
-                        that.httpPost('index.php?g=Shop&m=Coupon&a=delete_coupon',{id:id},function (res) {
+                        that.httpPost('index.php?g=Shop&m=Coupon&a=delete_user_coupon',{id:id},function (res) {
                             if(res.status == 1){
-                                layer.msg(res.msg,function () {
-                                    window.location.href = "{:U('Coupon/index')}";
-                                })
+                                layer.msg(res.msg)
+                                setTimeout(function () {
+                                    window.location.href = "{:U('Coupon/user_coupon')}";
+                                },1500)
                             }else{
                                 layer.msg(res.msg)
                             }

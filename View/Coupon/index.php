@@ -124,9 +124,10 @@
                     layer.confirm('是否确定删除？', function () {
                         that.httpPost('index.php?g=Shop&m=Coupon&a=delete_coupon',{id:id},function (res) {
                             if(res.status == 1){
-                                layer.msg(res.msg,function () {
+                                layer.msg(res.msg)
+                                setTimeout(function () {
                                     window.location.href = "{:U('Coupon/index')}";
-                                })
+                                }, 1500)
                             }else{
                                 layer.msg(res.msg)
                             }

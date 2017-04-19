@@ -146,10 +146,68 @@ class CouponController extends AdminBase
     public function add_user_coupon()
     {
         if(IS_POST){
-            $coupon_info = M('ShopCoupon')->where('id='.I('post.coupon_id'))->find();
-            $coupon_info['coupon_id'] = $coupon_info['id'];
+            $count = M('ShopUsercoupon')->where(['coupon_id'=>I('post.coupon_id'),'userid'=>I('post.userid')])->find();
+            if(empty($count)){
+                $coupon_info = M('ShopCoupon')->where('id='.I('post.coupon_id'))->find();
+                $coupon_info['coupon_id'] = $coupon_info['id'];
+                $coupon_info['userid'] = I('post.userid');
+                $coupon_info['coupon_num'] = $this->generate_code(6);
+                unset($coupon_info['id']);
+                $res = M('ShopUsercoupon')->add($coupon_info);
+                if($res){
+                    $this->ajaxReturn(['status'=>1,'msg'=>'操作成功']);
+                }
+            }else{
+                $this->ajaxReturn(['status'=>0,'msg'=>'该用户已领取过该优惠券']);
+            }
         }else{
             $this->display();
         }
+    }
+
+    /**
+     * 修改用户优惠券信息
+     */
+    public function edit_user_coupon()
+    {
+        if(IS_POST){
+            $post = I('post.');
+            $id = $post['id'];
+            unset($post['id']);
+            $res = M('ShopUsercoupon')->where('id='.$id)->save($post);
+            if($res){
+                $this->ajaxReturn(['status'=>1,'msg'=>'修改成功']);
+            }else{
+                $this->ajaxReturn(['status'=>0,'msg'=>'没有修改数据']);
+            }
+        }else {
+            $id = I('get.id');
+            $coupon = M('ShopUsercoupon')->where('id=' . $id)->find();
+            $this->assign('coupon', $coupon);
+            $this->display();
+        }
+    }
+
+    /**
+     * 删除用户优惠
+     */
+    public function delete_user_coupon()
+    {
+        $res = M('ShopUsercoupon')->where('id='.I('post.id'))->delete();
+        if($res){
+            $this->ajaxReturn(['status'=>1, 'msg'=>'删除成功']);
+        }else{
+            $this->ajaxReturn(['status'=>0, 'msg'=>'操作失败']);
+        }
+    }
+
+    /**
+     * 生成随机的优惠券编码
+     * @param int $length 随机数长度
+     * @return int
+     */
+    public function generate_code($length)
+    {
+        return rand(pow(10,($length-1)), pow(10,$length)-1);
     }
 }
