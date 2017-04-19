@@ -166,6 +166,42 @@ class CouponController extends AdminBase
     }
 
     /**
+     * 修改用户优惠券信息
+     */
+    public function edit_user_coupon()
+    {
+        if(IS_POST){
+            $post = I('post.');
+            $id = $post['id'];
+            unset($post['id']);
+            $res = M('ShopUsercoupon')->where('id='.$id)->save($post);
+            if($res){
+                $this->ajaxReturn(['status'=>1,'msg'=>'修改成功']);
+            }else{
+                $this->ajaxReturn(['status'=>0,'msg'=>'没有修改数据']);
+            }
+        }else {
+            $id = I('get.id');
+            $coupon = M('ShopUsercoupon')->where('id=' . $id)->find();
+            $this->assign('coupon', $coupon);
+            $this->display();
+        }
+    }
+
+    /**
+     * 删除用户优惠
+     */
+    public function delete_user_coupon()
+    {
+        $res = M('ShopUsercoupon')->where('id='.I('post.id'))->delete();
+        if($res){
+            $this->ajaxReturn(['status'=>1, 'msg'=>'删除成功']);
+        }else{
+            $this->ajaxReturn(['status'=>0, 'msg'=>'操作失败']);
+        }
+    }
+
+    /**
      * 生成随机的优惠券编码
      * @param int $length 随机数长度
      * @return int
