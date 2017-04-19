@@ -126,10 +126,10 @@
             var data = $("#coupon-add").serialize()
             $.post("{:U('Coupon/add_coupon')}",data,function (res) {
                 if(res.status){
-                    layer.alert(res.msg,function () {
+                    layer.msg(res.msg)
+                    setTimeout(function () {
                         window.parent.layer.closeAll();
-                    })
-
+                    }, 1500)
                 }else{
                     layer.alert(res.msg);
                 }

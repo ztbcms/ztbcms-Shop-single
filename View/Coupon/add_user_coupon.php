@@ -4,9 +4,6 @@
     <section class="content">
         <!-- Main content -->
         <div class="container-fluid">
-            <div class="pull-right">
-                <a href="javascript:history.go(-1)" data-toggle="tooltip" title="" class="btn btn-default" data-original-title="返回"><i class="fa fa-reply"></i></a>
-            </div>
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-list"></i> 赠送优惠券</h3>
@@ -107,7 +104,7 @@
                         if(res.status == 1){
                             layer.msg(res.msg)
                             setTimeout(function () {
-                                window.location.href = "{:U('Coupon/user_coupon')}";
+                                window.parent.layer.closeAll();
                             }, 1500)
                         }else{
                             layer.msg(res.msg)

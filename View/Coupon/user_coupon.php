@@ -17,7 +17,7 @@
                     <div class="navbar navbar-default">
                         <form action="" id="search-form2" class="navbar-form form-inline" method="post"
                               onsubmit="return false">
-                            <button onclick="location.href='{:U('Coupon/add_user_coupon')}'"
+                            <button @click="add_user_coupon()"
                                     class="btn btn-primary pull-right"><i class="glyphicon glyphicon-send"></i> 赠送优惠券
                             </button>
                         </form>
@@ -134,6 +134,20 @@
                             that.page_count = data.page_count
                         }
                     })
+                },
+                add_user_coupon:function () {
+                    var that = this
+                    layer.open({
+                        title: '赠送优惠券',
+                        type:2,
+                        area:['800px','530px'],
+                        fixed:false,
+                        maxmin:false,
+                        content:'{:U("Coupon/add_user_coupon")}',
+                        end:function () {
+                            that.getList()
+                        }
+                    });
                 },
                 delCoupon:function (id) {
                     var that = this

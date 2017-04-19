@@ -155,7 +155,7 @@ class CouponController extends AdminBase
                 unset($coupon_info['id']);
                 $res = M('ShopUsercoupon')->add($coupon_info);
                 if($res){
-                    $this->ajaxReturn(['status'=>1,'msg'=>'操作成功']);
+                    $this->ajaxReturn(['status'=>1,'msg'=>'赠送成功']);
                 }
             }else{
                 $this->ajaxReturn(['status'=>0,'msg'=>'该用户已领取过该优惠券']);
