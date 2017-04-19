@@ -108,10 +108,10 @@
                                         <a href="javascript:;">收货人</a>
                                     </td>
                                     <td class="text-center">
-                                        <a href="">总金额</a>
+                                        <a href="javascript:;">总金额</a>
                                     </td>
                                     <td class="text-center">
-                                        <a href="">应付金额</a>
+                                        <a href="javascript:;">应付金额</a>
                                     </td>
                                     <td class="text-center">
                                         <a href="javascript:;">订单状态</a>
@@ -151,6 +151,9 @@
                                 </tbody>
                             </table>
                         </div>
+                        <!--     分页-->
+                        <v-page :page="page" v-on:update="getList" :page_count="page_count"></v-page>
+                        <!--   /分页-->
                     </div>
                 </div>
             </div>
@@ -170,7 +173,9 @@
                 limit: 20,
                 order_status: {},
                 pay_status: {},
-                shipping_status: {}
+                shipping_status: {},
+                page: 1,
+                page_count: 0
             },
             mixins: [window.__baseMethods, window.__baseFilters],
             methods: {
@@ -179,12 +184,17 @@
                 },
                 getList: function () {
                     var that = this
-                    that.httpGet('{:U("Shop/Order/orderList")}', $('#search-form').serialize(), function (res) {
+                    var params=$('#search-form').serializeArray()
+                    params.push({name:'page',value:that.page})
+                    console.log(params)
+                    that.httpGet('{:U("Shop/Order/orderList")}',params, function (res) {
                         var data = res.info
                         that.shipping_status = data.shipping_status
                         that.pay_status = data.pay_status
                         that.order_status = data.order_status
                         that.lists = data.lists
+                        that.page = data.page
+                        that.page_count = data.page_count
                     })
                 },
                 delOrder: function (item) {
@@ -210,6 +220,9 @@
             mounted: function () {
                 var that = this
                 that.getList()
+            },
+            components: {
+                'v-page': pageComponent
             }
         })
         $('#add_time').daterangepicker({

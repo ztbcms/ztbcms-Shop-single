@@ -4,9 +4,6 @@
     <section class="content">
         <!-- Main content -->
         <div class="container-fluid">
-            <div class="pull-right">
-                <a href="javascript:history.go(-1)" data-toggle="tooltip" title="" class="btn btn-default" data-original-title="返回"><i class="fa fa-reply"></i></a>
-            </div>
             <div class="panel panel-default" id="app">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-list"></i> 商品类型</h3>
@@ -18,27 +15,28 @@
                     <!--表单数据-->
                     <form method="post" id="addEditGoodsTypeForm" onsubmit="return false;">
                         <!--通用信息-->
-                    <div class="tab-content">                 	  
-                        <div class="tab-pane active" id="tab_tongyong">
-                           
-                            <table class="table table-bordered">
-                                <tbody>
-                                <tr>
-                                    <td>类型名称:</td>
-                                    <td>
-                                        <input type="text" v-model="detail.name" name="name" class="form-control"/>
-                                        <span id="err_name" style="color:#F00; display:none;">商品类型名称不能为空!!</span>
-                                    </td>
-                                </tr>                                
-                                </tbody>                                
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab_tongyong">
+
+                                <table class="table table-bordered">
+                                    <tbody>
+                                    <tr>
+                                        <td>类型名称:</td>
+                                        <td>
+                                            <input type="text" v-model="detail.name" name="name" class="form-control"/>
+                                        </td>
+                                    </tr>
+                                    </tbody>
                                 </table>
-                        </div>                           
-                    </div>              
-                    <div class="pull-right">
-                        <input type="hidden" name="id" :value="detail.id">
-                        <button v-on:click="addEditGoodsType()" class="btn btn-primary" title="" data-toggle="tooltip" data-original-title="保存"><i class="fa fa-save"></i> 确认</button>
-                    </div>
-			    </form><!--表单数据-->
+                            </div>
+                        </div>
+                        <div class="pull-right">
+                            <input type="hidden" name="id" :value="detail.id">
+                            <button v-on:click="addEditGoodsType()" class="btn btn-primary" title=""
+                                    data-toggle="tooltip" data-original-title="保存"><i class="fa fa-save"></i> 确认
+                            </button>
+                        </div>
+                    </form><!--表单数据-->
                 </div>
             </div>
         </div>    <!-- /.content -->
@@ -49,33 +47,35 @@
     new Vue({
         el: '#app',
         data: {
-            detail:{}
+            detail: {}
         },
+        mixins: [window.__baseMethods],
         methods: {
-            getDetail: function(){
+            getDetail: function () {
                 var that = this;
-                $.ajax({url: "{:U('Type/getTypeDetail')}", type: 'post', data: {'id': '<?php echo $id;?>'}, dataType: 'json',
-                    success:function (res){
-                        if(res.status){
-                            that.detail = res.data;
-                        }
+                var id = that.getQueryString('id')
+                that.httpGet("{:U('Type/getTypeDetail')}", {id: id}, function (res) {
+                    if (res.status) {
+                        that.detail = res.data;
                     }
-                });
+                })
             },
-            addEditGoodsType: function(){
+            addEditGoodsType: function () {
                 var that = this;
-                $.ajax({url: "{:U('Type/addEditGoodsType')}", type: 'post', data: that.detail, dataType: 'json',
-                    success:function (res){
-                        if(res.status){
-                            layer.alert('操作成功',function(){
-                                window.location.href = "{:U('Type/index')}";
-                            });
-                        }
+                if (!that.detail.name) {
+                    layer.alert('请输入类型名称')
+                    return;
+                }
+                that.httpPost("{:U('Type/addEditGoodsType')}", that.detail, function (res) {
+                    if (res.status) {
+                        layer.alert('操作成功', function () {
+                            parent.layer.closeAll()
+                        });
                     }
-                });
+                })
             }
         },
-        mounted: function(){
+        mounted: function () {
             this.getDetail();
         }
     });

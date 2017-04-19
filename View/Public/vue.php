@@ -38,12 +38,22 @@
     }
     window.__baseMethods = {
         methods: {
-            httpGet: function (url, data, success) {
+            getQueryString: function (name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null) {
+                    return decodeURI(r[2]);
+                } else {
+                    return null;
+                }
+            },
+            httpGet: function (url, data, success, cache) {
                 $.ajax({
                     url: url,
                     type: 'get',
                     data: data,
                     dataType: 'json',
+                    cache: cache == false ? cache : true,
                     success: function (res) {
                         if (typeof success == 'function') {
                             success(res)
