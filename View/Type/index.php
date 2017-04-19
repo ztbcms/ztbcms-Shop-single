@@ -32,7 +32,9 @@
                                     <td class="text-center">{{ item.name }}</td>
                                     <td class="text-center">
                                         <a :href="'{:U('Spec/index')}&type_id='+item.id" data-toggle="tooltip" title=""
-                                           class="btn btn-info" data-original-title="属性列表"><i class="fa fa-eye"></i></a>
+                                           class="btn btn-info" data-original-title="属性列表">规格</a>
+                                        <a :href="'{:U('Attribute/index')}&type_id='+item.id" data-toggle="tooltip" title=""
+                                           class="btn btn-info" data-original-title="属性列表">属性</a>
                                         <a href="javascript:;" @click="editBtn(item.id)" data-toggle="tooltip"
                                            title="" class="btn btn-primary" data-original-title="编辑"><i
                                                     class="fa fa-pencil"></i></a>
