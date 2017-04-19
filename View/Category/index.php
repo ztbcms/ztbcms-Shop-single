@@ -100,6 +100,7 @@
             where: {},
             catList: []
         },
+        mixins: [window.__baseMethods],
         methods: {
             editBtn: function (id) {
                 var that = this
@@ -131,16 +132,10 @@
             },
             getList: function () {
                 var that = this;
-                $.ajax({
-                    url: '',
-                    type: 'post',
-                    data: that.where,
-                    dataType: 'json',
-                    success: function (res) {
-                        console.log(res);
-                        that.catList = res.cat_list;
-                    }
-                });
+                that.httpGet("{:U('Category/index')}", that.where, function (res) {
+                    console.log(res);
+                    that.catList = res.cat_list;
+                }, false)
             },
             change: function (obj, field) {
                 if (obj[field] == 1) {
@@ -153,36 +148,22 @@
             },
             update: function (obj, field) {
                 console.log(obj);
-                $.ajax({
-                    url: "{:U('Shop/AdminApi/changeTableVal')}",
-                    data: {
-                        'table': 'goodsCategory',
-                        'id_name': 'id',
-                        'id_value': obj.id,
-                        'field': field,
-                        'value': obj[field]
-                    },
-                    success: function (res) {
-                        layer.msg('操作成功');
-                    }
-                });
+                var that = this
+                that.changeTableVal('goodsCategory', 'id', obj.id, field, obj[field])
             },
             delGoodsCategory: function (id) {
                 var that = this;
                 layer.confirm('确定要删除该分类吗？', {
                     btn: ['确定', '取消']
                 }, function () {
-                    $.ajax({
-                        url: "{:U('Category/delGoodsCategory')}", type: 'get', data: {'id': id}, dataType: 'json',
-                        success: function (res) {
-                            layer.alert(res.info, {
-                                icon: res.status
-                            }, function () {
-                                layer.closeAll();
-                                that.getList();
-                            });
-                        }
-                    });
+                    that.httpPost("{:U('Category/delGoodsCategory')}", {'id': id}, function (res) {
+                        layer.alert(res.info, {
+                            icon: res.status
+                        }, function () {
+                            layer.closeAll();
+                            that.getList();
+                        });
+                    })
                 });
             }
         },

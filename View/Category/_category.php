@@ -129,42 +129,35 @@
             detail: [],
             pid: 0
         },
+        mixins: [window.__baseMethods],
         methods: {
             getDetail: function () {
                 var that = this;
-                $.ajax({
-                    url: "{:U('Category/getCategoryDetail')}",
-                    type: 'post',
-                    data: {'id': '<?php echo $id;?>'},
-                    dataType: 'json',
-                    success: function (res) {
-                        console.log(res);
-                        that.catList = res.cat_list;
-                        that.detail = res.goods_category_info;
-                        that.pid = res.pid;
-                    }
-                });
+                var id = that.getQueryString('id')
+                that.httpGet("{:U('Category/getCategoryDetail')}", {id: id}, function (res) {
+                    console.log(res);
+                    that.catList = res.cat_list;
+                    that.detail = res.goods_category_info;
+                    that.pid = res.pid;
+                })
             },
             addEditCate: function () {
                 var that = this;
+                var id = that.getQueryString('id')
                 var data = {
                     'detail': that.detail,
                     'pid': that.pid,
-                    'id': '<?php echo $id;?>'
+                    'id': id
                 };
-
-                $.ajax({
-                    url: "{:U('Category/addEditCategory')}", type: 'post', data: data, dataType: 'json',
-                    success: function (res) {
-                        if (res.status) {
-                            layer.alert(res.msg,function () {
-                                parent.layer.close(parent.open_window)
-                            })
-                        } else {
-                            layer.alert(res.msg);
-                        }
+                that.httpPost("{:U('Category/addEditCategory')}", data, function (res) {
+                    if (res.status) {
+                        layer.alert(res.msg, function () {
+                            parent.layer.close(parent.open_window)
+                        })
+                    } else {
+                        layer.alert(res.msg);
                     }
-                });
+                })
             }
         },
         mounted: function () {
