@@ -73,9 +73,8 @@
                                     <td>
                                         <div class="form-group">
                                             <div class="col-xs-4">
-                                                <input name="start_time" value="{$coupon['start_time']}" class="form-control" placeholder="使用起始时间" />
+                                                <input name="start_time" type="date" value="{$coupon['start_time']}" class="form-control" placeholder="使用起始时间" />
                                             </div>
-                                            <span>例如2017-04-18，默认是0</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -84,9 +83,8 @@
                                     <td>
                                         <div class="form-group">
                                             <div class="col-xs-4">
-                                                <input name="end_time" value="{$coupon['end_time']}" class="form-control" placeholder="过期时间" />
+                                                <input name="end_time" type="date" value="{$coupon['end_time']}" class="form-control" placeholder="过期时间" />
                                             </div>
-                                            <span>例如2017-04-18，默认是0</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -132,9 +130,10 @@
             var data = $("#coupon-edit").serialize()
             $.post("{:U('Coupon/edit_coupon')}",data,function (res) {
                 if(res.status){
-                    layer.alert(res.msg,function(){
+                    layer.alert(res.msg)
+                    setTimeout(function () {
                         window.location.href = "{:U('Coupon/index')}";
-                    });
+                    }, 1500)
                 }else{
                     layer.alert(res.msg);
                 }

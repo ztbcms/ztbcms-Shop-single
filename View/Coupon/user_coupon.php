@@ -76,7 +76,10 @@
                                         </td>
                                         <td class="text-center">{{ item.start_time }}</td>
                                         <td class="text-center">{{ item.end_time }}</td>
-                                        <td class="text-center">{{ item.use_time | getFormatTime }}</td>
+                                        <td class="text-center">
+                                            <template v-if="item.use_time == 0">0</template>
+                                            <template v-else>{{ item.use_time | getFormatTime }}</template>
+                                        </td>
                                         <td class="text-right">
                                             <!--<a target="_blank" href="{:U('Home/Goods/goodsInfo',array('id'=>$list['goods_id']))}" class="btn btn-info" title="查看详情"><i class="fa fa-eye"></i></a>-->
                                             <a :href="'{:U('Coupon/edit_coupon')}&id='+item.id"
