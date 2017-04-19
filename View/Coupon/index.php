@@ -14,6 +14,14 @@
                     <h3 class="panel-title"><i class="fa fa-list"></i> 商城优惠券</h3>
                 </div>
                 <div class="panel-body">
+                    <div class="navbar navbar-default">
+                        <form action="" id="search-form2" class="navbar-form form-inline" method="post"
+                              onsubmit="return false">
+                            <button @click="add_coupon()"
+                                    class="btn btn-primary pull-right"><i class="fa fa-plus"></i> 添加优惠券
+                            </button>
+                        </form>
+                    </div>
                     <div id="ajax_return">
                         <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
                             <div class="table-responsive">
@@ -118,6 +126,20 @@
                             that.page_count = data.page_count
                         }
                     })
+                },
+                add_coupon:function () {
+                    var that = this
+                    layer.open({
+                        title: '添加优惠券',
+                        type:2,
+                        area:['60%','530px'],
+                        fixed:false,
+                        maxmin:false,
+                        content:'{:U("Coupon/add_coupon")}',
+                        end:function () {
+                            that.getList()
+                        }
+                    });
                 },
                 delCoupon:function (id) {
                     var that = this

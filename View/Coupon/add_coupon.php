@@ -4,9 +4,6 @@
     <section class="content">
         <!-- Main content -->
         <div class="container-fluid">
-            <div class="pull-right">
-                <a href="javascript:history.go(-1)" data-toggle="tooltip" title="" class="btn btn-default" data-original-title="返回"><i class="fa fa-reply"></i></a>
-            </div>
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-list"></i> 添加优惠券</h3>
@@ -129,10 +126,10 @@
             var data = $("#coupon-add").serialize()
             $.post("{:U('Coupon/add_coupon')}",data,function (res) {
                 if(res.status){
-                    layer.alert(res.msg)
-                    setTimeout(function () {
-                        window.location.href = "{:U('Coupon/index')}";
-                    }, 1500)
+                    layer.alert(res.msg,function () {
+                        window.parent.layer.closeAll();
+                    })
+
                 }else{
                     layer.alert(res.msg);
                 }
