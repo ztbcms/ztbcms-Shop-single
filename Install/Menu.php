@@ -164,6 +164,26 @@ return array(
                     ),
                 ),
             ),
+            array(
+                "route" => "Shop/Record/index",
+                "type" => 1,
+                "status" => 1,
+                "name" => "记录管理",
+                "child" => array(
+                    array(
+                        "route" => "Shop/Record/index?tabName=recordTrade",
+                        "type" => 1,
+                        "status" => 1,
+                        "name" => "交易记录",
+                    ),
+                    array(
+                        "route" => "Shop/Record/index?tabName=recordIntegral",
+                        "type" => 1,
+                        "status" => 1,
+                        "name" => "积分记录",
+                    ),
+                ),
+            )
         ),
     ),
 );
