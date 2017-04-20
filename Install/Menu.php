@@ -188,6 +188,12 @@ return array(
                         "status" => 1,
                         "name" => "积分记录",
                     ),
+                    array(
+                        "route" => "Shop/Record/index?tabName=RecordCommission",
+                        "type" => 1,
+                        "status" => 1,
+                        "name" => "提成记录",
+                    ),
                 ),
             )
         ),
