@@ -22,7 +22,7 @@ class RecordController extends AdminBase {
                 }
             }
 
-            $order = 'id';
+            $order = 'id DESC';
             $page = I('page', 1);
             $limit = I('limit', 20);
             $lists = M($tabName)->where($where)->order($order)->page($page, $limit)->select();
