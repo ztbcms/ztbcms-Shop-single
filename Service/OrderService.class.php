@@ -314,6 +314,8 @@ class OrderService extends BaseService {
                 ];
                 M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
                 self::logOrder($order['order_id'], '订单支付成功', '支付成功', $order['user_id']);
+                //支付成功后调用支付成功hook
+                Hook::listen('shop_order_pay', $order);
 
                 return $order['order_id'];
             } else {
