@@ -5,6 +5,24 @@ use Common\Controller\AdminBase;
 
 class ShopController extends AdminBase {
     public function index() {
+        if (IS_POST) {
+            $post = I('post.');
+            foreach ($post as $key => $value) {
+                $is_exsit = D('Config')->where("varname='%s'", $key)->find();
+                if ($is_exsit) {
+                    $data = array('varname' => $key, 'value' => $value);
+                    M('Config')->where("id='%d'", $is_exsit['id'])->save($data);
+                } else {
+                    $data = array('varname' => $key, 'value' => $value);
+                    M('Config')->add($data);
+                }
+            }
+            //设置成功后删除缓存
+            cache('Config', null);
+
+            return $this->success('设置成功');
+        }
+        $this->assign('config', cache('Config'));
         $this->display();
     }
 

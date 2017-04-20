@@ -38,6 +38,12 @@ return array(
             'remark' => '商城确认收货后行为',
             'type' => 1,
             'phpfile:DeliveryOrderBehavior|module:Shop',
+        ),
+        'shop_order_pay' => array(
+            'title' => '商城订单支付成功后行为',
+            'remark' => '商城订单支付成功后行为',
+            'type' => 1,
+            'phpfile:PayOrderBehavior|module:Shop',
         )
     ),
     //缓存，格式：缓存key=>array('module','model','action')
