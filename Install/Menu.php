@@ -23,6 +23,12 @@ return array(
                 "name" => "商城主页",
                 "child" => array(
                     array(
+                        "route" => "Shop/Shop/index",
+                        "type" => 1,
+                        "status" => 1,
+                        "name" => "店铺设置",
+                    ),
+                    array(
                         "route" => "Shop/Shop/recom",
                         "type" => 1,
                         "status" => 1,
