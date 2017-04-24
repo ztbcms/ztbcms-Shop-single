@@ -271,19 +271,6 @@ CREATE TABLE `cms_order` (
   KEY `pay_id` (`pay_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
--- 消息表
--- ----------------------------
-DROP TABLE IF EXISTS `cms_message`;
-CREATE TABLE `cms_message` (
-  `message_id` int(11) NOT NULL AUTO_INCREMENT,
-  `admin_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT '管理者id',
-  `message` text NOT NULL COMMENT '站内信内容',
-  `type` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '个体消息：0，全体消息1',
-  `category` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT ' 系统消息：0，活动消息：1',
-  `send_time` int(10) unsigned NOT NULL COMMENT '发送时间',
-  PRIMARY KEY (`message_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
--- ----------------------------
 -- 团购商品表
 -- ----------------------------
 DROP TABLE IF EXISTS `cms_group_buy`;
