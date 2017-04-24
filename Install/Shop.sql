@@ -27,8 +27,8 @@ CREATE TABLE `cms_user_level` (
 -- ----------------------------
 -- 用户地址表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_user_address`;
-CREATE TABLE `cms_user_address` (
+DROP TABLE IF EXISTS `cms_shop_user_address`;
+CREATE TABLE `cms_shop_user_address` (
   `address_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '表id',
   `userid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',
   `consignee` varchar(60) NOT NULL DEFAULT '' COMMENT '收货人',
