@@ -557,8 +557,8 @@ CREATE TABLE `cms_cart` (
 -- ----------------------------
 -- 商品品牌
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_brand`;
-CREATE TABLE `cms_brand` (
+DROP TABLE IF EXISTS `cms_shop_brand`;
+CREATE TABLE `cms_shop_brand` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT '品牌表',
   `name` varchar(60) NOT NULL DEFAULT '' COMMENT '品牌名称',
   `logo` varchar(80) NOT NULL DEFAULT '' COMMENT '品牌logo',
