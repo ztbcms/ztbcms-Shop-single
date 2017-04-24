@@ -169,25 +169,6 @@ CREATE TABLE `cms_return_goods` (
   `spec_key` varchar(64) CHARACTER SET utf8 DEFAULT '' COMMENT '商品规格key 对应tp_spec_goods_price 表',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
-
--- ----------------------------
--- 商城插件
--- ----------------------------
-DROP TABLE IF EXISTS `cms_plugin`;
-CREATE TABLE `cms_plugin` (
-  `code` varchar(13) DEFAULT NULL COMMENT '插件编码',
-  `name` varchar(55) DEFAULT NULL COMMENT '中文名字',
-  `version` varchar(255) DEFAULT NULL COMMENT '插件的版本',
-  `author` varchar(30) DEFAULT NULL COMMENT '插件作者',
-  `config` text COMMENT '配置信息',
-  `config_value` text COMMENT '配置值信息',
-  `desc` varchar(255) DEFAULT NULL COMMENT '插件描述',
-  `status` tinyint(1) DEFAULT '0' COMMENT '是否启用',
-  `type` varchar(50) DEFAULT NULL COMMENT '插件类型 payment支付 login 登陆 shipping物流',
-  `icon` varchar(255) DEFAULT NULL COMMENT '图标',
-  `bank_code` text COMMENT '网银配置信息',
-  `scene` tinyint(1) DEFAULT '0' COMMENT '使用场景 0 PC+手机 1 手机 2 PC'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
 -- 订单商品表
 -- ----------------------------
