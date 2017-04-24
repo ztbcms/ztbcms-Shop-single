@@ -482,23 +482,6 @@ CREATE TABLE `cms_shop_brand` (
   `is_hot` tinyint(1) DEFAULT '0' COMMENT '是否推荐',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
--- ----------------------------
--- 交易记录
--- ----------------------------
-DROP TABLE IF EXISTS `cms_account_log`;
-CREATE TABLE `cms_account_log` (
-  `log_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '日志id',
-  `userid` mediumint(8) unsigned NOT NULL COMMENT '用户id',
-  `user_money` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '用户金额',
-  `frozen_money` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '冻结金额',
-  `pay_points` mediumint(9) NOT NULL COMMENT '支付积分',
-  `change_time` int(10) unsigned NOT NULL COMMENT '变动时间',
-  `desc` varchar(255) NOT NULL COMMENT '描述',
-  `order_sn` varchar(50) DEFAULT NULL COMMENT '订单编号',
-  `order_id` int(10) DEFAULT NULL COMMENT '订单id',
-  PRIMARY KEY (`log_id`),
-  KEY `user_id` (`userid`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- 推荐位表
