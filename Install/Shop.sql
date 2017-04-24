@@ -49,8 +49,8 @@ CREATE TABLE `cms_shop_user_address` (
 -- ----------------------------
 -- 商品规格供货商表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_suppliers`;
-CREATE TABLE `cms_suppliers` (
+DROP TABLE IF EXISTS `cms_shop_suppliers`;
+CREATE TABLE `cms_shop_suppliers` (
   `suppliers_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT '供应商ID',
   `suppliers_name` varchar(255) NOT NULL DEFAULT '' COMMENT '供应商名称',
   `suppliers_desc` mediumtext NOT NULL COMMENT '供应商描述',
