@@ -1,18 +1,4 @@
 -- ----------------------------
--- 用户消息表
--- ----------------------------
-DROP TABLE IF EXISTS `cms_user_message`;
-CREATE TABLE `cms_user_message` (
-  `rec_id` int(11) NOT NULL AUTO_INCREMENT,
-  `userid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',
-  `message_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '消息id',
-  `category` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '系统消息0，活动消息',
-  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '查看状态：0未查看，1已查看',
-  PRIMARY KEY (`rec_id`),
-  KEY `user_id` (`userid`),
-  KEY `message_id` (`message_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
--- ----------------------------
 -- 用户等级表
 -- ----------------------------
 DROP TABLE IF EXISTS `cms_shop_user_level`;
