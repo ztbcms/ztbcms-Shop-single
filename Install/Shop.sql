@@ -169,27 +169,7 @@ CREATE TABLE `cms_return_goods` (
   `spec_key` varchar(64) CHARACTER SET utf8 DEFAULT '' COMMENT '商品规格key 对应tp_spec_goods_price 表',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
--- ----------------------------
--- 分成记录表
--- ----------------------------
-DROP TABLE IF EXISTS `cms_rebate_log`;
-CREATE TABLE `cms_rebate_log` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '分成记录表',
-  `user_id` int(11) DEFAULT '0' COMMENT '获佣用户',
-  `buy_user_id` int(11) DEFAULT '0' COMMENT '购买人id',
-  `nickname` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT '购买人名称',
-  `order_sn` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT '订单编号',
-  `order_id` int(11) DEFAULT '0' COMMENT '订单id',
-  `goods_price` decimal(10,2) DEFAULT '0.00' COMMENT '订单商品总额',
-  `money` decimal(10,2) DEFAULT '0.00' COMMENT '获佣金额',
-  `level` tinyint(1) DEFAULT '1' COMMENT '获佣用户级别',
-  `create_time` int(11) DEFAULT '0' COMMENT '分成记录生成时间',
-  `confirm` int(11) DEFAULT '0' COMMENT '确定收货时间',
-  `status` tinyint(1) DEFAULT '0' COMMENT '0未付款,1已付款, 2等待分成(已收货) 3已分成, 4已取消',
-  `confirm_time` int(11) DEFAULT '0' COMMENT '确定分成或者取消时间',
-  `remark` varchar(1024) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT '如果是取消, 有取消备注',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
 -- ----------------------------
 -- 商城插件
 -- ----------------------------
