@@ -271,29 +271,6 @@ CREATE TABLE `cms_order` (
   KEY `pay_id` (`pay_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
--- 团购商品表
--- ----------------------------
-DROP TABLE IF EXISTS `cms_group_buy`;
-CREATE TABLE `cms_group_buy` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '团购ID',
-  `title` varchar(255) NOT NULL COMMENT '活动名称',
-  `start_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '开始时间',
-  `end_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '结束时间',
-  `goods_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '商品ID',
-  `price` decimal(10,2) NOT NULL COMMENT '团购价格',
-  `goods_num` int(10) DEFAULT '0' COMMENT '商品参团数',
-  `buy_num` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '商品已购买数',
-  `order_num` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '已下单人数',
-  `virtual_num` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '虚拟购买数',
-  `rebate` decimal(10,1) NOT NULL COMMENT '折扣',
-  `intro` text COMMENT '本团介绍',
-  `goods_price` decimal(10,2) NOT NULL COMMENT '商品原价',
-  `goods_name` varchar(200) NOT NULL COMMENT '商品名称',
-  `recommended` tinyint(1) unsigned NOT NULL COMMENT '是否推荐 0.未推荐 1.已推荐',
-  `views` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '查看次数',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='团购商品表';
--- ----------------------------
 -- 商品类型
 -- ----------------------------
 DROP TABLE IF EXISTS `cms_goods_type`;
