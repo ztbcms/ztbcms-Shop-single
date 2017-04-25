@@ -8,6 +8,7 @@ namespace Shop\Controller;
 
 use Common\Controller\AdminBase;
 use Shop\Logic\GoodsLogic;
+use Shop\Service\GoodsService;
 
 class GoodsController extends AdminBase {
     /**
@@ -131,7 +132,7 @@ class GoodsController extends AdminBase {
         $cat_list = M('goods_category')->where("parent_id = 0")->select(); // 已经改成联动菜单
         $brandList = $GoodsLogic->getSortBrands();
         $goodsType = M("GoodsType")->select();
-        $suppliersList = M("suppliers")->select();
+        $suppliersList = M(GoodsService::SUPPLIERS_TABLE_NAME)->select();
         $this->assign('suppliersList', $suppliersList);
         $this->assign('level_cat', $level_cat);
         $this->assign('level_cat2', $level_cat2);

@@ -3,6 +3,9 @@ namespace Shop\Service;
 
 class GoodsService extends BaseService {
 
+    //定义供应商表名
+    const SUPPLIERS_TABLE_NAME = 'ShopSuppliers';
+
     /**
      * 获取指定的商品列表
      * @param array $where 查询条件
