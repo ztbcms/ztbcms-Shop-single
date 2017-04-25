@@ -119,20 +119,20 @@ function cart_freight2($shipping_code,$province,$city,$district,$weight)
      * @param  int $mode 0  返回数组形式  1 直接返回result
      * @return array|int
      */
-    public function getCouponMoney($user_id, $coupon_id,$mode)
-    {
-        $couponlist = M('CouponList')->where("uid = $user_id and id = $coupon_id")->find(); // 获取用户的优惠券
-        if(empty($couponlist)) {
-            if($mode == 1) return 0;    
-            return array('status'=>1,'msg'=>'','result'=>0);
-        }            
-        
-        $coupon = M('Coupon')->where("id = {$couponlist['cid']}")->find(); // 获取 优惠券类型表
-        $coupon['money'] = $coupon['money'] ? $coupon['money'] : 0;
-       
-        if($mode == 1) return $coupon['money'];
-        return array('status'=>1,'msg'=>'','result'=>$coupon['money']);        
-    }
+//    public function getCouponMoney($user_id, $coupon_id,$mode)
+//    {
+//        $couponlist = M('CouponList')->where("uid = $user_id and id = $coupon_id")->find(); // 获取用户的优惠券
+//        if(empty($couponlist)) {
+//            if($mode == 1) return 0;
+//            return array('status'=>1,'msg'=>'','result'=>0);
+//        }
+//
+//        $coupon = M('Coupon')->where("id = {$couponlist['cid']}")->find(); // 获取 优惠券类型表
+//        $coupon['money'] = $coupon['money'] ? $coupon['money'] : 0;
+//
+//        if($mode == 1) return $coupon['money'];
+//        return array('status'=>1,'msg'=>'','result'=>$coupon['money']);
+//    }
     
     /**
      * 根据优惠券代码获取优惠券金额
@@ -140,21 +140,21 @@ function cart_freight2($shipping_code,$province,$city,$district,$weight)
      * @param string|float $order_momey Description 订单金额
      * @return array -1 优惠券不存在 -2 优惠券已过期 -3 订单金额没达到使用券条件
      */
-    public function getCouponMoneyByCode($couponCode,$order_momey)
-    {
-        $couponlist = M('CouponList')->where("code = '$couponCode'")->find(); // 获取用户的优惠券
-        if(empty($couponlist)) 
-            return array('status'=>-9,'msg'=>'优惠券码不存在','result'=>'');
-        $coupon = M('Coupon')->where("id = {$couponlist['cid']}")->find(); // 获取优惠券类型表
-        if(time() > $coupon['use_end_time'])  
-            return array('status'=>-10,'msg'=>'优惠券已经过期','result'=>'');
-        if($order_momey < $coupon['condition'])
-            return array('status'=>-11,'msg'=>'金额没达到优惠券使用条件','result'=>'');
-        if($couponlist['order_id'] > 0)
-            return array('status'=>-12,'msg'=>'优惠券已被使用','result'=>'');
-        
-        return array('status'=>1,'msg'=>'','result'=>$coupon['money']);
-    }
+//    public function getCouponMoneyByCode($couponCode,$order_momey)
+//    {
+//        $couponlist = M('CouponList')->where("code = '$couponCode'")->find(); // 获取用户的优惠券
+//        if(empty($couponlist))
+//            return array('status'=>-9,'msg'=>'优惠券码不存在','result'=>'');
+//        $coupon = M('Coupon')->where("id = {$couponlist['cid']}")->find(); // 获取优惠券类型表
+//        if(time() > $coupon['use_end_time'])
+//            return array('status'=>-10,'msg'=>'优惠券已经过期','result'=>'');
+//        if($order_momey < $coupon['condition'])
+//            return array('status'=>-11,'msg'=>'金额没达到优惠券使用条件','result'=>'');
+//        if($couponlist['order_id'] > 0)
+//            return array('status'=>-12,'msg'=>'优惠券已被使用','result'=>'');
+//
+//        return array('status'=>1,'msg'=>'','result'=>$coupon['money']);
+//    }
     
     /**
      *  添加一个订单

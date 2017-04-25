@@ -108,7 +108,7 @@ class OrderService extends BaseService {
             'discount' => $cart_price['discount'],//'优惠券抵扣价格'
         );
 
-        $order_id = M("Order")->data($data)->add();
+        $order_id = M(self::TABLE_NAME)->data($data)->add();
         if (!$order_id) {
             $this->set_err_msg('添加订单失败');
 
@@ -164,7 +164,7 @@ class OrderService extends BaseService {
         // 4 删除已提交订单商品
 
         $where = array('userid' => $user_id, 'goods_id' => array('in', $order_goods_ids));
-        M('Cart')->where($where)->delete();
+        M(CartService::TABLE_NAME)->where($where)->delete();
 
 
         // 如果应付金额为0  可能是余额支付 + 积分 + 优惠券 这里订单支付状态直接变成已支付

@@ -189,7 +189,7 @@ class OrderLogic extends RelationModel {
      * @return bool
      */
     public function orderProcessHandle($order_id, $act) {
-        $order_sn = M('order')->where("order_id = $order_id")->getField("order_sn");
+        $order_sn = M(OrderService::TABLE_NAME)->where("order_id = $order_id")->getField("order_sn");
         $order_service = new OrderService();
         $res = null;
         switch ($act) {
@@ -232,12 +232,12 @@ class OrderLogic extends RelationModel {
     function order_pay_cancel($order_id) {
 
         //如果这笔订单已经取消付款过了
-        $count = M('order')->where("order_id = $order_id and pay_status = 1")->count();   // 看看有没已经处理过这笔订单  支付宝返回不重复处理操作
+        $count = M(OrderService::TABLE_NAME)->where("order_id = $order_id and pay_status = 1")->count();   // 看看有没已经处理过这笔订单  支付宝返回不重复处理操作
         if ($count == 0) {
             return false;
         }
         // 找出对应的订单
-        $order = M('order')->where("order_id = $order_id")->find();
+        $order = M(OrderService::TABLE_NAME)->where("order_id = $order_id")->find();
         // 增加对应商品的库存
         $orderGoodsArr = M('OrderGoods')->where("order_id = $order_id")->select();
         foreach ($orderGoodsArr as $key => $val) {
@@ -261,7 +261,7 @@ class OrderLogic extends RelationModel {
             }
         }
         // 根据order表查看消费记录 给他会员等级升级 修改他的折扣 和 总金额
-        M('order')->where("order_id=$order_id")->save(array('pay_status' => 0));
+        M(OrderService::TABLE_NAME)->where("order_id=$order_id")->save(array('pay_status' => 0));
         update_user_level($order['user_id']);
         // 记录订单操作日志
         logOrder($order['order_id'], '订单取消付款', '付款取消', $order['user_id']);

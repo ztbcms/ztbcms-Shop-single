@@ -304,19 +304,16 @@ function getGoodNum($goods_id, $key) {
  * 计算订单金额
  * @param string|int $user_id  用户id
  * @param string|int $order_goods  购买的商品
- * @param string|int $shipping_code  物流code
  * @param string|int $shipping_price 物流费用, 如果传递了物流费用 就不在计算物流费
  * @param string|int $province  省份
  * @param string|int $city 城市
  * @param string|int $district 县
  * @param string|int $pay_points 积分
  * @param int $user_money 余额
- * @param string|int $coupon_id  优惠券
- * @param string|int $couponCode  优惠码
  * @return array
  */
 
-function calculate_price($user_id = 0, $order_goods, $shipping_code = '', $shipping_price = 0, $province = 0, $city = 0, $district = 0, $pay_points = 0, $user_money = 0, $coupon_id = 0, $couponCode = '') {
+function calculate_price($user_id = 0, $order_goods, $shipping_price = 0, $province = 0, $city = 0, $district = 0, $pay_points = 0, $user_money = 0) {
     $cartLogic = new \Shop\Logic\CartLogic();
     $user = M('ShopUsers')->where("userid = $user_id")->find(); // 找出这个用户
 
@@ -347,18 +344,18 @@ function calculate_price($user_id = 0, $order_goods, $shipping_code = '', $shipp
     }
 
     // 优惠券处理操作
-    $coupon_price = 0;
-    if ($coupon_id && $user_id) {
-        $coupon_price = $cartLogic->getCouponMoney($user_id, $coupon_id, 1); // 下拉框方式选择优惠券
-    }
-    if ($couponCode && $user_id) {
-        $coupon_result = $cartLogic->getCouponMoneyByCode($couponCode, $goods_price); // 根据 优惠券 号码获取的优惠券
-        if ($coupon_result['status'] < 0) {
-            return $coupon_result;
-        }
-
-        $coupon_price = $coupon_result['result'];
-    }
+//    $coupon_price = 0;
+//    if ($coupon_id && $user_id) {
+//        $coupon_price = $cartLogic->getCouponMoney($user_id, $coupon_id, 1); // 下拉框方式选择优惠券
+//    }
+//    if ($couponCode && $user_id) {
+//        $coupon_result = $cartLogic->getCouponMoneyByCode($couponCode, $goods_price); // 根据 优惠券 号码获取的优惠券
+//        if ($coupon_result['status'] < 0) {
+//            return $coupon_result;
+//        }
+//
+//        $coupon_price = $coupon_result['result'];
+//    }
     // 处理物流
     // if($shipping_price == 0)
     // {
@@ -377,6 +374,7 @@ function calculate_price($user_id = 0, $order_goods, $shipping_code = '', $shipp
     }
     // 返回结果状态
 
+    $coupon_price = 0;
     $order_amount = $goods_price + $shipping_price - $coupon_price; // 应付金额 = 商品价格 + 物流费 - 优惠券
 
     $pay_points = ($pay_points / tpCache('shopping.point_rate')); // 积分支付 100 积分等于 1块钱
@@ -770,7 +768,7 @@ function cart_goods_num($user_id = 0, $session_id = '') {
     $where = " session_id = '$session_id' ";
     $user_id && $where .= " or user_id = $user_id ";
     // 查找购物车数量
-    $cart_count = M('Cart')->where($where)->sum('goods_num');
+    $cart_count = M('ShopCart')->where($where)->sum('goods_num');
     $cart_count = $cart_count ? $cart_count : 0;
     return $cart_count;
 }
