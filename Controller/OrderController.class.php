@@ -4,6 +4,7 @@ namespace Shop\Controller;
 
 use Shop\Logic\OrderLogic;
 use Shop\Logic\CartLogic;
+use Shop\Service\DeliveryService;
 use Shop\Service\OrderService;
 use Shop\Util\AjaxPage;
 use Common\Controller\AdminBase;
@@ -133,7 +134,7 @@ class OrderController extends AdminBase {
         $shipping_status = I('shipping_status');
         $condition['shipping_status'] = empty($shipping_status) ? array('neq', 1) : $shipping_status;
         $condition['order_status'] = array('in', '1,2,4');
-        $count = M('order')->where($condition)->count();
+        $count = M(OrderService::TABLE_NAME)->where($condition)->count();
         $page = I('page',1);
         $limit = I('limit',10);
         $page_count = ceil ($count / $limit);
@@ -141,7 +142,7 @@ class OrderController extends AdminBase {
             'page' => $page,
             'page_count' => $page_count,
         );
-        $orderList = M('order')->where($condition)->page($page,$limit)->order('add_time DESC')->select();
+        $orderList = M(OrderService::TABLE_NAME)->where($condition)->page($page,$limit)->order('add_time DESC')->select();
 
         $this->ajaxReturn(['orderList'=>$orderList, 'page'=>$pageArr]);
     }
@@ -567,7 +568,7 @@ class OrderController extends AdminBase {
             $orderLogic = new OrderLogic();
             $order = $orderLogic->getOrderInfo($order_id);
             $orderGoods = $orderLogic->getOrderGoods($order_id);
-            $delivery_record = M('delivery_doc')->where('order_id=' . $order_id)->select();
+            $delivery_record = M(DeliveryService::TABLE_NAME)->where('order_id=' . $order_id)->select();
             if ($delivery_record) {
                 $order['invoice_no'] = $delivery_record[count($delivery_record) - 1]['invoice_no'];
             }
@@ -840,10 +841,8 @@ class OrderController extends AdminBase {
         $city = M('AreaCity')->where(array('parent_id' => $order['province'], 'level' => 2))->select();
         //  获取订单地区
         $area = M('AreaDistrict')->where(array('parent_id' => $order['city'], 'level' => 3))->select();
-        //  获取配送方式
-        $shipping_list = M('plugin')->where(array('status' => 1, 'type' => 'shipping'))->select();
         //  获取支付方式
-        $payment_list = M('plugin')->where(array('status' => 1, 'type' => 'payment'))->select();
+        $payment_list = OrderService::PAY_WAY();
         if (IS_POST) {
             $order['user_id'] = I('user_id');// 用户id 可以为空
             $order['consignee'] = I('consignee');// 收货人
@@ -856,20 +855,8 @@ class OrderController extends AdminBase {
             $order['admin_note'] = I('admin_note'); // 管理员备注            
             $order['order_sn'] = date('YmdHis') . mt_rand(1000, 9999); // 订单编号;
             $order['admin_note'] = I('admin_note'); // 
-            $order['add_time'] = time(); //                    
-            $order['shipping_code'] = I('shipping');// 物流方式
-            $order['shipping_name'] = M('plugin')->where(array(
-                'status' => 1,
-                'type' => 'shipping',
-                'code' => I('shipping')
-            ))->getField('name');
-            $order['pay_code'] = I('payment');// 支付方式            
-            $order['pay_name'] = M('plugin')->where(array(
-                'status' => 1,
-                'type' => 'payment',
-                'code' => I('payment')
-            ))->getField('name');
-
+            $order['add_time'] = time(); //添加时间
+            $order['pay_code'] = I('payment');// 支付方式
             $goods_id_arr = I("goods_id");
             $orderLogic = new OrderLogic();
             $order_goods = $orderLogic->get_spec_goods($goods_id_arr);
@@ -885,7 +872,7 @@ class OrderController extends AdminBase {
             $order['total_amount'] = $result['result']['total_amount']; // 订单总价
 
             // 添加订单
-            $order_id = M('order')->add($order);
+            $order_id = M(OrderService::TABLE_NAME)->add($order);
             if ($order_id) {
                 foreach ($order_goods as $key => $val) {
                     $val['order_id'] = $order_id;
@@ -900,7 +887,6 @@ class OrderController extends AdminBase {
                 $this->error('添加失败');
             }
         }
-        $this->assign('shipping_list', $shipping_list);
         $this->assign('payment_list', $payment_list);
         $this->assign('province', $province);
         $this->assign('city', $city);

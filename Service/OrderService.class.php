@@ -34,6 +34,17 @@ class OrderService extends BaseService {
     }
 
     /**
+     * 支付方式
+     */
+    static function PAY_WAY() {
+        return array(
+            'alipay' => '支付宝支付',
+            'wxpay' => '微信支付',
+            'cod' => '货到付款'
+        );
+    }
+
+    /**
      * 发货状态
      */
     static function SHIPPING_STATUS() {
@@ -66,7 +77,7 @@ class OrderService extends BaseService {
         $cart_price
     ) {
         // 0插入订单 order
-        $address = M('UserAddress')->where("address_id = $address_id")->find();
+        $address = M(UserService::ADDRESS_TABLE_NAME)->where("address_id = $address_id")->find();
         $shipping = [];
         $data = array(
             'order_sn' => date('YmdHis') . rand(1000, 9999), // 订单编号
@@ -105,7 +116,7 @@ class OrderService extends BaseService {
         }
         // 记录订单操作日志
         logOrder($order_id, '您提交了订单，请等待系统确认', '提交订单', $user_id);
-        $order = M('Order')->where("order_id = $order_id")->find();
+        $order = M(self::TABLE_NAME)->where("order_id = $order_id")->find();
         // 1插入order_goods 表
         $order_goods_ids = array();
         foreach ($cartList as $key => $val) {
@@ -481,7 +492,7 @@ class OrderService extends BaseService {
     }
 
     static function logOrder($order_id, $action_note, $status_desc, $user_id = 0) {
-        $order = M('order')->where("order_id = $order_id")->find();
+        $order = M(self::TABLE_NAME)->where("order_id = $order_id")->find();
         $action_info = array(
             'order_id' => $order_id,
             'action_user' => $user_id,
