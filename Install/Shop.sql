@@ -441,8 +441,8 @@ CREATE TABLE `cms_delivery_doc` (
 -- ----------------------------
 -- 购物车
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_cart`;
-CREATE TABLE `cms_cart` (
+DROP TABLE IF EXISTS `cms_shop_cart`;
+CREATE TABLE `cms_shop_cart` (
   `id` int(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '购物车表',
   `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',
   `session_id` char(128) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT 'session',

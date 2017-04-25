@@ -13,7 +13,7 @@ class CartController extends BaseController {
         if (I('get.ids')) {
             $where['id'] = ['in', I('get.ids')];
         }
-        $cart_list = M("Cart")->where($where)->order('id DESC')->select();
+        $cart_list = M(CartService::TABLE_NAME)->where($where)->order('id DESC')->select();
         $this->success($cart_list ? $cart_list : [], '', true);
     }
 
@@ -24,7 +24,7 @@ class CartController extends BaseController {
      */
     public function set_num() {
         $cart_id = I('cart_id');
-        $cart = M('Cart')->find($cart_id);
+        $cart = M(CartService::TABLE_NAME)->find($cart_id);
         if ($cart && $cart_id) {
             $set_num = (int)I('set_num');
             $goods_id = $cart['goods_id'];
@@ -88,7 +88,7 @@ class CartController extends BaseController {
         $id = I('post.cart_id');
         $where['userid'] = $this->userid;
         $where['id'] = $id;
-        $res = M('Cart')->where($where)->delete();
+        $res = M(CartService::TABLE_NAME)->where($where)->delete();
         if ($res) {
             $this->success('删除成功', '', true);
         } else {

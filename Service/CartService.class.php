@@ -3,6 +3,8 @@ namespace Shop\Service;
 
 class CartService extends BaseService {
 
+    const TABLE_NAME = 'ShopCart';
+
     /**
      * 加入购物车
      *
@@ -39,14 +41,14 @@ class CartService extends BaseService {
             $where .= " and  session_id = '$session_id' ";
         }
 
-        $cart_goods = M('Cart')->where($where)->find(); // 查找购物车是否已经存在该商品
+        $cart_goods = M(self::TABLE_NAME)->where($where)->find(); // 查找购物车是否已经存在该商品
         $price = $spec_price ? $spec_price : $goods['shop_price']; // 如果商品规格没有指定价格则用商品原始价格
 
 
         if ($user_id) {
             $where .= "  or user_id= $user_id ";
         }
-        $catr_count = M('Cart')->where($where)->count(); // 查找购物车商品总数量
+        $catr_count = M(self::TABLE_NAME)->where($where)->count(); // 查找购物车商品总数量
         if ($catr_count >= 20) {
             $this->set_err_msg('购物车最多只能放20种商品');
 
@@ -103,11 +105,11 @@ class CartService extends BaseService {
             $update = array();
             $update['goods_num'] = ($cart_goods['goods_num'] + $goods_num);
             $update['add_time'] = time();
-            $res = M('Cart')->where("id =" . $cart_goods['id'])->save($update); // 数量相加
+            $res = M(self::TABLE_NAME)->where("id =" . $cart_goods['id'])->save($update); // 数量相加
             $cart_count = cart_goods_num($user_id, $session_id); // 查找购物车数量
             setcookie('cn', $cart_count, null, '/');
         } else {
-            $res = M('Cart')->add($data);
+            $res = M(self::TABLE_NAME)->add($data);
             $cart_count = cart_goods_num($user_id, $session_id); // 查找购物车数量
             setcookie('cn', $cart_count, null, '/');
         }
