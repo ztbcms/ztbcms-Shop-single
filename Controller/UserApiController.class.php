@@ -71,7 +71,7 @@ class UserApiController extends BaseController {
      * 用户地址列表
      */
     public function address_list() {
-        $address_lists = M('UserAddress')->where(array('userid' => $this->userid))->order('is_default desc')->select();
+        $address_lists = M(UserService::ADDRESS_TABLE_NAME)->where(array('userid' => $this->userid))->order('is_default desc')->select();
         $list = [];
         foreach ($address_lists as $key => $value) {
             $value['province_name'] = getRegionName($value['province'], 1);
@@ -123,8 +123,8 @@ class UserApiController extends BaseController {
      */
     public function set_default() {
         $id = I('post.id');
-        M('UserAddress')->where(array('userid' => $this->userid))->save(array('is_default' => 0));
-        $row = M('UserAddress')->where(array(
+        M(UserService::ADDRESS_TABLE_NAME)->where(array('userid' => $this->userid))->save(array('is_default' => 0));
+        $row = M(UserService::ADDRESS_TABLE_NAME)->where(array(
             'userid' => $this->userid,
             'address_id' => $id
         ))->save(array('is_default' => 1));
@@ -140,12 +140,12 @@ class UserApiController extends BaseController {
      */
     public function del_address() {
         $id = I('post.id');
-        $address = M('UserAddress')->where("address_id = $id")->find();
-        $row = M('UserAddress')->where(array('userid' => $this->userid, 'address_id' => $id))->delete();
+        $address = M(UserService::ADDRESS_TABLE_NAME)->where("address_id = $id")->find();
+        $row = M(UserService::ADDRESS_TABLE_NAME)->where(array('userid' => $this->userid, 'address_id' => $id))->delete();
         // 如果删除的是默认收货地址 则要把第一个地址设置为默认收货地址
         if ($address['is_default'] == 1) {
-            $address2 = M('UserAddress')->where("userid = {$this->userid}")->find();
-            $address2 && M('UserAddress')->where("address_id = {$address2['address_id']}")->save(array('is_default' => 1));
+            $address2 = M(UserService::ADDRESS_TABLE_NAME)->where("userid = {$this->userid}")->find();
+            $address2 && M(UserService::ADDRESS_TABLE_NAME)->where("address_id = {$address2['address_id']}")->save(array('is_default' => 1));
         }
         if (!$row) {
             $this->error('操作失败', '', true);

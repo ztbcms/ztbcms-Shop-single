@@ -5,6 +5,10 @@ use Record\Records\TradeRecord;
 use Record\Service\TradeRecordService;
 
 class UserService extends BaseService {
+
+    //定义用户地址表名
+    const ADDRESS_TABLE_NAME = 'ShopUserAddress';
+
     public function login($username, $password) {
         if (!$username || !$password) {
             $this->set_err_msg('请填写账号或密码');
@@ -107,7 +111,7 @@ class UserService extends BaseService {
     public function add_eidt_address($user_id, $address_id = 0, $data) {
         $post = $data;
         if ($address_id == 0) {
-            $c = M('UserAddress')->where("userid = $user_id")->count();
+            $c = M(self::ADDRESS_TABLE_NAME)->where("userid = $user_id")->count();
             if ($c >= 20) {
                 $this->set_err_msg('最多只能添加20个收货地址');
 
@@ -139,11 +143,11 @@ class UserService extends BaseService {
 
         //编辑模式
         if ($address_id > 0) {
-            $address = M('UserAddress')->where(array('address_id' => $address_id, 'userid' => $user_id))->find();
+            $address = M(self::ADDRESS_TABLE_NAME)->where(array('address_id' => $address_id, 'userid' => $user_id))->find();
             if ($post['is_default'] == 1 && $address['is_default'] != 1) {
-                M('UserAddress')->where(array('userid' => $user_id))->save(array('is_default' => 0));
+                M(self::ADDRESS_TABLE_NAME)->where(array('userid' => $user_id))->save(array('is_default' => 0));
             }
-            $row = M('user_address')->where(array('address_id' => $address_id, 'user_id' => $user_id))->save($post);
+            $row = M(self::ADDRESS_TABLE_NAME)->where(array('address_id' => $address_id, 'user_id' => $user_id))->save($post);
             if (!$row) {
                 return true;
             }
@@ -154,19 +158,19 @@ class UserService extends BaseService {
         $post['userid'] = $user_id;
 
         // 如果目前只有一个收货地址则改为默认收货地址
-        $c = M('UserAddress')->where("userid = {$post['userid']}")->count();
+        $c = M(self::ADDRESS_TABLE_NAME)->where("userid = {$post['userid']}")->count();
         if ($c == 0) {
             $post['is_default'] = 1;
         }
 
-        $address_id = M('UserAddress')->add($post);
+        $address_id = M(self::ADDRESS_TABLE_NAME)->add($post);
         //如果设为默认地址
-        $insert_id = M('UserAddress')->getLastInsID();
+        $insert_id = M(self::ADDRESS_TABLE_NAME)->getLastInsID();
         $map['userid'] = $user_id;
         $map['address_id'] = array('neq', $insert_id);
 
         if ($post['is_default'] == 1) {
-            M('UserAddress')->where($map)->save(array('is_default' => 0));
+            M(self::ADDRESS_TABLE_NAME)->where($map)->save(array('is_default' => 0));
         }
         if (!$address_id) {
             $this->set_err_msg('添加失败');
