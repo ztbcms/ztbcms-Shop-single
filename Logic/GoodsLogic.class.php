@@ -2,6 +2,8 @@
 namespace Shop\Logic;
 
 use Common\Model\RelationModel;
+use Shop\Service\BrandService;
+
 /**
  * 分类逻辑定义
  * Class CatsLogic
@@ -489,8 +491,8 @@ class GoodsLogic extends RelationModel{
      *  获取排好序的品牌列表    
      */
     function getSortBrands(){
-        $brandList =  M("Brand")->select();
-        $brandIdArr =  M("Brand")->where("name in (select `name` from `".C('DB_PREFIX')."brand` group by name having COUNT(id) > 1)")->getField('id,cat_id'); 
+        $brandList =  M(BrandService::TABLIE_NAME)->select();
+        $brandIdArr =  M(BrandService::TABLIE_NAME)->where("name in (select `name` from `".C('DB_PREFIX')."shop_brand` group by name having COUNT(id) > 1)")->getField('id,cat_id');
         $goodsCategoryArr = M('goodsCategory')->where("level = 1")->getField('id,name');
         $nameList = array();
         foreach($brandList as $k => $v)

@@ -7,6 +7,7 @@
 namespace Shop\Controller;
 
 use Common\Controller\AdminBase;
+use Shop\Service\BrandService;
 use Shop\Util\Page;
 
 class BrandController extends AdminBase {
@@ -23,7 +24,7 @@ class BrandController extends AdminBase {
 
     public function getList() {
         if (IS_AJAX) {
-            $model = M("Brand");
+            $model = M(BrandService::TABLIE_NAME);
             $keyword = I('keyword');
             $where = $keyword ? " name like '%$keyword%' " : "";
             $count = $model->where($where)->count();
@@ -51,7 +52,7 @@ class BrandController extends AdminBase {
             $post = I('post.');
             $id = I('id');
 
-            $model = M("Brand");
+            $model = M(BrandService::TABLIE_NAME);
 
             if ($id == '') {
                 $res = $model->add($post['detail']);
@@ -67,7 +68,7 @@ class BrandController extends AdminBase {
     public function getBrandDetail() {
         $id = I('id');
         if (IS_AJAX) {
-            $model = M("Brand");
+            $model = M(BrandService::TABLIE_NAME);
             $cat_list = M('goods_category')->select(); // 已经改成联动菜单
 
             $brand = $model->find($id);
@@ -101,7 +102,7 @@ class BrandController extends AdminBase {
             $this->error('此品牌有商品在用不得删除!');
         }
 
-        $model = M("Brand");
+        $model = M(BrandService::TABLIE_NAME);
         $model->where("id = '%d' ", $id)->delete();
         $this->success("操作成功");
     }
