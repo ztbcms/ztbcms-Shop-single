@@ -323,21 +323,17 @@ function calculate_price($user_id = 0, $order_goods, $shipping_code = '', $shipp
     if (empty($order_goods)) {
         return array('status' => -9, 'msg' => '商品列表不能为空', 'result' => '');
     }
-
-    $goods_id_arr = get_arr_column($order_goods, 'goods_id');
-    $goods_arr = M('goods')->where("goods_id in(" . implode(',', $goods_id_arr) . ")")->getField('goods_id,weight,market_price,is_free_shipping'); // 商品id 和重量对应的键值对
+//    $goods_id_arr = get_arr_column($order_goods, 'goods_id');
 
     foreach ($order_goods as $key => $val) {
+        $goods_price=0;
+        $cut_fee=0;
+        $anum=0;
         // 如果传递过来的商品列表没有定义会员价
         if (!array_key_exists('member_goods_price', $val)) {
             $user['discount'] = $user['discount'] ? $user['discount'] : 1; // 会员折扣 不能为 0
             $order_goods[$key]['member_goods_price'] = $val['member_goods_price'] = $val['goods_price'] * $user['discount'];
         }
-        //如果商品不是包邮的
-        if ($goods_arr[$val['goods_id']]['is_free_shipping'] == 0) {
-            $goods_weight += $goods_arr[$val['goods_id']]['weight'] * $val['goods_num'];
-        }
-        //累积商品重量 每种商品的重量 * 数量
 
         $order_goods[$key]['goods_fee'] = $val['goods_num'] * $val['member_goods_price']; // 小计
         $order_goods[$key]['store_count'] = getGoodNum($val['goods_id'], $val['spec_key']); // 最多可购买的库存数量
@@ -774,7 +770,7 @@ function cart_goods_num($user_id = 0, $session_id = '') {
     $where = " session_id = '$session_id' ";
     $user_id && $where .= " or user_id = $user_id ";
     // 查找购物车数量
-    $cart_count = M('ShopCart')->where($where)->sum('goods_num');
+    $cart_count = M('Cart')->where($where)->sum('goods_num');
     $cart_count = $cart_count ? $cart_count : 0;
     return $cart_count;
 }

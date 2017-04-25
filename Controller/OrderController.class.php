@@ -4,6 +4,7 @@ namespace Shop\Controller;
 
 use Shop\Logic\OrderLogic;
 use Shop\Logic\CartLogic;
+use Shop\Service\BrandService;
 use Shop\Service\DeliveryService;
 use Shop\Service\OrderService;
 use Shop\Util\AjaxPage;
@@ -898,7 +899,7 @@ class OrderController extends AdminBase {
      * 选择搜索商品
      */
     public function search_goods() {
-        $brandList = M("brand")->select();
+        $brandList = M(BrandService::TABLIE_NAME)->select();
         $categoryList = M("goods_category")->select();
         $this->assign('categoryList', $categoryList);
         $this->assign('brandList', $brandList);
@@ -929,7 +930,7 @@ class OrderController extends AdminBase {
     }
 
     public function ajaxOrderNotice() {
-        $order_amount = M('order')->where("order_status=0 and (pay_status=1 or pay_code='cod')")->count();
+        $order_amount = M(OrderService::TABLE_NAME)->where("order_status=0 and (pay_status=1 or pay_code='cod')")->count();
         echo $order_amount;
     }
 }

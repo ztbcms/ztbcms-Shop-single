@@ -4,6 +4,7 @@
 namespace Shop\Logic;
 
 use Common\Model\RelationModel;
+use Shop\Service\DeliveryService;
 use Shop\Service\OrderService;
 
 class OrderLogic extends RelationModel {
@@ -38,7 +39,7 @@ class OrderLogic extends RelationModel {
      */
     public function getOrderInfo($order_id) {
         //  订单总金额查询语句		
-        $order = M('order')->where("order_id = $order_id")->find();
+        $order = M(OrderService::TABLE_NAME)->where("order_id = $order_id")->find();
         $order['address2'] = $this->getAddressName($order['province'], $order['city'], $order['district']);
         $order['address2'] = $order['address2'] . $order['address'];
 
@@ -92,7 +93,7 @@ class OrderLogic extends RelationModel {
      * @return mixed
      */
     public function orderActionLog($order_id, $action, $note = '') {
-        $order = M('order')->where(array('order_id' => $order_id))->find();
+        $order = M(OrderService::TABLE_NAME)->where(array('order_id' => $order_id))->find();
         $data['order_id'] = $order_id;
         $data['action_user'] = session('admin_id');
         $data['action_note'] = $note;
@@ -290,11 +291,11 @@ class OrderLogic extends RelationModel {
         $data['city'] = $order['city'];
         $data['district'] = $order['district'];
         $data['address'] = $order['address'];
-        $data['shipping_code'] = $data['shipping_code'];
-        $data['shipping_name'] = $data['shipping_name'];
+//        $data['shipping_code'] = $data['shipping_code'];
+//        $data['shipping_name'] = $data['shipping_name'];
         $data['shipping_price'] = $order['shipping_price'];
         $data['create_time'] = time();
-        $did = M('delivery_doc')->add($data);
+        $did = M(DeliveryService::TABLE_NAME)->add($data);
         $is_delivery = 0;
         foreach ($orderGoods as $k => $v) {
             if ($v['is_send'] == 1) {
@@ -315,7 +316,7 @@ class OrderLogic extends RelationModel {
         } else {
             $updata['shipping_status'] = 2;
         }
-        M('order')->where("order_id=" . $data['order_id'])->save($updata);//改变订单状态
+        M(OrderService::TABLE_NAME)->where("order_id=" . $data['order_id'])->save($updata);//改变订单状态
         $s = $this->orderActionLog($order['order_id'], 'delivery', $data['note']);//操作日志
         return $s && $r;
     }
@@ -343,11 +344,11 @@ class OrderLogic extends RelationModel {
      * @return bool
      */
     function delOrder($order_id) {
-        $order = M('order')->where(array('order_id' => $order_id))->find();
+        $order = M(OrderService::TABLE_NAME)->where(array('order_id' => $order_id))->find();
         if ($order['order_status'] == 3 || $order['order_status'] == 5) {
             return false;
         }
-        $a = M('order')->where(array('order_id' => $order_id))->delete();
+        $a = M(OrderService::TABLE_NAME)->where(array('order_id' => $order_id))->delete();
         $b = M('order_goods')->where(array('order_id' => $order_id))->delete();
 
         return $a && $b;

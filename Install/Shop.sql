@@ -410,8 +410,8 @@ CREATE TABLE `cms_goods` (
 -- ----------------------------
 -- 发货单
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_delivery_doc`;
-CREATE TABLE `cms_delivery_doc` (
+DROP TABLE IF EXISTS `cms_shop_delivery`;
+CREATE TABLE `cms_shop_delivery` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '发货单ID',
   `order_id` int(11) unsigned NOT NULL COMMENT '订单ID',
   `order_sn` varchar(64) NOT NULL COMMENT '订单编号',

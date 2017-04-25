@@ -3,6 +3,8 @@
 namespace Shop\Logic;
 
 use Common\Model\RelationModel;
+use Shop\Service\CartService;
+
 /**
  * 购物车 逻辑定义
  * Class CatsLogic
@@ -37,7 +39,7 @@ class CartLogic extends RelationModel
             $user['user_id'] = 0;
         }
                                 
-        $cartList = M('Cart')->where($where)->select();  // 获取购物车商品 
+        $cartList = M(CartService::TABLE_NAME)->where($where)->select();  // 获取购物车商品
         $anum = $total_price =  $cut_fee = 0;
 
         foreach ($cartList as $k=>$val){
