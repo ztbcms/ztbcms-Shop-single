@@ -184,17 +184,17 @@
 						{							
 							$("span[id^='err_']").each(function(){
 								$(this).hide();
-							});																				
-									
+							});
+
 						   ($.trim($('#consignee').val()) == '') && $('#err_consignee').show();
 						   ($.trim($('#province').val()) == '') && $('#err_address').show();
 						   ($.trim($('#city').val()) == '') && $('#err_address').show();
 						   ($.trim($('#district').val()) == '') && $('#err_address').show();
 						   ($.trim($('#address').val()) == '') && $('#err_address').show();
-						   ($.trim($('#mobile').val()) == '') && $('#err_mobile').show();						   						   						   	
-						   ($("input[name^='goods_id']").length ==0) && $('#err_goods').show();							
-						   
-						   if($("span[id^='err_']:visible").length > 0 ) 
+						   ($.trim($('#mobile').val()) == '') && $('#err_mobile').show();
+						   ($("input[name^='goods_id']").length ==0) && $('#err_goods').show();
+
+						   if($("span[id^='err_']:visible").length > 0 )
 						      return false;
 							  
 						   $('#order-add').submit();	  

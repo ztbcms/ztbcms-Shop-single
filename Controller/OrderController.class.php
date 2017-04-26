@@ -732,7 +732,7 @@ class OrderController extends AdminBase {
         $this->assign('list', $list);
         $this->assign('page', $show);
         // $admin = M('admin')->getField('admin_id,user_name');
-        $this->assign('admin', $admin);
+//        $this->assign('admin', $admin);
         $this->display();
     }
 
@@ -845,7 +845,6 @@ class OrderController extends AdminBase {
         //  获取支付方式
         $payment_list = OrderService::PAY_WAY();
         if (IS_POST) {
-
             $order['user_id'] = I('user_id');// 用户id 可以为空
             $order['consignee'] = I('consignee');// 收货人
             $order['province'] = I('province'); // 省份
@@ -856,15 +855,14 @@ class OrderController extends AdminBase {
             $order['invoice_title'] = I('invoice_title');// 发票
             $order['admin_note'] = I('admin_note'); // 管理员备注            
             $order['order_sn'] = date('YmdHis') . mt_rand(1000, 9999); // 订单编号;
-            $order['admin_note'] = I('admin_note'); // 
             $order['add_time'] = time(); //添加时间
             $order['pay_code'] = I('payment');// 支付方式
+
             $goods_id_arr = I("goods_id");
             $orderLogic = new OrderLogic();
             $order_goods = $orderLogic->get_spec_goods($goods_id_arr);
-            $result = calculate_price($order['user_id'], $order_goods, 0, $order['province'],
-                $order['city'], $order['district'], 0, 0);
-            echo 'zhutibang';exit;
+            $result = calculate_price($order['user_id'], $order_goods, $order['shipping_code'], 0, $order['province'],
+                $order['city'], $order['district'], 0, 0, 0, 0);
             if ($result['status'] < 0) {
                 $this->error($result['msg']);
             }
@@ -873,8 +871,9 @@ class OrderController extends AdminBase {
             $order['shipping_price'] = $result['result']['shipping_price']; //物流费
             $order['order_amount'] = $result['result']['order_amount']; // 应付金额
             $order['total_amount'] = $result['result']['total_amount']; // 订单总价
+
             // 添加订单
-            $order_id = M(OrderService::TABLE_NAME)->add($order);
+            $order_id = M('order')->add($order);
             if ($order_id) {
                 foreach ($order_goods as $key => $val) {
                     $val['order_id'] = $order_id;

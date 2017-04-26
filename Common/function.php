@@ -304,33 +304,45 @@ function getGoodNum($goods_id, $key) {
  * 计算订单金额
  * @param string|int $user_id  用户id
  * @param string|int $order_goods  购买的商品
+ * @param string|int $shipping_code  物流code
  * @param string|int $shipping_price 物流费用, 如果传递了物流费用 就不在计算物流费
  * @param string|int $province  省份
  * @param string|int $city 城市
  * @param string|int $district 县
  * @param string|int $pay_points 积分
  * @param int $user_money 余额
+ * @param string|int $coupon_id  优惠券
+ * @param string|int $couponCode  优惠码
  * @return array
  */
 
-function calculate_price($user_id = 0, $order_goods, $shipping_price = 0, $province = 0, $city = 0, $district = 0, $pay_points = 0, $user_money = 0) {
-    $cartLogic = new \Shop\Logic\CartLogic();
+function calculate_price($user_id = 0, $order_goods, $shipping_code = '', $shipping_price = 0, $province = 0, $city = 0, $district = 0, $pay_points = 0, $user_money = 0, $coupon_id = 0, $couponCode = '') {
+//    $cartLogic = new \Shop\Logic\CartLogic();
+    $goods_weight = 0; //商品重量
+    $goods_price = 0; //商品总价
+    $cut_fee = 0; //优惠价格
+    $anum = 0; //购买数量
+
     $user = M('ShopUsers')->where("userid = $user_id")->find(); // 找出这个用户
 
     if (empty($order_goods)) {
         return array('status' => -9, 'msg' => '商品列表不能为空', 'result' => '');
     }
-//    $goods_id_arr = get_arr_column($order_goods, 'goods_id');
+
+    $goods_id_arr = get_arr_column($order_goods, 'goods_id');
+    $goods_arr = M('goods')->where("goods_id in(" . implode(',', $goods_id_arr) . ")")->getField('goods_id,weight,market_price,is_free_shipping'); // 商品id 和重量对应的键值对
 
     foreach ($order_goods as $key => $val) {
-        $goods_price=0;
-        $cut_fee=0;
-        $anum=0;
         // 如果传递过来的商品列表没有定义会员价
         if (!array_key_exists('member_goods_price', $val)) {
             $user['discount'] = $user['discount'] ? $user['discount'] : 1; // 会员折扣 不能为 0
             $order_goods[$key]['member_goods_price'] = $val['member_goods_price'] = $val['goods_price'] * $user['discount'];
         }
+        //如果商品不是包邮的
+        if ($goods_arr[$val['goods_id']]['is_free_shipping'] == 0) {
+            $goods_weight += $goods_arr[$val['goods_id']]['weight'] * $val['goods_num'];
+        }
+        //累积商品重量 每种商品的重量 * 数量
 
         $order_goods[$key]['goods_fee'] = $val['goods_num'] * $val['member_goods_price']; // 小计
         $order_goods[$key]['store_count'] = getGoodNum($val['goods_id'], $val['spec_key']); // 最多可购买的库存数量
@@ -374,7 +386,6 @@ function calculate_price($user_id = 0, $order_goods, $shipping_price = 0, $provi
     }
     // 返回结果状态
 
-    $coupon_price = 0;
     $order_amount = $goods_price + $shipping_price - $coupon_price; // 应付金额 = 商品价格 + 物流费 - 优惠券
 
     $pay_points = ($pay_points / tpCache('shopping.point_rate')); // 积分支付 100 积分等于 1块钱
@@ -388,15 +399,15 @@ function calculate_price($user_id = 0, $order_goods, $shipping_price = 0, $provi
     //订单总价  应付金额  物流费  商品总价 节约金额 共多少件商品 积分  余额  优惠券
     $result = array(
         'total_amount' => $total_amount, // 商品总价
-         'order_amount' => $order_amount, // 应付金额
-         'shipping_price' => $shipping_price, // 物流费
-         'goods_price' => $goods_price, // 商品总价
-         'cut_fee' => $cut_fee, // 共节约多少钱
-         'anum' => $anum, // 商品总共数量
-         'integral_money' => $pay_points, // 积分抵消金额
-         'user_money' => $user_money, // 使用余额
-         'coupon_price' => $coupon_price, // 优惠券抵消金额
-         'order_goods' => $order_goods, // 商品列表 多加几个字段原样返回
+        'order_amount' => $order_amount, // 应付金额
+        'shipping_price' => $shipping_price, // 物流费
+        'goods_price' => $goods_price, // 商品总价
+        'cut_fee' => $cut_fee, // 共节约多少钱
+        'anum' => $anum, // 商品总共数量
+        'integral_money' => $pay_points, // 积分抵消金额
+        'user_money' => $user_money, // 使用余额
+        'coupon_price' => $coupon_price, // 优惠券抵消金额
+        'order_goods' => $order_goods, // 商品列表 多加几个字段原样返回
     );
     return array('status' => 1, 'msg' => "计算价钱成功", 'result' => $result); // 返回结果状态
 }
