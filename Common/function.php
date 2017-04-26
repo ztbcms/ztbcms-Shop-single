@@ -320,8 +320,9 @@ function calculate_price($user_id = 0, $order_goods, $shipping_code = '', $shipp
 //    $cartLogic = new \Shop\Logic\CartLogic();
     $goods_weight = 0; //商品重量
     $goods_price = 0; //商品总价
-    $cut_fee = 0; //优惠价格
+    $cut_fee = 0; //共节约价格
     $anum = 0; //购买数量
+    $coupon_price = 0; //优惠券
 
     $user = M('ShopUsers')->where("userid = $user_id")->find(); // 找出这个用户
 
