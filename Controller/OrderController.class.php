@@ -110,7 +110,7 @@ class OrderController extends AdminBase {
         I('shipping_status') != '' ? $condition['shipping_status'] = I('shipping_status') : false;
         I('user_id') ? $condition['user_id'] = trim(I('user_id')) : false;
         $sort_order = I('order_by', 'DESC') . ' ' . I('sort');
-        $count = M('order')->where($condition)->count();
+        $count = M(OrderService::TABLE_NAME)->where($condition)->count();
         $Page = new AjaxPage($count, 20);
         //  搜索条件下 分页赋值
         foreach ($condition as $key => $val) {
@@ -125,9 +125,9 @@ class OrderController extends AdminBase {
     }
 
 
-    /*
-     * ajax 发货订单列表
-    */
+    /**
+     * AJAX 发货订单列表
+     */
     public function getDeliveryList() {
         $condition = array();
         I('consignee') ? $condition['consignee'] = trim(I('consignee')) : false;
@@ -150,8 +150,6 @@ class OrderController extends AdminBase {
 
     /**
      * 订单详情
-     *
-     * @param int $id 订单id
      */
     public function detail($order_id) {
         $orderLogic = new OrderLogic();
@@ -174,10 +172,9 @@ class OrderController extends AdminBase {
         $this->display();
     }
 
+
     /**
      * 订单编辑
-     *
-     * @param int $id 订单id
      */
     public function edit_order() {
         $order_id = I('order_id');
@@ -199,19 +196,7 @@ class OrderController extends AdminBase {
             $order['mobile'] = I('mobile'); // 手机           
             $order['invoice_title'] = I('invoice_title');// 发票
             $order['admin_note'] = I('admin_note'); // 管理员备注
-            $order['admin_note'] = I('admin_note'); //                  
-            $order['shipping_code'] = I('shipping');// 物流方式
-            $order['shipping_name'] = M('plugin')->where(array(
-                'status' => 1,
-                'type' => 'shipping',
-                'code' => I('shipping')
-            ))->getField('name');
-            $order['pay_code'] = I('payment');// 支付方式            
-            $order['pay_name'] = M('plugin')->where(array(
-                'status' => 1,
-                'type' => 'payment',
-                'code' => I('payment')
-            ))->getField('name');
+            $order['pay_code'] = I('payment');// 支付方式
             $goods_id_arr = I("goods_id");
             $new_goods = $old_goods_arr = array();
             //################################订单添加商品
@@ -253,7 +238,7 @@ class OrderController extends AdminBase {
             $order['shipping_price'] = $result['result']['shipping_price'];//物流费
             $order['order_amount'] = $result['result']['order_amount']; // 应付金额
             $order['total_amount'] = $result['result']['total_amount']; // 订单总价           
-            $o = M('order')->where('order_id=' . $order_id)->save($order);
+            $o = M(OrderService::TABLE_NAME)->where('order_id=' . $order_id)->save($order);
 
             $l = $orderLogic->orderActionLog($order_id, 'edit', '修改订单');//操作日志
             if ($o && $l) {
@@ -270,16 +255,13 @@ class OrderController extends AdminBase {
         //获取订单地区
         $area = M('AreaDistrict')->where(array('parentid' => $order['city'], 'level' => 3))->select();
         //获取支付方式
-        $payment_list = M('plugin')->where(array('status' => 1, 'type' => 'payment'))->select();
-        //获取配送方式
-        $shipping_list = M('plugin')->where(array('status' => 1, 'type' => 'shipping'))->select();
+        $payment_list = OrderService::PAY_WAY();
 
         $this->assign('order', $order);
         $this->assign('province', $province);
         $this->assign('city', $city);
         $this->assign('area', $area);
         $this->assign('orderGoods', $orderGoods);
-        $this->assign('shipping_list', $shipping_list);
         $this->assign('payment_list', $payment_list);
         $this->display();
     }
@@ -322,7 +304,7 @@ class OrderController extends AdminBase {
             $res['goods_price'] = $result['result']['goods_price']; // 商品总价
             $res['order_amount'] = $result['result']['order_amount']; // 应付金额
             $res['total_amount'] = $result['result']['total_amount']; // 订单总价
-            M('order')->where("order_id=" . $order_id)->save($res);
+            M(OrderService::TABLE_NAME)->where("order_id=" . $order_id)->save($res);
             //################################原单处理结束
 
             //################################新单处理
@@ -354,7 +336,7 @@ class OrderController extends AdminBase {
                 $new_order['total_amount'] = $result['result']['total_amount']; // 订单总价
                 $new_order['add_time'] = time();
                 unset($new_order['order_id']);
-                $new_order_id = M('order')->add($new_order);//插入订单表
+                $new_order_id = M(OrderService::TABLE_NAME)->add($new_order);//插入订单表
                 foreach ($goods as $vv) {
                     $vv['order_id'] = $new_order_id;
                     unset($vv['rec_id']);
@@ -389,7 +371,7 @@ class OrderController extends AdminBase {
             $update['discount'] = I('post.discount');
             $update['shipping_price'] = I('post.shipping_price');
             $update['order_amount'] = $order['goods_price'] + $update['shipping_price'] - $update['discount'] - $order['user_money'] - $order['integral_money'] - $order['coupon_price'];
-            $row = M('order')->where(array('order_id' => $order_id))->save($update);
+            $row = M(OrderService::TABLE_NAME)->where(array('order_id' => $order_id))->save($update);
             if (!$row) {
                 $this->success('没有更新数据', U('Order/editprice', array('order_id' => $order_id)));
             } else {
@@ -436,7 +418,7 @@ class OrderController extends AdminBase {
                 exit("<script>window.parent.pay_callback(0);</script>");
             }
         } else {
-            $order = M('order')->where("order_id=$order_id")->find();
+            $order = M(OrderService::TABLE_NAME)->where("order_id=$order_id")->find();
             $this->assign('order', $order);
             $this->display();
         }
@@ -587,7 +569,7 @@ class OrderController extends AdminBase {
         $this->display();
     }
 
-    /*
+    /**
      * ajax 退货订单列表
      */
     public function ajax_return_list() {
@@ -673,7 +655,7 @@ class OrderController extends AdminBase {
             $this->error('已经提交过退货申请!', U('Shop/Order/return_list'));
             exit;
         }
-        $order = M('order')->where("order_id = $order_id")->find();
+        $order = M(OrderService::TABLE_NAME)->where("order_id = $order_id")->find();
 
         $data['order_id'] = $order_id;
         $data['order_sn'] = $order['order_sn'];
@@ -693,7 +675,7 @@ class OrderController extends AdminBase {
         $orderLogic = new OrderLogic();
         $action = I('get.type');
         $order_id = I('get.order_id');
-        $order = M('Order')->find($order_id);
+        $order = M(OrderService::TABLE_NAME)->find($order_id);
         if ($action && $order) {
             $res = $orderLogic->orderProcessHandle($order_id, $action);
             if ($res) {
@@ -873,7 +855,7 @@ class OrderController extends AdminBase {
             $order['total_amount'] = $result['result']['total_amount']; // 订单总价
 
             // 添加订单
-            $order_id = M('order')->add($order);
+            $order_id = M(OrderService::TABLE_NAME)->add($order);
             if ($order_id) {
                 foreach ($order_goods as $key => $val) {
                     $val['order_id'] = $order_id;

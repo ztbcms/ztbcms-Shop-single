@@ -88,30 +88,30 @@
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>配送物流</td>
-                                        <td>
-                                            <div class="form-group ">
-                                                <div class="col-xs-2">
-                                                    <select id="shipping" name="shipping" class="form-control">
-                                            <volist name="shipping_list" id="shipping">
-                                                <option <if condition="$order[shipping_code] eq $shipping[code]">selected</if> value="{$shipping.code}" >{$shipping.name}</option>
-                                            </volist>
-                                        </select>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+<!--                                    <tr>-->
+<!--                                        <td>配送物流</td>-->
+<!--                                        <td>-->
+<!--                                            <div class="form-group ">-->
+<!--                                                <div class="col-xs-2">-->
+<!--                                                    <select id="shipping" name="shipping" class="form-control">-->
+<!--                                            <volist name="shipping_list" id="shipping">-->
+<!--                                                <option <if condition="$order[shipping_code] eq $shipping[code]">selected</if> value="{$shipping.code}" >{$shipping.name}</option>-->
+<!--                                            </volist>-->
+<!--                                        </select>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </td>-->
+<!--                                    </tr>-->
                                     <tr>
                                         <td>支付方式</td>
                                         <td>
                                             <div class="form-group ">
                                                 <div class="col-xs-2">
-                                                    <select id="payment" name="payment" class="form-control">
-                                            <volist name="payment_list" id="payment">
-                                                <option <if condition="$order[pay_code] eq $payment[code]">selected</if> value="{$payment.code}" >{$payment.name}</option>
-                                            </volist>
-                                        </select>
+                                                    <select id="payment" name="payment"  class="form-control" >
+                                                        <?php foreach ($payment_list as $k=>$vo):?>
+                                                            <option <if condition="$order[pay_code] eq $k">selected</if> value="{$k}" >{$vo}</option>
+                                                        <?php endforeach;?>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </td>
