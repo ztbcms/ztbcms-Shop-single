@@ -7,7 +7,8 @@ use Shop\Model\OrderModel;
 use Think\Hook;
 
 class OrderService extends BaseService {
-    const TABLE_NAME = 'Order';
+    const TABLE_NAME = 'Order';//订单表
+    const RETURN_TABLE_NAME = 'ShopReturnGoods';//退回订单表
 
     /**
      * 订单状态

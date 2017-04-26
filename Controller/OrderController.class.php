@@ -582,10 +582,10 @@ class OrderController extends AdminBase {
         $where = " 1 = 1 ";
         $order_sn && $where .= " and order_sn like '%$order_sn%' ";
         empty($order_sn) && $where .= " and status = '$status' ";
-        $count = M('return_goods')->where($where)->count();
+        $count = M(OrderService::RETURN_TABLE_NAME)->where($where)->count();
         $Page = new AjaxPage($count, 13);
         $show = $Page->show();
-        $list = M('return_goods')->where($where)->order("$order_by $sort_order")->limit("{$Page->firstRow},{$Page->listRows}")->select();
+        $list = M(OrderService::RETURN_TABLE_NAME)->where($where)->order("$order_by $sort_order")->limit("{$Page->firstRow},{$Page->listRows}")->select();
         $goods_id_arr = get_arr_column($list, 'goods_id');
         if (!empty($goods_id_arr)) {
             $goods_list = M('goods')->where("goods_id in (" . implode(',',
@@ -602,7 +602,7 @@ class OrderController extends AdminBase {
      */
     public function return_del() {
         $id = I('get.id');
-        M('return_goods')->where("id = $id")->delete();
+        M(OrderService::RETURN_TABLE_NAME)->where("id = $id")->delete();
         $this->success('成功删除!');
     }
 
@@ -611,7 +611,7 @@ class OrderController extends AdminBase {
      */
     public function return_info() {
         $id = I('id');
-        $return_goods = M('return_goods')->where("id= $id")->find();
+        $return_goods = M(OrderService::RETURN_TABLE_NAME)->where("id= $id")->find();
         if ($return_goods['imgs']) {
             $return_goods['imgs'] = explode(',', $return_goods['imgs']);
         }
@@ -624,7 +624,7 @@ class OrderController extends AdminBase {
             $data['status'] = I('status');
             $data['remark'] = I('remark');
             $note = "退换货:{$type_msg[$data['type']]}, 状态:{$status_msg[$data['status']]},处理备注：{$data['remark']}";
-            $result = M('return_goods')->where("id= $id")->save($data);
+            $result = M(OrderService::RETURN_TABLE_NAME)->where("id= $id")->save($data);
             if ($result) {
                 $type = empty($data['type']) ? 2 : 3;
                 $where = " order_id = " . $return_goods['order_id'] . " and goods_id=" . $return_goods['goods_id'];
@@ -650,7 +650,7 @@ class OrderController extends AdminBase {
         $order_id = I('order_id');
         $goods_id = I('goods_id');
 
-        $return_goods = M('return_goods')->where("order_id = $order_id and goods_id = $goods_id")->find();
+        $return_goods = M(OrderService::RETURN_TABLE_NAME)->where("order_id = $order_id and goods_id = $goods_id")->find();
         if (!empty($return_goods)) {
             $this->error('已经提交过退货申请!', U('Shop/Order/return_list'));
             exit;
@@ -661,9 +661,9 @@ class OrderController extends AdminBase {
         $data['order_sn'] = $order['order_sn'];
         $data['goods_id'] = $goods_id;
         $data['addtime'] = time();
-        $data['user_id'] = $order[user_id];
+        $data['user_id'] = $order['user_id'];
         $data['remark'] = '管理员申请退换货'; // 问题描述            
-        M('return_goods')->add($data);
+        M(OrderService::RETURN_TABLE_NAME)->add($data);
         $this->success('申请成功,现在去处理退货', U('Shop/Order/return_list'));
         exit;
     }

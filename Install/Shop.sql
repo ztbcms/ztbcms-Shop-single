@@ -153,8 +153,8 @@ CREATE TABLE `cms_shop_comment` (
 -- ----------------------------
 -- 退货记录表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_return_goods`;
-CREATE TABLE `cms_return_goods` (
+DROP TABLE IF EXISTS `cms_shop_return_goods`;
+CREATE TABLE `cms_shop_return_goods` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '退货申请表id自增',
   `order_id` int(11) DEFAULT '0' COMMENT '订单id',
   `order_sn` varchar(1024) CHARACTER SET utf8 DEFAULT '' COMMENT '订单编号',
