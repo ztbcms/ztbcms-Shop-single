@@ -358,8 +358,8 @@ CREATE TABLE `cms_goods_attr` (
 -- ----------------------------
 -- 商品表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_goods`;
-CREATE TABLE `cms_goods` (
+DROP TABLE IF EXISTS `cms_shop_goods`;
+CREATE TABLE `cms_shop_goods` (
   `goods_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '商品id',
   `cat_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '分类id',
   `extend_cat_id` int(11) DEFAULT '0' COMMENT '扩展分类id',

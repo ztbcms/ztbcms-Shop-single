@@ -14,9 +14,11 @@
 
 namespace Shop\Model;
 
+use Shop\Service\CartService;
 use Think\Model;
 
 class GoodsModel extends Model {
+    protected $tableName = 'shop_goods';
     protected $patchValidate = true; // 系统支持数据的批量验证功能，
     /**
      *
@@ -108,14 +110,14 @@ class GoodsModel extends Model {
                     'bar_code' => ''
                 );
                 // 修改商品后购物车的商品价格也修改一下
-                M('cart')->where("goods_id = $goods_id and spec_key = '$k'")->save(array(
+                M(CartService::TABLE_NAME)->where("goods_id = $goods_id and spec_key = '$k'")->save(array(
                     'market_price' => $v['price'], //市场价
                     'goods_price' => $v['price'], // 本店价
                     'member_goods_price' => $v['price'], // 会员折扣价
                 ));
             }
             $specGoodsPrice->addAll($dataList);
-            //M('Goods')->where("goods_id = 1")->save(array('store_count'=>10)); // 修改总库存为各种规格的库存相加
+            //M('ShopGoods')->where("goods_id = 1")->save(array('store_count'=>10)); // 修改总库存为各种规格的库存相加
         }
 
         // 商品规格图片处理

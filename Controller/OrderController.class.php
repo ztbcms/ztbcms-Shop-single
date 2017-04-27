@@ -6,6 +6,7 @@ use Shop\Logic\OrderLogic;
 use Shop\Logic\CartLogic;
 use Shop\Service\BrandService;
 use Shop\Service\DeliveryService;
+use Shop\Service\GoodsService;
 use Shop\Service\OrderService;
 use Shop\Util\AjaxPage;
 use Common\Controller\AdminBase;
@@ -588,7 +589,7 @@ class OrderController extends AdminBase {
         $list = M(OrderService::RETURN_TABLE_NAME)->where($where)->order("$order_by $sort_order")->limit("{$Page->firstRow},{$Page->listRows}")->select();
         $goods_id_arr = get_arr_column($list, 'goods_id');
         if (!empty($goods_id_arr)) {
-            $goods_list = M('goods')->where("goods_id in (" . implode(',',
+            $goods_list = M(GoodsService::GOODS_TABLE_NAME)->where("goods_id in (" . implode(',',
                     $goods_id_arr) . ")")->getField('goods_id,goods_name');
         }
         $this->assign('goods_list', $goods_list);
@@ -616,7 +617,7 @@ class OrderController extends AdminBase {
             $return_goods['imgs'] = explode(',', $return_goods['imgs']);
         }
         $user = M('ShopUsers')->where("userid = {$return_goods[user_id]}")->find();
-        $goods = M('goods')->where("goods_id = {$return_goods[goods_id]}")->find();
+        $goods = M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = {$return_goods[goods_id]}")->find();
         $type_msg = array('退换', '换货');
         $status_msg = array('未处理', '处理中', '已完成');
         if (IS_POST) {
@@ -688,6 +689,9 @@ class OrderController extends AdminBase {
         }
     }
 
+    /**
+     * 订单日志
+     */
     public function order_log() {
         $timegap = I('timegap');
         if ($timegap) {
@@ -901,7 +905,7 @@ class OrderController extends AdminBase {
             $this->assign('keywords', I('keywords'));
             $where = "$where and (goods_name like '%" . I('keywords') . "%' or keywords like '%" . I('keywords') . "%')";
         }
-        $goodsList = M('goods')->where($where)->order('goods_id DESC')->limit(10)->select();
+        $goodsList = M(GoodsService::GOODS_TABLE_NAME)->where($where)->order('goods_id DESC')->limit(10)->select();
 
         foreach ($goodsList as $key => $val) {
             $spec_goods = M('spec_goods_price')->where("goods_id = {$val['goods_id']}")->select();

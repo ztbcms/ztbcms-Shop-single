@@ -6,6 +6,7 @@
 
 namespace Shop\Controller;
 use Common\Controller\AdminBase;
+use Shop\Service\GoodsService;
 use Shop\Util\AjaxPage;
 
 class CommentController extends AdminBase {
@@ -43,7 +44,7 @@ class CommentController extends AdminBase {
         if(!empty($comment_list))
         {
             $goods_id_arr = get_arr_column($comment_list, 'goods_id');
-            $goods_list = M('Goods')->where("goods_id in (".  implode(',', $goods_id_arr).")")->getField("goods_id,goods_name");
+            $goods_list = M(GoodsService::GOODS_TABLE_NAME)->where("goods_id in (".  implode(',', $goods_id_arr).")")->getField("goods_id,goods_name");
         }
 
         return ['goods_list'=>$goods_list,'comment_list'=>$comment_list, 'page'=>$pageArr];
@@ -126,7 +127,7 @@ class CommentController extends AdminBase {
     	if(!empty($comment_list))
     	{
     		$goods_id_arr = get_arr_column($comment_list, 'goods_id');
-    		$goods_list = M('Goods')->where("goods_id in (".  implode(',', $goods_id_arr).")")->getField("goods_id,goods_name");
+    		$goods_list = M(GoodsService::GOODS_TABLE_NAME)->where("goods_id in (".  implode(',', $goods_id_arr).")")->getField("goods_id,goods_name");
     	}
     	$consult_type = array(0=>'默认咨询',1=>'商品咨询',2=>'支付咨询',3=>'配送',4=>'售后');
 

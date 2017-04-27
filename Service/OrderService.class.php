@@ -122,7 +122,7 @@ class OrderService extends BaseService {
         $order_goods_ids = array();
         foreach ($cartList as $key => $val) {
             $order_goods_ids[] = $val['goods_id'];
-            $goods = M('goods')->where(['goods_id' => $val['goods_id']])->find();
+            $goods = M(GoodsService::GOODS_TABLE_NAME)->where(['goods_id' => $val['goods_id']])->find();
             $order_goods['order_id'] = $order_id; // 订单id
             $order_goods['goods_id'] = $val['goods_id']; // 商品id
             $order_goods['goods_name'] = $val['goods_name']; // 商品名称
@@ -145,7 +145,7 @@ class OrderService extends BaseService {
                 M('SpecGoodsPrice')->where("`goods_id`='%d' AND `key`='%s' ", $val['goods_id'],
                     $val['spec_key'])->setDec('store_count', $val['goods_num']);
             } else {
-                M('Goods')->where("goods_id = " . $val['goods_id'])->setDec('store_count', $val['goods_num']); // 商品减少库存
+                M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = " . $val['goods_id'])->setDec('store_count', $val['goods_num']); // 商品减少库存
             }
         }
 
@@ -242,7 +242,7 @@ class OrderService extends BaseService {
         }
 
         $goods_id_arr = get_arr_column($order_goods, 'goods_id');
-        $goods_arr = M('goods')->where("goods_id in(" . implode(',',
+        $goods_arr = M(GoodsService::GOODS_TABLE_NAME)->where("goods_id in(" . implode(',',
                 $goods_id_arr) . ")")->getField('goods_id,weight,market_price,is_free_shipping'); // 商品id 和重量对应的键值对
 
         $goods_weight = 0;
@@ -423,9 +423,9 @@ class OrderService extends BaseService {
                     ])->setInc('store_count', $value['goods_num']);
                 } else {
                     //没有规格商品,增加库存
-                    M('Goods')->where(['goods_id' => $value['goods_id']])->setInc('store_count', $value['goods_num']);
+                    M(GoodsService::GOODS_TABLE_NAME)->where(['goods_id' => $value['goods_id']])->setInc('store_count', $value['goods_num']);
                 }
-                M('Goods')->where(['goods_id' => $value['goods_id']])->setDec('sales_sum', $value['goods_num']);
+                M(GoodsService::GOODS_TABLE_NAME)->where(['goods_id' => $value['goods_id']])->setDec('sales_sum', $value['goods_num']);
             }
             self::logOrder($order['order_id'], '订单取消', '订单取消', $order['user_id']);
 

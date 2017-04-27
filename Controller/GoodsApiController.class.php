@@ -9,7 +9,7 @@ class GoodsApiController extends Base {
      * @param $goods_id
      */
     public function goods_info($goods_id) {
-        $goods = M('Goods')->where("goods_id = $goods_id")->find();
+        $goods = M('ShopGoods')->where("goods_id = $goods_id")->find();
         //将商品详情转义html
         $goods['goods_content'] = htmlspecialchars_decode($goods['goods_content']);
         if (empty($goods) || ($goods['is_on_sale'] == 0)) {

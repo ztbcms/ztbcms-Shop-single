@@ -4,6 +4,7 @@ namespace Shop\Logic;
 
 use Common\Model\RelationModel;
 use Shop\Service\CartService;
+use Shop\Service\GoodsService;
 
 /**
  * 购物车 逻辑定义
@@ -216,7 +217,7 @@ function cart_freight2($shipping_code,$province,$city,$district,$weight)
         $order_goods_ids=array();
         foreach($cartList as $key => $val){
            $order_goods_ids[]=$val['goods_id'];
-           $goods = M('goods')->where("goods_id = {$val['goods_id']} ")->find();
+           $goods = M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = {$val['goods_id']} ")->find();
            $data2['order_id']           = $order_id; // 订单id
            $data2['goods_id']           = $val['goods_id']; // 商品id
            $data2['goods_name']         = $val['goods_name']; // 商品名称
@@ -234,7 +235,7 @@ function cart_freight2($shipping_code,$province,$city,$district,$weight)
            $data2['prom_id']            = $val['prom_id']; // 活动id
            $order_goods_id              = M("OrderGoods")->data($data2)->add(); 
            // 扣除商品库存  扣除库存移到 付完款后扣除
-           //M('Goods')->where("goods_id = ".$val['goods_id'])->setDec('store_count',$val['goods_num']); // 商品减少库存
+           //M('ShopGoods')->where("goods_id = ".$val['goods_id'])->setDec('store_count',$val['goods_num']); // 商品减少库存
         } 
         // 如果应付金额为0  可能是余额支付 + 积分 + 优惠券 这里订单支付状态直接变成已支付 
         if($data['order_amount'] == 0)

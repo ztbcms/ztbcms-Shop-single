@@ -331,7 +331,7 @@ function calculate_price($user_id = 0, $order_goods, $shipping_code = '', $shipp
     }
 
     $goods_id_arr = get_arr_column($order_goods, 'goods_id');
-    $goods_arr = M('goods')->where("goods_id in(" . implode(',', $goods_id_arr) . ")")->getField('goods_id,weight,market_price,is_free_shipping'); // 商品id 和重量对应的键值对
+    $goods_arr = M('ShopGoods')->where("goods_id in(" . implode(',', $goods_id_arr) . ")")->getField('goods_id,weight,market_price,is_free_shipping'); // 商品id 和重量对应的键值对
 
     foreach ($order_goods as $key => $val) {
         // 如果传递过来的商品列表没有定义会员价
@@ -546,9 +546,9 @@ function minus_stock($order_id) {
             M('SpecGoodsPrice')->where("goods_id = {$val['goods_id']} and `key` = '{$val['spec_key']}'")->setDec('store_count', $val['goods_num']);
             refresh_stock($val['goods_id']);
         } else {
-            M('Goods')->where("goods_id = {$val['goods_id']}")->setDec('store_count', $val['goods_num']); // 直接扣除商品总数量
+            M('ShopGoods')->where("goods_id = {$val['goods_id']}")->setDec('store_count', $val['goods_num']); // 直接扣除商品总数量
         }
-        M('Goods')->where("goods_id = {$val['goods_id']}")->setInc('sales_sum', $val['goods_num']); // 增加商品销售量
+        M('ShopGoods')->where("goods_id = {$val['goods_id']}")->setInc('sales_sum', $val['goods_num']); // 增加商品销售量
         //更新活动商品购买量
         if ($val['prom_type'] == 1 || $val['prom_type'] == 2) {
             $prom = get_goods_promotion($val['goods_id']);
@@ -752,7 +752,7 @@ function navigate_goods($id, $type = 0) {
     $cat_id = $id; //
     // 如果传递过来的是
     if ($type == 1) {
-        $cat_id = M('goods')->where("goods_id = $id")->getField('cat_id');
+        $cat_id = M('ShopGoods')->where("goods_id = $id")->getField('cat_id');
     }
     $categoryList = M('GoodsCategory')->getField("id,name,parent_id");
 
