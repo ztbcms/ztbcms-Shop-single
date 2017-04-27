@@ -232,7 +232,7 @@ function refresh_stock($goods_id) {
     // 没有使用规格方式 没必要更改总库存
 
     $store_count = M("SpecGoodsPrice")->where("goods_id = $goods_id")->sum('store_count');
-    M("Goods")->where("goods_id = $goods_id")->save(array('store_count' => $store_count)); // 更新商品的总库存
+    M("ShopGoods")->where("goods_id = $goods_id")->save(array('store_count' => $store_count)); // 更新商品的总库存
 }
 
 /**

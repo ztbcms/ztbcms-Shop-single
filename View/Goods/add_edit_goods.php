@@ -433,7 +433,6 @@
             mixins: [window.__baseMethods],
             methods: {
                 saveBtn: function () {
-                    console.log('xxx')
                     $.ajax({
                         url: "{:U('Goods/addEditGoods?is_ajax=1')}",
                         data: $('#addEditGoodsForm').serialize(),
@@ -570,7 +569,7 @@
                     $("#ajax_spec_data").html('')
                     $("#ajax_spec_data").append(data);
                     //alert('132');
-                    ajaxGetSpecInput(); // 触发完  马上处罚 规格输入框
+                    ajaxGetSpecInput(); // 触发完  马上触发 规格输入框
                 }
             });
         });

@@ -5,6 +5,7 @@ namespace Shop\Logic;
 
 use Common\Model\RelationModel;
 use Shop\Service\DeliveryService;
+use Shop\Service\GoodsService;
 use Shop\Service\OrderService;
 
 class OrderLogic extends RelationModel {
@@ -59,7 +60,7 @@ class OrderLogic extends RelationModel {
         }
         foreach ($goods_id_arr as $key => $val) {
             $arr = array();
-            $goods = M('goods')->where("goods_id = $key")->find();
+            $goods = M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = $key")->find();
             $arr['goods_id'] = $key; // 商品id
             $arr['goods_name'] = $goods['goods_name'];
             $arr['goods_sn'] = $goods['goods_sn'];
@@ -247,9 +248,9 @@ class OrderLogic extends RelationModel {
                     $val['goods_num']);
                 refresh_stock($val['goods_id']);
             } else {
-                M('Goods')->where("goods_id = {$val['goods_id']}")->setInc('store_count', $val['goods_num']); // 增加商品总数量
+                M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = {$val['goods_id']}")->setInc('store_count', $val['goods_num']); // 增加商品总数量
             }
-            M('Goods')->where("goods_id = {$val['goods_id']}")->setDec('sales_sum', $val['goods_num']); // 减少商品销售量
+            M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = {$val['goods_id']}")->setDec('sales_sum', $val['goods_num']); // 减少商品销售量
             //更新活动商品购买量
             if ($val['prom_type'] == 1 || $val['prom_type'] == 2) {
                 $prom = get_goods_promotion($val['goods_id']);

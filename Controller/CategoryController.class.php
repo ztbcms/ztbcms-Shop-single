@@ -8,7 +8,7 @@ namespace Shop\Controller;
 
 use Common\Controller\AdminBase;
 use Shop\Logic\GoodsLogic;
-use Shop\Service\GoodsService;
+use Shop\Service\CategoryService;
 
 class CategoryController extends AdminBase {
     /**
@@ -16,8 +16,8 @@ class CategoryController extends AdminBase {
      */
     public function index() {
         if (IS_AJAX) {
-            $GoodsLogic = new GoodsLogic();
-            $cat_list = $GoodsLogic->goods_cat_list();
+            $CategoryService = new CategoryService();
+            $cat_list = $CategoryService->goods_cat_list();
 
             // 解决ajax的自动排序
             $arr = [];
@@ -137,7 +137,7 @@ class CategoryController extends AdminBase {
         $count = $GoodsCategory->where("parent_id = '%d'", $id)->count("id");
         $count > 0 && $this->error('该分类下还有分类不得删除!');
         // 判断是否存在商品
-        $goods_count = M(GoodsService::GOODS_TABLE_NAME)->where("cat_id = '%d'", $id)->count('1');
+        $goods_count = M('Goods')->where("cat_id = '%d'", $id)->count('1');
         $goods_count > 0 && $this->error('该分类下有商品不得删除!');
         // 删除分类
         $GoodsCategory->where("id = '%d'", $id)->delete();

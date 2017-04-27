@@ -94,7 +94,6 @@ class GoodsModel extends Model {
         if ($_POST['item']) {
             $spec = M('Spec')->getField('id,name'); // 规格表
             $specItem = M('SpecItem')->getField('id,item'); //规格项
-
             foreach ($_POST['item'] as $k => $v) {
                 // 批量添加数据
                 $v['price'] = trim($v['price']);

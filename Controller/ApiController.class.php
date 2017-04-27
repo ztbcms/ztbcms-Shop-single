@@ -14,7 +14,7 @@ class ApiController extends Base {
     public function get_category() {
         $parent_id = I('get.parent_id'); // 商品分类 父id
         $list = M('goods_category')->where("parent_id = $parent_id")->select();
-
+        $html = '';
         foreach ($list as $k => $v) {
             $html .= "<option value='{$v['id']}'>{$v['name']}</option>";
         }
