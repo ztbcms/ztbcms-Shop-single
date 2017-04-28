@@ -7,7 +7,10 @@
 namespace Shop\Controller;
 
 use Common\Controller\AdminBase;
-use Shop\Logic\GoodsLogic;
+use Shop\Model\GoodsModel;
+use Shop\Service\BrandService;
+use Shop\Service\CartService;
+use Shop\Service\CategoryService;
 use Shop\Service\GoodsService;
 
 class GoodsController extends AdminBase {
@@ -15,9 +18,8 @@ class GoodsController extends AdminBase {
      * 商品列表
      */
     public function index() {
-        $GoodsLogic = new GoodsLogic();
-        $brandList = $GoodsLogic->getSortBrands();
-        $categoryList = $GoodsLogic->getSortCategory();
+        $brandList = BrandService::getSortBrands()['data'];
+        $categoryList = GoodsService::getSortCategory()['data'];
         $this->assign('categoryList', $categoryList);
         $this->assign('brandList', $brandList);
         $this->display();
@@ -43,7 +45,7 @@ class GoodsController extends AdminBase {
             $where['cat_id'] = ['in', $grandson_ids];
         }
 
-        $model = M('Goods');
+        $model = M(GoodsService::GOODS_TABLE_NAME);
         $page = I('page', 1);
         $limit = I('limit', 20);
         $total = $model->where($where)->count();
@@ -52,7 +54,7 @@ class GoodsController extends AdminBase {
         $goodsList = $model->where($where)->order($order_str)->page($page, $limit)->order($order_str)->select();
 
         //分类
-        $catList = D('GoodsCategory')->select();
+        $catList = D(CategoryService::TABLE_NAME)->select();
         $catList = convert_arr_key($catList, 'id');
 
         foreach ($goodsList as $key => $item) {
@@ -73,8 +75,8 @@ class GoodsController extends AdminBase {
      * 添加修改商品
      */
     public function addEditGoods() {
-        $GoodsLogic = new GoodsLogic();
-        $Goods = D('Goods'); //
+        $GoodsService = new GoodsService();
+        $Goods = new GoodsModel();
         $type = $_POST['goods_id'] > 0 ? 2 : 1; // 标识自动验证时的 场景 1 表示插入 2 表示更新
         //ajax提交验证
         if (IS_AJAX && IS_POST) {
@@ -98,12 +100,11 @@ class GoodsController extends AdminBase {
                 $_POST['extend_cat_id_2'] && ($Goods->extend_cat_id = $_POST['extend_cat_id_2']);
                 $_POST['extend_cat_id_3'] && ($Goods->extend_cat_id = $_POST['extend_cat_id_3']);
 
-
                 if ($type == 2) {
                     $goods_id = $_POST['goods_id'];
-                    $Goods->save(); // 写入数据到数据库                    
+                    $Goods->save(); // 写入数据到数据库
                     // 修改商品后购物车的商品价格也修改一下
-                    M('cart')->where("goods_id = $goods_id and spec_key = ''")->save(array(
+                    M(CartService::TABLE_NAME)->where("goods_id = $goods_id and spec_key = ''")->save(array(
                         'market_price' => $_POST['market_price'], //市场价
                         'goods_price' => $_POST['shop_price'], // 本店价
                         'member_goods_price' => $_POST['shop_price'], // 会员折扣价
@@ -115,7 +116,7 @@ class GoodsController extends AdminBase {
                 }
 
                 //暂时关闭属性的操作
-                $GoodsLogic->saveGoodsAttr($goods_id, $_POST['goods_type']); // 处理商品 属性
+                $GoodsService->saveGoodsAttr($goods_id, $_POST['goods_type']); // 处理商品 属性
 
                 $return_arr = array(
                     'status' => 1,
@@ -126,12 +127,12 @@ class GoodsController extends AdminBase {
             }
         }
 
-        $goodsInfo = M('Goods')->where('goods_id=' . I('GET.id', 0))->find();
-        $level_cat = $GoodsLogic->find_parent_cat($goodsInfo['cat_id']); // 获取分类默认选中的下拉框
-        $level_cat2 = $GoodsLogic->find_parent_cat($goodsInfo['extend_cat_id']); // 获取分类默认选中的下拉框
-        $cat_list = M('goods_category')->where("parent_id = 0")->select(); // 已经改成联动菜单
-        $brandList = $GoodsLogic->getSortBrands();
-        $goodsType = M("GoodsType")->select();
+        $goodsInfo = M(GoodsService::GOODS_TABLE_NAME)->where('goods_id=' . I('GET.id', 0))->find();
+        $level_cat = GoodsService::find_parent_cat($goodsInfo['cat_id'])['data']; // 获取分类默认选中的下拉框
+        $level_cat2 = GoodsService::find_parent_cat($goodsInfo['extend_cat_id'])['data']; // 获取分类默认选中的下拉框
+        $cat_list = M(CategoryService::TABLE_NAME)->where("parent_id = 0")->select(); // 已经改成联动菜单
+        $brandList = BrandService::getSortBrands()['data'];
+        $goodsType = M(GoodsService::GOODS_TYPE_TABLE_NAME)->select();
         $suppliersList = M(GoodsService::SUPPLIERS_TABLE_NAME)->select();
         $this->assign('suppliersList', $suppliersList);
         $this->assign('level_cat', $level_cat);
@@ -140,7 +141,7 @@ class GoodsController extends AdminBase {
         $this->assign('brandList', $brandList);
         $this->assign('goodsType', $goodsType);
         $this->assign('goodsInfo', $goodsInfo);  // 商品详情
-        $goodsImages = M("GoodsImages")->where('goods_id =' . I('GET.id', 0))->select();
+        $goodsImages = M(GoodsService::GOODS_IMAGES_TABLE_NAME)->where('goods_id =' . I('GET.id', 0))->select();
         $this->assign('goodsImages', $goodsImages);  // 商品相册
         $this->initEditor(); // 编辑器
         $this->display('add_edit_goods');
@@ -157,13 +158,8 @@ class GoodsController extends AdminBase {
         $c1 = M('OrderGoods')->where("goods_id = $goods_id")->count('1');
         $c1 && $error .= '此商品有订单,不得删除! <br/>';
 
-
-        // 商品团购
-        $c1 = M('group_buy')->where("goods_id = $goods_id")->count('1');
-        $c1 && $error .= '此商品有团购,不得删除! <br/>';
-
         // 商品退货记录
-        $c1 = M('return_goods')->where("goods_id = $goods_id")->count('1');
+        $c1 = M('shop_return_goods')->where("goods_id = $goods_id")->count('1');
         $c1 && $error .= '此商品有退货记录,不得删除! <br/>';
 
         if ($error) {
@@ -176,13 +172,13 @@ class GoodsController extends AdminBase {
         }
 
         // 删除此商品        
-        M("Goods")->where('goods_id =' . $goods_id)->delete();  //商品表
-        M("cart")->where('goods_id =' . $goods_id)->delete();  // 购物车
+        M(GoodsService::GOODS_TABLE_NAME)->where('goods_id =' . $goods_id)->delete();  //商品表
+        M(CartService::TABLE_NAME)->where('goods_id =' . $goods_id)->delete();  // 购物车
         // M("comment")->where('goods_id ='.$goods_id)->delete();  //商品评论
         // M("goods_consult")->where('goods_id ='.$goods_id)->delete();  //商品咨询
-        M("goods_images")->where('goods_id =' . $goods_id)->delete();  //商品相册
-        M("spec_goods_price")->where('goods_id =' . $goods_id)->delete();  //商品规格
-        M("spec_image")->where('goods_id =' . $goods_id)->delete();  //商品规格图片
+        M(GoodsService::GOODS_IMAGES_TABLE_NAME)->where('goods_id =' . $goods_id)->delete();  //商品相册
+        M("shop_spec_goods_price")->where('goods_id =' . $goods_id)->delete();  //商品规格
+        M("shop_spec_image")->where('goods_id =' . $goods_id)->delete();  //商品规格图片
         // M("goods_attr")->where('goods_id ='.$goods_id)->delete();  //商品属性     
         // M("goods_collect")->where('goods_id ='.$goods_id)->delete();  //商品收藏          
 
@@ -200,19 +196,18 @@ class GoodsController extends AdminBase {
      */
     public function ajaxGetSpecSelect() {
         $goods_id = $_GET['goods_id'] ? $_GET['goods_id'] : 0;
-        $GoodsLogic = new GoodsLogic();
         //$_GET['spec_type'] =  13;
-        $specList = D('Spec')->where("type_id = " . $_GET['spec_type'])->order('`order` desc')->select();
+        $specList = M('ShopSpec')->where("type_id = " . $_GET['spec_type'])->order('`order` desc')->select();
         foreach ($specList as $k => $v) {
-            $specList[$k]['spec_item'] = D('SpecItem')->where("spec_id = " . $v['id'])->order('id')->getField('id,item');
+            $specList[$k]['spec_item'] = M('ShopSpecItem')->where("spec_id = " . $v['id'])->order('id')->getField('id,item');
         } // 获取规格项
 
-        $items_id = M('SpecGoodsPrice')->where('goods_id = ' . $goods_id)->getField("GROUP_CONCAT(`key` SEPARATOR '_') AS items_id");
+        $items_id = M('ShopSpecGoodsPrice')->where('goods_id = ' . $goods_id)->getField("GROUP_CONCAT(`key` SEPARATOR '_') AS items_id");
         $items_ids = explode('_', $items_id);
 
         // 获取商品规格图片                
         if ($goods_id) {
-            $specImageList = M('SpecImage')->where("goods_id = $goods_id")->getField('spec_image_id,src');
+            $specImageList = M('ShopSpecImage')->where("goods_id = $goods_id")->getField('spec_image_id,src');
         }
         $this->assign('specImageList', $specImageList);
 
@@ -225,9 +220,9 @@ class GoodsController extends AdminBase {
      * 动态获取商品规格输入框 根据不同的数据返回不同的输入框
      */
     public function ajaxGetSpecInput() {
-        $GoodsLogic = new GoodsLogic();
+        $GoodsService = new GoodsService();
         $goods_id = $_REQUEST['goods_id'] ? $_REQUEST['goods_id'] : 0;
-        $str = $GoodsLogic->getSpecInput($goods_id, $_POST['spec_arr']);
+        $str = $GoodsService->getSpecInput($goods_id, $_POST['spec_arr']);
         exit($str);
     }
 
@@ -236,15 +231,15 @@ class GoodsController extends AdminBase {
      */
     public function del_goods_images() {
         $path = I('filename', '');
-        M('goods_images')->where("image_url = '$path'")->delete();
+        M(GoodsService::GOODS_IMAGES_TABLE_NAME)->where("image_url = '$path'")->delete();
     }
 
     /**
      * 动态获取商品属性输入框 根据不同的数据返回不同的输入框类型
      */
     public function ajaxGetAttrInput() {
-        $GoodsLogic = new GoodsLogic();
-        $str = $GoodsLogic->getAttrInput($_REQUEST['goods_id'], $_REQUEST['type_id']);
+        $GoodsService = new GoodsService();
+        $str = $GoodsService->getAttrInput($_REQUEST['goods_id'], $_REQUEST['type_id']);
         exit($str);
     }
 

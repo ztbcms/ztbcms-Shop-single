@@ -6,6 +6,7 @@
 
 namespace Shop\Controller;
 use Common\Controller\AdminBase;
+use Shop\Service\GoodsService;
 use Shop\Util\AjaxPage;
 
 class CommentController extends AdminBase {
@@ -43,7 +44,7 @@ class CommentController extends AdminBase {
         if(!empty($comment_list))
         {
             $goods_id_arr = get_arr_column($comment_list, 'goods_id');
-            $goods_list = M('Goods')->where("goods_id in (".  implode(',', $goods_id_arr).")")->getField("goods_id,goods_name");
+            $goods_list = M(GoodsService::GOODS_TABLE_NAME)->where("goods_id in (".  implode(',', $goods_id_arr).")")->getField("goods_id,goods_name");
         }
 
         return ['goods_list'=>$goods_list,'comment_list'=>$comment_list, 'page'=>$pageArr];
@@ -102,7 +103,7 @@ class CommentController extends AdminBase {
     	$this->display();
     }
       public function get_ask_list(){
-    	$model = M('goods_consult');
+    	$model = M('Shop_goods_consult');
     	$username = I('username','','trim');
     	$content = I('content','','trim');
     	$where=' parent_id = 0';
@@ -126,7 +127,7 @@ class CommentController extends AdminBase {
     	if(!empty($comment_list))
     	{
     		$goods_id_arr = get_arr_column($comment_list, 'goods_id');
-    		$goods_list = M('Goods')->where("goods_id in (".  implode(',', $goods_id_arr).")")->getField("goods_id,goods_name");
+    		$goods_list = M(GoodsService::GOODS_TABLE_NAME)->where("goods_id in (".  implode(',', $goods_id_arr).")")->getField("goods_id,goods_name");
     	}
     	$consult_type = array(0=>'默认咨询',1=>'商品咨询',2=>'支付咨询',3=>'配送',4=>'售后');
 
@@ -137,12 +138,12 @@ class CommentController extends AdminBase {
     public function consult_info(){
         $id = I('id');
         if(IS_POST) {
-            $res = M('goods_consult')->where(array('id' => $id))->find();
+            $res = M('shop_goods_consult')->where(array('id' => $id))->find();
             if (!$res) {
                 $this->ajaxReturn(['msg'=>'不存在该咨询','status'=>false]);
             }
 
-            $reply = M('goods_consult')->where(array('parent_id' => $id))->select(); // 咨询回复列表
+            $reply = M('shop_goods_consult')->where(array('parent_id' => $id))->select(); // 咨询回复列表
             $this->assign('comment', $res);
             $this->assign('reply', $reply);
             $this->ajaxReturn(['comment'=>$res,'reply'=>$reply,'status'=>true]);
@@ -153,7 +154,7 @@ class CommentController extends AdminBase {
     public function addConsult(){
         if(IS_POST){
             $id = I('id');
-            $res = M('goods_consult')->where(array('id' => $id))->find();
+            $res = M('shop_goods_consult')->where(array('id' => $id))->find();
             $add['parent_id'] = $id;
             $add['content'] = I('post.content');
             $add['goods_id'] = $res['goods_id'];
@@ -161,7 +162,7 @@ class CommentController extends AdminBase {
             $add['add_time'] = time();
             $add['username'] = 'admin';
             $add['is_show'] = 1;
-            $row =  M('goodsConsult')->add($add);
+            $row =  M('ShopGoodsConsult')->add($add);
 
             if($row){
                 $this->ajaxReturn(['msg'=>'添加成功','icon'=>1]);
@@ -180,20 +181,20 @@ class CommentController extends AdminBase {
     	if($type == 'del'){
     		//删除咨询
     		$where .= "( id IN ({$selected_id}) OR parent_id IN ({$selected_id})) ";
-    		$row = M('goods_consult')->where($where)->delete();
+    		$row = M('shop_goods_consult')->where($where)->delete();
     	}
     	if($type == 'show'){
-    		$row = M('goods_consult')->where("id IN ({$selected_id})")->save(array('is_show'=>1));
+    		$row = M('shop_goods_consult')->where("id IN ({$selected_id})")->save(array('is_show'=>1));
     	}
     	if($type == 'hide'){
-    		$row = M('goods_consult')->where("id IN ({$selected_id})")->save(array('is_show'=>0));
+    		$row = M('shop_goods_consult')->where("id IN ({$selected_id})")->save(array('is_show'=>0));
     	}    		
     	$this->success('操作完成');
     }
 
     public function delAsk(){
         $id = I('get.id');
-        $row = M('goodsConsult')->where(array('id'=>$id))->delete();
+        $row = M('ShopGoodsConsult')->where(array('id'=>$id))->delete();
         if($row){
             $this->success('删除成功');
         }else{

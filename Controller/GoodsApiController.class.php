@@ -2,6 +2,7 @@
 namespace Shop\Controller;
 
 use Common\Controller\Base;
+use Shop\Service\CategoryService;
 use Shop\Service\GoodsService;
 
 class GoodsApiController extends Base {
@@ -9,17 +10,17 @@ class GoodsApiController extends Base {
      * @param $goods_id
      */
     public function goods_info($goods_id) {
-        $goods = M('Goods')->where("goods_id = $goods_id")->find();
+        $goods = M('ShopGoods')->where("goods_id = $goods_id")->find();
         //将商品详情转义html
         $goods['goods_content'] = htmlspecialchars_decode($goods['goods_content']);
         if (empty($goods) || ($goods['is_on_sale'] == 0)) {
             $this->error('该商品已经下架', '', true);
         }
-        $goods_images_list = M('GoodsImages')->where("goods_id = '%d'", $goods_id)->select(); // 商品 图册
-        $goods_attribute = M('GoodsAttribute')->where("type_id='%d'",
+        $goods_images_list = M(GoodsService::GOODS_IMAGES_TABLE_NAME)->where("goods_id = '%d'", $goods_id)->select(); // 商品 图册
+        $goods_attribute = M(GoodsService::GOODS_ATTRIBUTE_TABLE_NAME)->where("type_id='%d'",
             $goods['goods_type'])->getField('attr_id,attr_name'); // 查询属性
-        $goods_attr_list = M('GoodsAttr')->where("goods_id = '%d'", $goods_id)->select(); // 查询商品属性表
-        $spec_goods_price = M('spec_goods_price')->where("goods_id = '%d'",
+        $goods_attr_list = M(GoodsService::GOODS_ATTR_TABLE_NAME)->where("goods_id = '%d'", $goods_id)->select(); // 查询商品属性表
+        $spec_goods_price = M('shop_spec_goods_price')->where("goods_id = '%d'",
             $goods_id)->getField("key,price,store_count"); // 规格 对应 价格 库存表
         $filter_spec = GoodsService::get_spec($goods_id);
         $data = [
@@ -77,7 +78,7 @@ class GoodsApiController extends Base {
             $where['parent_id'] = I('get.parent_id');
         }
         $where['is_show'] = 1;
-        $res = M('GoodsCategory')->where($where)->select();
+        $res = M(CategoryService::TABLE_NAME)->where($where)->select();
         if ($res) {
             $this->success($res ? $res : [], '', true);
         } else {

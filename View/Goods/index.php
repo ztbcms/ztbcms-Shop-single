@@ -120,54 +120,54 @@
                                         <td class="text-left">
                                             <input type="text" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')"
                                                    onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
-                                                   v-on:change="ajaxUpdateField('goods',item.goods_id,'store_count',item.store_count)"
+                                                   v-on:change="ajaxUpdateField('shop_goods',item.goods_id,'store_count',item.store_count)"
                                                    size="4" v-model="item.store_count"
                                             />
                                         </td>
                                         <td class="text-center">
                                             <img v-if="item.is_on_sale == 1" width="20" height="20"
                                                  src="{$config_siteurl}statics/extres/shop/images/yes.png "
-                                                 v-on:click="changeTableVal('goods','goods_id',item.goods_id,'is_on_sale',0,item)"
+                                                 v-on:click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_on_sale',0,item)"
                                                  id="img_is_on_sale"/>
                                             <img v-else width="20" height="20"
                                                  src="{$config_siteurl}statics/extres/shop/images/cancel.png "
-                                                 v-on:click="changeTableVal('goods','goods_id',item.goods_id,'is_on_sale',1,item)"
+                                                 v-on:click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_on_sale',1,item)"
                                                  id="img_is_on_sale"/>
                                         </td>
                                         <td class="text-center">
                                             <img v-if="item.is_recommend == 1" width="20" height="20"
                                                  src="{$config_siteurl}statics/extres/shop/images/yes.png "
-                                                 v-on:click="changeTableVal('goods','goods_id',item.goods_id,'is_recommend',0,item)"
+                                                 v-on:click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_recommend',0,item)"
                                                  id="img_is_recommend"/>
                                             <img v-else width="20" height="20"
                                                  src="{$config_siteurl}statics/extres/shop/images/cancel.png "
-                                                 v-on:click="changeTableVal('goods','goods_id',item.goods_id,'is_recommend',1,item)"
+                                                 v-on:click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_recommend',1,item)"
                                                  id="img_is_recommend"/>
                                         </td>
                                         <td class="text-center">
                                             <img v-if="item.is_new == 1" width="20" height="20"
                                                  src="{$config_siteurl}statics/extres/shop/images/yes.png "
-                                                 v-on:click="changeTableVal('goods','goods_id',item.goods_id,'is_new',0,item)"
+                                                 v-on:click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_new',0,item)"
                                                  id="img_is_new"/>
                                             <img v-else width="20" height="20"
                                                  src="{$config_siteurl}statics/extres/shop/images/cancel.png "
-                                                 v-on:click="changeTableVal('goods','goods_id',item.goods_id,'is_new',1,item)"
+                                                 v-on:click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_new',1,item)"
                                                  id="img_is_new"/>
                                         </td>
                                         <td class="text-center">
                                             <img v-if="item.is_hot == 1" width="20" height="20"
                                                  src="{$config_siteurl}statics/extres/shop/images/yes.png "
-                                                 v-on:click="changeTableVal('goods','goods_id',item.goods_id,'is_hot',0,item)"
+                                                 v-on:click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_hot',0,item)"
                                                  id="img_is_hot"/>
                                             <img v-else width="20" height="20"
                                                  src="{$config_siteurl}statics/extres/shop/images/cancel.png "
-                                                 v-on:click="changeTableVal('goods','goods_id',item.goods_id,'is_hot',1,item)"
+                                                 v-on:click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_hot',1,item)"
                                                  id="img_is_hot"/>
                                         </td>
                                         <td class="text-center">
                                             <input type="text" onkeyup="this.value=this.value.replace(/[^\d]/g,'')"
                                                    onpaste="this.value=this.value.replace(/[^\d]/g,'')"
-                                                   v-on:change="changeTableVal('goods','goods_id',item.goods_id,'sort',item.sort,item)"
+                                                   v-on:change="changeTableVal('shop_goods','goods_id',item.goods_id,'sort',item.sort,item)"
                                                    size="4" v-model=" item.sort "/>
                                         </td>
                                         <td class="text-right">

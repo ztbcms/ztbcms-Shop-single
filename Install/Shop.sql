@@ -2,7 +2,7 @@
 -- 用户等级表
 -- ----------------------------
 DROP TABLE IF EXISTS `cms_shop_user_level`;
-CREATE TABLE `cms_user_level` (
+CREATE TABLE `cms_shop_user_level` (
   `level_id` smallint(4) unsigned NOT NULL AUTO_INCREMENT COMMENT '表id',
   `level_name` varchar(30) DEFAULT NULL COMMENT '头衔名称',
   `amount` decimal(10,2) DEFAULT NULL COMMENT '等级必要金额',
@@ -48,8 +48,8 @@ CREATE TABLE `cms_shop_suppliers` (
 -- ----------------------------
 -- 商品规格单元表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_spec_item`;
-CREATE TABLE `cms_spec_item` (
+DROP TABLE IF EXISTS `cms_shop_spec_item`;
+CREATE TABLE `cms_shop_spec_item` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '规格项id',
   `spec_id` int(11) DEFAULT NULL COMMENT '规格id',
   `item` varchar(54) DEFAULT NULL COMMENT '规格项',
@@ -58,8 +58,8 @@ CREATE TABLE `cms_spec_item` (
 -- ----------------------------
 -- 商品规格对应图片表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_spec_image`;
-CREATE TABLE `cms_spec_image` (
+DROP TABLE IF EXISTS `cms_shop_spec_image`;
+CREATE TABLE `cms_shop_spec_image` (
   `goods_id` int(11) DEFAULT '0' COMMENT '商品规格图片表id',
   `spec_image_id` int(11) DEFAULT '0' COMMENT '规格项id',
   `src` varchar(512) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT '商品规格图片路径'
@@ -67,8 +67,8 @@ CREATE TABLE `cms_spec_image` (
 -- ----------------------------
 -- 商品规格对应价格库存表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_spec_goods_price`;
-CREATE TABLE `cms_spec_goods_price` (
+DROP TABLE IF EXISTS `cms_shop_spec_goods_price`;
+CREATE TABLE `cms_shop_spec_goods_price` (
   `goods_id` int(11) DEFAULT '0' COMMENT '商品id',
   `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '规格键名',
   `key_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '规格键名中文',
@@ -80,8 +80,8 @@ CREATE TABLE `cms_spec_goods_price` (
 -- ----------------------------
 -- 商品规格表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_spec`;
-CREATE TABLE `cms_spec` (
+DROP TABLE IF EXISTS `cms_shop_spec`;
+CREATE TABLE `cms_shop_spec` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '规格表',
   `type_id` int(11) DEFAULT '0' COMMENT '规格类型',
   `name` varchar(55) DEFAULT NULL COMMENT '规格名称',
@@ -172,8 +172,8 @@ CREATE TABLE `cms_shop_return_goods` (
 -- ----------------------------
 -- 订单商品表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_order_goods`;
-CREATE TABLE `cms_order_goods` (
+DROP TABLE IF EXISTS `cms_shop_order_goods`;
+CREATE TABLE `cms_shop_order_goods` (
   `rec_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '表id自增',
   `order_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '订单id',
   `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '商品id',
@@ -201,8 +201,8 @@ CREATE TABLE `cms_order_goods` (
 -- ----------------------------
 -- 订单跟进表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_order_action`;
-CREATE TABLE `cms_order_action` (
+DROP TABLE IF EXISTS `cms_shop_order_action`;
+CREATE TABLE `cms_shop_order_action` (
   `action_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '表id',
   `order_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '订单ID',
   `action_user` int(11) DEFAULT '0' COMMENT '操作人 0 为管理员操作',
@@ -218,8 +218,8 @@ CREATE TABLE `cms_order_action` (
 -- ----------------------------
 -- 订单表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_order`;
-CREATE TABLE `cms_order` (
+DROP TABLE IF EXISTS `cms_shop_order`;
+CREATE TABLE `cms_shop_order` (
   `order_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '订单id',
   `order_sn` varchar(20) NOT NULL DEFAULT '' COMMENT '订单编号',
   `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',
@@ -273,17 +273,17 @@ CREATE TABLE `cms_order` (
 -- ----------------------------
 -- 商品类型
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_goods_type`;
-CREATE TABLE `cms_goods_type` (
+DROP TABLE IF EXISTS `cms_shop_goods_type`;
+CREATE TABLE `cms_shop_goods_type` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id自增',
   `name` varchar(60) NOT NULL DEFAULT '' COMMENT '类型名称',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
--- 商品类型
+-- 商品相册
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_goods_images`;
-CREATE TABLE `cms_goods_images` (
+DROP TABLE IF EXISTS `cms_shop_goods_images`;
+CREATE TABLE `cms_shop_goods_images` (
   `img_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '图片id 自增',
   `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '商品id',
   `image_url` varchar(255) NOT NULL DEFAULT '' COMMENT '图片地址',
@@ -293,8 +293,8 @@ CREATE TABLE `cms_goods_images` (
 -- ----------------------------
 -- 商品咨询表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_goods_consult`;
-CREATE TABLE `cms_goods_consult` (
+DROP TABLE IF EXISTS `cms_shop_goods_consult`;
+CREATE TABLE `cms_shop_goods_consult` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '商品咨询id',
   `goods_id` int(11) DEFAULT '0' COMMENT '商品id',
   `username` varchar(32) CHARACTER SET utf8 DEFAULT '' COMMENT '网名',
@@ -308,8 +308,8 @@ CREATE TABLE `cms_goods_consult` (
 -- ----------------------------
 -- 商品分类表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_goods_category`;
-CREATE TABLE `cms_goods_category` (
+DROP TABLE IF EXISTS `cms_shop_goods_category`;
+CREATE TABLE `cms_shop_goods_category` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT '商品分类id',
   `name` varchar(90) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '商品分类名称',
   `mobile_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT '手机端显示的商品分类名',
@@ -328,8 +328,8 @@ CREATE TABLE `cms_goods_category` (
 -- ----------------------------
 -- 商品属性表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_goods_attribute`;
-CREATE TABLE `cms_goods_attribute` (
+DROP TABLE IF EXISTS `cms_shop_goods_attribute`;
+CREATE TABLE `cms_shop_goods_attribute` (
   `attr_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '属性id',
   `attr_name` varchar(60) NOT NULL DEFAULT '' COMMENT '属性名称',
   `type_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT '属性分类id',
@@ -344,8 +344,8 @@ CREATE TABLE `cms_goods_attribute` (
 -- ----------------------------
 -- 商品所属属性表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_goods_attr`;
-CREATE TABLE `cms_goods_attr` (
+DROP TABLE IF EXISTS `cms_shop_goods_attr`;
+CREATE TABLE `cms_shop_goods_attr` (
   `goods_attr_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '商品属性id自增',
   `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '商品id',
   `attr_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT '属性id',
@@ -358,8 +358,8 @@ CREATE TABLE `cms_goods_attr` (
 -- ----------------------------
 -- 商品表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_goods`;
-CREATE TABLE `cms_goods` (
+DROP TABLE IF EXISTS `cms_shop_goods`;
+CREATE TABLE `cms_shop_goods` (
   `goods_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '商品id',
   `cat_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '分类id',
   `extend_cat_id` int(11) DEFAULT '0' COMMENT '扩展分类id',

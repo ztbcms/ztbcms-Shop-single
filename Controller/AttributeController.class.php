@@ -7,6 +7,7 @@
 namespace Shop\Controller;
 
 use Common\Controller\AdminBase;
+use Shop\Service\GoodsService;
 use Shop\Util\Page;
 use Shop\Util\AjaxPage;
 
@@ -32,7 +33,7 @@ class AttributeController extends AdminBase {
         $where = ' 1 = 1 '; // 搜索条件                        
         I('type_id') && $where = "$where and type_id = " . I('type_id');
         // 关键词搜索               
-        $model = M('GoodsAttribute');
+        $model = M(GoodsService::GOODS_ATTRIBUTE_TABLE_NAME);
         $count = $model->where($where)->count();
         $page = I('page', 1);
         $limit = I('limit', 20);
@@ -43,7 +44,7 @@ class AttributeController extends AdminBase {
         );
 
         $goodsAttributeList = $model->where($where)->order('`order` desc,attr_id DESC')->page($page, $limit)->select();
-        $goodsTypeList = M("GoodsType")->select(); // 分类
+        $goodsTypeList = M(GoodsService::GOODS_TYPE_TABLE_NAME)->select(); // 分类
         $goodsTypeList = convert_arr_key($goodsTypeList, 'id');
         $attr_input_type = array(0 => '手工录入', 1 => ' 从列表中选择', 2 => ' 多行文本框');
 
@@ -66,7 +67,7 @@ class AttributeController extends AdminBase {
                 $this->ajaxReturn(['msg' => '没有选择商品类型', 'status' => false]);
             }
 
-            $model = M('goodsAttribute');
+            $model = M(GoodsService::GOODS_ATTRIBUTE_TABLE_NAME);
             $id = I('id', 0);
 
             if ($id == 0) {
@@ -84,8 +85,8 @@ class AttributeController extends AdminBase {
     public function getAttrDetail() {
         $id = I('id', 0);
         if (IS_AJAX) {
-            $res = M("GoodsAttribute")->find($id);
-            $goodsType = M("GoodsType")->select();
+            $res = M(GoodsService::GOODS_ATTRIBUTE_TABLE_NAME)->find($id);
+            $goodsType = M(GoodsService::GOODS_TYPE_TABLE_NAME)->select();
             if ($res) {
                 $this->ajaxReturn(['goodsType' => $goodsType, 'data' => $res, 'status' => true]);
             } else {
@@ -111,10 +112,10 @@ class AttributeController extends AdminBase {
     public function delGoodsAttribute() {
         $id = I('post.id');
         // 判断 有无商品使用该属性
-        $count = M("GoodsAttr")->where("attr_id = '%d'", $id)->count("1");
+        $count = M(GoodsService::GOODS_ATTR_TABLE_NAME)->where("attr_id = '%d'", $id)->count("1");
         $count > 0 && $this->error('有商品使用该属性,不得删除!', U('Attribute/index'));
         // 删除 属性
-        M('GoodsAttribute')->where("attr_id = '%d'", $id)->delete();
+        M(GoodsService::GOODS_ATTRIBUTE_TABLE_NAME)->where("attr_id = '%d'", $id)->delete();
         $this->success("操作成功", U('Attribute/index'));
     }
 }

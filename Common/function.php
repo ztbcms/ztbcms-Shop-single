@@ -160,9 +160,9 @@ function getCatGrandson($cat_id) {
     // 先把自己的id 保存起来
     $GLOBALS['catGrandson'][] = $cat_id;
     // 把整张表找出来
-    $GLOBALS['category_id_arr'] = M('GoodsCategory')->cache(true, TPSHOP_CACHE_TIME)->getField('id,parent_id');
+    $GLOBALS['category_id_arr'] = M('ShopGoodsCategory')->cache(true, TPSHOP_CACHE_TIME)->getField('id,parent_id');
     // 先把所有儿子找出来
-    $son_id_arr = M('GoodsCategory')->where("parent_id = $cat_id")->cache(true, TPSHOP_CACHE_TIME)->getField('id', true);
+    $son_id_arr = M('ShopGoodsCategory')->where("parent_id = $cat_id")->cache(true, TPSHOP_CACHE_TIME)->getField('id', true);
     foreach ($son_id_arr as $k => $v) {
         getCatGrandson2($v);
     }
@@ -225,14 +225,14 @@ function delFile($dir, $file_type = '') {
  * @return bool
  */
 function refresh_stock($goods_id) {
-    $count = M("SpecGoodsPrice")->where("goods_id = $goods_id")->count();
+    $count = M("ShopSpecGoodsPrice")->where("goods_id = $goods_id")->count();
     if ($count == 0) {
         return false;
     }
     // 没有使用规格方式 没必要更改总库存
 
-    $store_count = M("SpecGoodsPrice")->where("goods_id = $goods_id")->sum('store_count');
-    M("Goods")->where("goods_id = $goods_id")->save(array('store_count' => $store_count)); // 更新商品的总库存
+    $store_count = M("ShopSpecGoodsPrice")->where("goods_id = $goods_id")->sum('store_count');
+    M("ShopGoods")->where("goods_id = $goods_id")->save(array('store_count' => $store_count)); // 更新商品的总库存
 }
 
 /**
@@ -293,9 +293,9 @@ function get_arr_column($arr, $key_name) {
  */
 function getGoodNum($goods_id, $key) {
     if (!empty($key)) {
-        return M("SpecGoodsPrice")->where("goods_id = $goods_id and `key` = '$key'")->getField('store_count');
+        return M("ShopSpecGoodsPrice")->where("goods_id = $goods_id and `key` = '$key'")->getField('store_count');
     } else {
-        return M("Goods")->where("goods_id = $goods_id")->getField('store_count');
+        return M("ShopGoods")->where("goods_id = $goods_id")->getField('store_count');
     }
 
 }
@@ -331,7 +331,7 @@ function calculate_price($user_id = 0, $order_goods, $shipping_code = '', $shipp
     }
 
     $goods_id_arr = get_arr_column($order_goods, 'goods_id');
-    $goods_arr = M('goods')->where("goods_id in(" . implode(',', $goods_id_arr) . ")")->getField('goods_id,weight,market_price,is_free_shipping'); // 商品id 和重量对应的键值对
+    $goods_arr = M('ShopGoods')->where("goods_id in(" . implode(',', $goods_id_arr) . ")")->getField('goods_id,weight,market_price,is_free_shipping'); // 商品id 和重量对应的键值对
 
     foreach ($order_goods as $key => $val) {
         // 如果传递过来的商品列表没有定义会员价
@@ -543,12 +543,12 @@ function minus_stock($order_id) {
     foreach ($orderGoodsArr as $key => $val) {
         // 有选择规格的商品
         if (!empty($val['spec_key'])) { // 先到规格表里面扣除数量 再重新刷新一个 这件商品的总数量
-            M('SpecGoodsPrice')->where("goods_id = {$val['goods_id']} and `key` = '{$val['spec_key']}'")->setDec('store_count', $val['goods_num']);
+            M('ShopSpecGoodsPrice')->where("goods_id = {$val['goods_id']} and `key` = '{$val['spec_key']}'")->setDec('store_count', $val['goods_num']);
             refresh_stock($val['goods_id']);
         } else {
-            M('Goods')->where("goods_id = {$val['goods_id']}")->setDec('store_count', $val['goods_num']); // 直接扣除商品总数量
+            M('ShopGoods')->where("goods_id = {$val['goods_id']}")->setDec('store_count', $val['goods_num']); // 直接扣除商品总数量
         }
-        M('Goods')->where("goods_id = {$val['goods_id']}")->setInc('sales_sum', $val['goods_num']); // 增加商品销售量
+        M('ShopGoods')->where("goods_id = {$val['goods_id']}")->setInc('sales_sum', $val['goods_num']); // 增加商品销售量
         //更新活动商品购买量
         if ($val['prom_type'] == 1 || $val['prom_type'] == 2) {
             $prom = get_goods_promotion($val['goods_id']);
@@ -752,9 +752,9 @@ function navigate_goods($id, $type = 0) {
     $cat_id = $id; //
     // 如果传递过来的是
     if ($type == 1) {
-        $cat_id = M('goods')->where("goods_id = $id")->getField('cat_id');
+        $cat_id = M('ShopGoods')->where("goods_id = $id")->getField('cat_id');
     }
-    $categoryList = M('GoodsCategory')->getField("id,name,parent_id");
+    $categoryList = M('ShopGoodsCategory')->getField("id,name,parent_id");
 
     // 第一个先装起来
     $arr[$cat_id] = $categoryList[$cat_id]['name'];

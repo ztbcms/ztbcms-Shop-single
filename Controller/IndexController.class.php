@@ -1,5 +1,8 @@
 <?php
 namespace Shop\Controller;
+use Shop\Service\BrandService;
+use Shop\Service\GoodsService;
+
 class IndexController extends BaseController {
     public function index(){
 
@@ -7,17 +10,17 @@ class IndexController extends BaseController {
     public function goodsInfo(){
         $goodsLogic = new \Shop\Logic\GoodsLogic();
         $goods_id = I("get.id");
-        $goods = M('Goods')->where("goods_id = $goods_id")->find();
+        $goods = M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = $goods_id")->find();
         if(empty($goods) || ($goods['is_on_sale'] == 0)){
         	$this->error('该商品已经下架',U('Index/index'));
         }
         if($goods['brand_id']){
-            $brnad = M('brand')->where("id =".$goods['brand_id'])->find();
+            $brnad = M(BrandService::TABLIE_NAME)->where("id =".$goods['brand_id'])->find();
             $goods['brand_name'] = $brnad['name'];
         }
-        $goods_images_list = M('GoodsImages')->where("goods_id = $goods_id")->select(); // 商品 图册        
-        $goods_attribute = M('GoodsAttribute')->getField('attr_id,attr_name'); // 查询属性
-        $goods_attr_list = M('GoodsAttr')->where("goods_id = $goods_id")->select(); // 查询商品属性表                        
+        $goods_images_list = M(GoodsService::GOODS_IMAGES_TABLE_NAME)->where("goods_id = $goods_id")->select(); // 商品 图册
+        $goods_attribute = M(GoodsService::GOODS_ATTRIBUTE_TABLE_NAME)->getField('attr_id,attr_name'); // 查询属性
+        $goods_attr_list = M(GoodsService::GOODS_ATTR_TABLE_NAME)->where("goods_id = $goods_id")->select(); // 查询商品属性表
 		$filter_spec = $goodsLogic->get_spec($goods_id);
                 
         //商品是否正在促销中        
@@ -28,8 +31,8 @@ class IndexController extends BaseController {
         }
 
         $freight_free = tpCache('shopping.freight_free'); // 全场满多少免运费
-        $spec_goods_price  = M('spec_goods_price')->where("goods_id = $goods_id")->getField("key,price,store_count"); // 规格 对应 价格 库存表
-        M('Goods')->where("goods_id=$goods_id")->save(array('click_count'=>$goods['click_count']+1 )); //统计点击数
+        $spec_goods_price  = M('shop_spec_goods_price')->where("goods_id = $goods_id")->getField("key,price,store_count"); // 规格 对应 价格 库存表
+        M(GoodsService::GOODS_TABLE_NAME)->where("goods_id=$goods_id")->save(array('click_count'=>$goods['click_count']+1 )); //统计点击数
         $commentStatistics = $goodsLogic->commentStatistics($goods_id);// 获取某个商品的评论统计
         $point_rate = tpCache('shopping.point_rate');
         $this->assign('freight_free', $freight_free);// 全场满多少免运费

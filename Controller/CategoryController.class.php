@@ -7,7 +7,8 @@
 namespace Shop\Controller;
 
 use Common\Controller\AdminBase;
-use Shop\Logic\GoodsLogic;
+use Shop\Service\CategoryService;
+use Shop\Service\GoodsService;
 
 class CategoryController extends AdminBase {
     /**
@@ -15,8 +16,8 @@ class CategoryController extends AdminBase {
      */
     public function index() {
         if (IS_AJAX) {
-            $GoodsLogic = new GoodsLogic();
-            $cat_list = $GoodsLogic->goods_cat_list();
+            $CategoryService = new CategoryService();
+            $cat_list = $CategoryService->goods_cat_list();
 
             // 解决ajax的自动排序
             $arr = [];
@@ -34,7 +35,7 @@ class CategoryController extends AdminBase {
     public function getCategoryDetail() {
         $id = I('id', 0);
         if (IS_AJAX) {
-            $cat_list = M('goods_category')->select(); // 已经改成联动菜单
+            $cat_list = M(CategoryService::TABLE_NAME)->select(); // 已经改成联动菜单
             $cat_list = convert_arr_key($cat_list, 'id');
             if ($id == 0) {
                 $goods_category_info = [
@@ -49,7 +50,7 @@ class CategoryController extends AdminBase {
                 ];
                 $pid = 0;
             } else {
-                $goods_category_info = D('GoodsCategory')->where(['id' => $id])->find();
+                $goods_category_info = D(CategoryService::TABLE_NAME)->where(['id' => $id])->find();
                 if ($goods_category_info['level'] == 3) {
                     $pid = $cat_list[$goods_category_info['parent_id']]['parent_id'];
                 } else {
@@ -98,13 +99,13 @@ class CategoryController extends AdminBase {
         if ($id == 0) {
             unset($data['id']);
 
-            $insert_id = M('goodsCategory')->add($data); // 写入数据到数据库
+            $insert_id = M(CategoryService::TABLE_NAME)->add($data); // 写入数据到数据库
 
             if (!$insert_id) {
                 $this->ajaxReturn(['status' => false, 'msg' => '操作失败']);
             }
             $path .= $insert_id;
-            M('goodsCategory')->where(['id' => $insert_id])->save(['parent_id_path' => $path]);
+            M(CategoryService::TABLE_NAME)->where(['id' => $insert_id])->save(['parent_id_path' => $path]);
             $this->ajaxReturn(['status' => 1, 'msg' => '操作成功']);
         } else {
             unset($data['id']);
@@ -116,7 +117,7 @@ class CategoryController extends AdminBase {
             $path .= $id;
             $data['parent_id_path'] = $path;
 
-            $res = M('goodsCategory')->where(['id' => $id])->save($data);
+            $res = M(CategoryService::TABLE_NAME)->where(['id' => $id])->save($data);
             if (!$res) {
                 $this->ajaxReturn(['status' => false, 'msg' => '操作失败或没有修改']);
             }
@@ -132,11 +133,11 @@ class CategoryController extends AdminBase {
     public function delGoodsCategory() {
         $id = I('post.id');
         // 判断子分类
-        $GoodsCategory = M("GoodsCategory");
+        $GoodsCategory = M(CategoryService::TABLE_NAME);
         $count = $GoodsCategory->where("parent_id = '%d'", $id)->count("id");
         $count > 0 && $this->error('该分类下还有分类不得删除!');
         // 判断是否存在商品
-        $goods_count = M('Goods')->where("cat_id = '%d'", $id)->count('1');
+        $goods_count = M(GoodsService::GOODS_TABLE_NAME)->where("cat_id = '%d'", $id)->count('1');
         $goods_count > 0 && $this->error('该分类下有商品不得删除!');
         // 删除分类
         $GoodsCategory->where("id = '%d'", $id)->delete();

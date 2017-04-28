@@ -3,6 +3,7 @@ namespace Shop\Logic;
 
 use Common\Model\RelationModel;
 use Shop\Service\BrandService;
+use Shop\Service\GoodsService;
 
 /**
  * 分类逻辑定义
@@ -16,7 +17,7 @@ class GoodsLogic extends RelationModel{
      */
     public function get_look_see($goods)
     {
-        return M('goods')->where("goods_id !=" . $goods['goods_id'] . " and cat_id!=" . $goods['cat_id'] . " and is_on_sale = 1")->limit(12)->select();
+        return M('ShopGoods')->where("goods_id !=" . $goods['goods_id'] . " and cat_id!=" . $goods['cat_id'] . " and is_on_sale = 1")->limit(12)->select();
     }
        /**
      * 获取相关分类
@@ -25,8 +26,8 @@ class GoodsLogic extends RelationModel{
     {
         if (empty($cat_id))
             return array();
-        $cate_info = M('goods_category')->where("id=$cat_id")->find();
-        $siblings_cate = M('goods_category')->where("id!=$cat_id and parent_id=" . $cate_info['parent_id'])->select();
+        $cate_info = M('shop_goods_category')->where("id=$cat_id")->find();
+        $siblings_cate = M('shop_goods_category')->where("id!=$cat_id and parent_id=" . $cate_info['parent_id'])->select();
         return empty($siblings_cate) ? array() : $siblings_cate;
     }
 
@@ -52,12 +53,13 @@ class GoodsLogic extends RelationModel{
      * 获取商品规格
      */
     public function get_spec($goods_id)
+    //TODO 已整合到CategoryService,后期可考虑删除
     {
         //商品规格 价钱 库存表 找出 所有 规格项id
-        $keys = M('SpecGoodsPrice')->where("goods_id = $goods_id")->getField("GROUP_CONCAT(`key` SEPARATOR '_') ");
+        $keys = M('ShopSpecGoodsPrice')->where("goods_id = $goods_id")->getField("GROUP_CONCAT(`key` SEPARATOR '_') ");
         $filter_spec = array();
         if ($keys) {
-            $specImage = M('SpecImage')->where("goods_id = $goods_id and src != '' ")->getField("spec_image_id,src");// 规格对应的 图片表， 例如颜色
+            $specImage = M('ShopSpecImage')->where("goods_id = $goods_id and src != '' ")->getField("spec_image_id,src");// 规格对应的 图片表， 例如颜色
             $keys = str_replace('_', ',', $keys);
             $sql = "SELECT a.name,a.order,b.* FROM __PREFIX__spec AS a INNER JOIN __PREFIX__spec_item AS b ON a.id = b.spec_id WHERE b.id IN($keys) ORDER BY b.id";
             $filter_spec2 = M()->query($sql);
@@ -81,6 +83,7 @@ class GoodsLogic extends RelationModel{
      * @param   int     $level      限定返回的级数。为0时返回所有级数
      * @return  mixed
      */
+    //TODO 已整合到CategoryService,后期可考虑删除
     public function goods_cat_list($cat_id = 0, $selected = 0, $re_type = true, $level = 0)
     {
                 global $goods_category, $goods_category2;                
@@ -148,13 +151,13 @@ class GoodsLogic extends RelationModel{
      */
     public function refresh_cat($id)
     {            
-        $GoodsCategory = M("GoodsCategory"); // 实例化User对象
+        $GoodsCategory = M("ShopGoodsCategory"); // 实例化User对象
         $cat = $GoodsCategory->where("id = $id")->find(); // 找出他自己
         // 刚新增的分类先把它的值重置一下
         if($cat['parent_id_path'] == '')
         {
             ($cat['parent_id'] == 0) && $GoodsCategory->execute("UPDATE __PREFIX__goods_category set  parent_id_path = '0_$id', level = 1 where id = $id"); // 如果是一级分类               
-            $GoodsCategory->execute("UPDATE __PREFIX__goods_category AS a ,__PREFIX__goods_category AS b SET a.parent_id_path = CONCAT_WS('_',b.parent_id_path,'$id'),a.level = (b.level+1) WHERE a.parent_id=b.id AND a.id = $id");                
+            $GoodsCategory->execute("UPDATE __PREFIX__shop_goods_category AS a ,__PREFIX__shop_goods_category AS b SET a.parent_id_path = CONCAT_WS('_',b.parent_id_path,'$id'),a.level = (b.level+1) WHERE a.parent_id=b.id AND a.id = $id");
             $cat = $GoodsCategory->where("id = $id")->find(); // 从新找出他自己
         }        
         
@@ -177,6 +180,7 @@ class GoodsLogic extends RelationModel{
      * @param int $type_id 商品属性类型id
      * @return string
      */
+    //TODO 已整合到GoodsService，后期可考虑删除
     public function getAttrInput($goods_id,$type_id)
     {
         header("Content-type: text/html; charset=utf-8");
@@ -251,6 +255,7 @@ class GoodsLogic extends RelationModel{
      * @param int $attr_id 商品属性id
      * @return array 返回数组
      */
+    //TODO 已整合到GoodsService，后期可考虑删除
     public function getGoodsAttrVal($goods_attr_id = 0 ,$goods_id = 0, $attr_id = 0)
     {
         $GoodsAttr = D('GoodsAttr');        
@@ -265,10 +270,11 @@ class GoodsLogic extends RelationModel{
      * @param int $goods_id  商品id
      * @param int $goods_type  商品类型id
      */
+    //TODO 已整合到GoodsService,后期可考虑删除
     public function saveGoodsAttr($goods_id,$goods_type)
     {  
         $GoodsAttr = D('GoodsAttr');
-        $Goods = M("Goods");
+        $Goods = M('ShopGoods');
                 
          // 属性类型被更改了 就先删除以前的属性类型 或者没有属性 则删除        
         if($goods_type == 0)  
@@ -335,6 +341,7 @@ class GoodsLogic extends RelationModel{
      * @param int $spec_id 规格id
      * @return array 返回数组
      */
+    //TODO 已整合到GoodsService,后期可考虑删除
     public function getSpecItem($spec_id)
     { 
         $model = M('SpecItem');        
@@ -349,6 +356,7 @@ class GoodsLogic extends RelationModel{
      * @param string $spec_arr 笛卡尔积
      * @return string 返回表格字符串
      */
+    //TODO 已整合到GoodsService,后期可考虑删除
     public function getSpecInput($goods_id, $spec_arr)
     {
         // <input name="item[2_4_7][price]" value="100" /><input name="item[2_4_7][name]" value="蓝色_S_长袖" />        
@@ -373,9 +381,9 @@ class GoodsLogic extends RelationModel{
          $clo_name = array_keys($spec_arr2);         
          $spec_arr2 = combineDika($spec_arr2); //  获取 规格的 笛卡尔积                 
                        
-         $spec = M('Spec')->getField('id,name'); // 规格表
-         $specItem = M('SpecItem')->getField('id,item,spec_id');//规格项
-         $keySpecGoodsPrice = M('SpecGoodsPrice')->where('goods_id = '.$goods_id)->getField('key,key_name,price,store_count,bar_code,sku');//规格项
+         $spec = M('ShopSpec')->getField('id,name'); // 规格表
+         $specItem = M('ShopSpecItem')->getField('id,item,spec_id');//规格项
+         $keySpecGoodsPrice = M('ShopSpecGoodsPrice')->where('goods_id = '.$goods_id)->getField('key,key_name,price,store_count,bar_code,sku');//规格项
                           
        $str = "<table class='table table-bordered' id='spec_input_tab'>";
        $str .="<tr>";       
@@ -421,7 +429,7 @@ class GoodsLogic extends RelationModel{
      * @return string
      */
     function GetSpecCheckboxList($type_id, $checked = array()){
-        $list = M('Spec')->where("type_id = $type_id")->order('`order` desc')->select();        
+        $list = M('ShopSpec')->where("type_id = $type_id")->order('`order` desc')->select();
         //$list = M('Spec')->where("1=1")->order('`order` desc')->select();        
         $str = '';
         
@@ -442,7 +450,7 @@ class GoodsLogic extends RelationModel{
      * @return string
      */
     function GetAttrCheckboxList($type_id, $checked = array()){                
-        $list = M('GoodsAttribute')->where("type_id = $type_id and attr_index > 0 ")->order('`order` desc')->select();        
+        $list = M(GoodsService::GOODS_ATTRIBUTE_TABLE_NAME)->where("type_id = $type_id and attr_index > 0 ")->order('`order` desc')->select();
         //$list = M('Spec')->where("1=1")->order('`order` desc')->select();        
         $str = '';
         
@@ -461,12 +469,13 @@ class GoodsLogic extends RelationModel{
      * @param string $cat_id
      * @return array
      */
+    //TODO 已整合到GoodsService,后期可考虑删除
     function find_parent_cat($cat_id)
     {
         if($cat_id == null) 
             return array();
         
-        $cat_list =  M('goods_category')->getField('id,parent_id,level');
+        $cat_list =  M('shop_goods_category')->getField('id,parent_id,level');
         $cat_level_arr[$cat_list[$cat_id]['level']] = $cat_id;
 
         // 找出他老爸
@@ -490,6 +499,7 @@ class GoodsLogic extends RelationModel{
     /**
      *  获取排好序的品牌列表    
      */
+    //TODO 已整合到BrandService,后期可考虑删除
     function getSortBrands(){
         $brandList =  M(BrandService::TABLIE_NAME)->select();
         $brandIdArr =  M(BrandService::TABLIE_NAME)->where("name in (select `name` from `".C('DB_PREFIX')."shop_brand` group by name having COUNT(id) > 1)")->getField('id,cat_id');
@@ -514,9 +524,10 @@ class GoodsLogic extends RelationModel{
     /**
      *  获取排好序的分类列表     
      */
+    //TODO 已整合到GoodsService,后期可考虑删除
     function getSortCategory()
     {
-        $categoryList =  M("GoodsCategory")->getField('id,name,parent_id,level');
+        $categoryList =  M("ShopGoodsCategory")->getField('id,name,parent_id,level');
         $nameList = array();
         foreach($categoryList as $k => $v)
         {

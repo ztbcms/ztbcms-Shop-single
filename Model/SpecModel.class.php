@@ -5,6 +5,7 @@ use Think\Model;
 
 class SpecModel extends Model {
     //protected $tablePrefix = 'tp_';
+    protected $tableName = 'shop_spec';
     protected $patchValidate = true; // 系统支持数据的批量验证功能，
     protected $items = '';
     /**

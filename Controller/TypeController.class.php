@@ -7,6 +7,7 @@
 namespace Shop\Controller;
 
 use Common\Controller\AdminBase;
+use Shop\Service\GoodsService;
 use Shop\Util\Page;
 
 class TypeController extends AdminBase {
@@ -15,7 +16,7 @@ class TypeController extends AdminBase {
      */
     public function index() {
         if (IS_AJAX) {
-            $model = M("GoodsType");
+            $model = M(GoodsService::GOODS_TYPE_TABLE_NAME);
             $count = $model->count();
 
             $page = I('page', 1);
@@ -41,10 +42,10 @@ class TypeController extends AdminBase {
         if (IS_POST) {
             $id = I('id', 0);
             $post = I('post.');
-            $model = M("GoodsType");
+            $model = M(GoodsService::GOODS_TYPE_TABLE_NAME);
 
             if ($id == '') {
-                $res = $model->add($post);
+                $model->add($post);
                 $this->ajaxReturn(['data' => $post, 'status' => true]);
             } else {
                 unset($post['id']);
@@ -58,7 +59,7 @@ class TypeController extends AdminBase {
     public function getTypeDetail() {
         $id = I('id', 0);
         if (IS_AJAX) {
-            $res = M("GoodsType")->find($id);
+            $res = M(GoodsService::GOODS_TYPE_TABLE_NAME)->find($id);
             if ($res) {
                 $this->ajaxReturn(['data' => $res, 'status' => true]);
             } else {
@@ -75,13 +76,13 @@ class TypeController extends AdminBase {
     public function delGoodsType() {
         $id = I('post.id', 0);
         // 判断 商品规格        
-        $count = M("Spec")->where(['type_id' => $id])->count("1");
+        $count = M("ShopSpec")->where(['type_id' => $id])->count("1");
         $count > 0 && $this->error('该类型下有商品规格不得删除!', U('Type/index'));
         // 判断 商品属性        
-        $count = M("GoodsAttribute")->where(['type_id' => $id])->count("1");
+        $count = M(GoodsService::Goods_ATTRIBUT_TABLE_NAME)->where(['type_id' => $id])->count("1");
         $count > 0 && $this->error('该类型下有商品属性不得删除!', U('Type/index'));
         // 删除分类
-        M('GoodsType')->where(['id' => $id])->delete();
+        M(GoodsService::GOODS_TYPE_TABLE_NAME)->where(['id' => $id])->delete();
         $this->success("操作成功", U('Type/index'));
     }
 }

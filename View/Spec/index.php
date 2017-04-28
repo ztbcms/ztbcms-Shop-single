@@ -146,11 +146,11 @@
                     obj.search_index = 1;
                 }
                 var that = this
-                that.changeTableVal('spec', 'id', obj.id, 'search_index', obj.search_index)
+                that.changeTableVal('shop_spec', 'id', obj.id, 'search_index', obj.search_index)
             },
             updateOrder: function (obj) {
                 var that = this
-                that.changeTableVal('spec', 'id', obj.id, 'order', obj.order)
+                that.changeTableVal('shop_spec', 'id', obj.id, 'order', obj.order)
             },
             delGoodsSpec: function (id) {
                 var that = this

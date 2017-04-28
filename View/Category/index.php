@@ -149,7 +149,7 @@
             update: function (obj, field) {
                 console.log(obj);
                 var that = this
-                that.changeTableVal('goodsCategory', 'id', obj.id, field, obj[field])
+                that.changeTableVal('ShopGoodsCategory', 'id', obj.id, field, obj[field])
             },
             delGoodsCategory: function (id) {
                 var that = this;

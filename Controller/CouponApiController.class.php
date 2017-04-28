@@ -8,6 +8,7 @@
 namespace Shop\Controller;
 
 
+use Shop\Service\CartService;
 use Shop\Service\CouponService;
 use Shop\Service\OrderService;
 
@@ -33,7 +34,7 @@ class CouponApiController extends BaseController
         if(I('get.cart_ids')){
             $where_cart['userid'] = $userid;
             $where_cart['id'] = array('in', I('get.cart_ids'));
-            $order_goods = M('Cart')->where($where_cart)->select();
+            $order_goods = M(CartService::TABLE_NAME)->where($where_cart)->select();
             //检测购物车是否有选择商品
             if (count($order_goods) == 0) {
                 $this->error('你的购物车没有选中商品');
@@ -78,7 +79,7 @@ class CouponApiController extends BaseController
 
         $where_cart['userid'] = $this->userid;
         $where_cart['id'] = array('in', I('cart_ids'));
-        $order_goods = M('Cart')->where($where_cart)->select();
+        $order_goods = M(CartService::TABLE_NAME)->where($where_cart)->select();
         //检测购物车是否有选择商品
         if (count($order_goods) == 0) {
             $this->error('你的购物车没有选中商品');

@@ -4,6 +4,7 @@ namespace Shop\Logic;
 
 use Common\Model\RelationModel;
 use Shop\Service\CartService;
+use Shop\Service\GoodsService;
 
 /**
  * 购物车 逻辑定义
@@ -216,7 +217,7 @@ function cart_freight2($shipping_code,$province,$city,$district,$weight)
         $order_goods_ids=array();
         foreach($cartList as $key => $val){
            $order_goods_ids[]=$val['goods_id'];
-           $goods = M('goods')->where("goods_id = {$val['goods_id']} ")->find();
+           $goods = M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = {$val['goods_id']} ")->find();
            $data2['order_id']           = $order_id; // 订单id
            $data2['goods_id']           = $val['goods_id']; // 商品id
            $data2['goods_name']         = $val['goods_name']; // 商品名称
@@ -234,7 +235,7 @@ function cart_freight2($shipping_code,$province,$city,$district,$weight)
            $data2['prom_id']            = $val['prom_id']; // 活动id
            $order_goods_id              = M("OrderGoods")->data($data2)->add(); 
            // 扣除商品库存  扣除库存移到 付完款后扣除
-           //M('Goods')->where("goods_id = ".$val['goods_id'])->setDec('store_count',$val['goods_num']); // 商品减少库存
+           //M('ShopGoods')->where("goods_id = ".$val['goods_id'])->setDec('store_count',$val['goods_num']); // 商品减少库存
         } 
         // 如果应付金额为0  可能是余额支付 + 积分 + 优惠券 这里订单支付状态直接变成已支付 
         if($data['order_amount'] == 0)
@@ -259,7 +260,7 @@ function cart_freight2($shipping_code,$province,$city,$district,$weight)
         // 4 删除已提交订单商品
 
         $where=array('userid'=>$user_id,'goods_id'=>array('in',$order_goods_ids));
-        M('Cart')->where($where)->delete();
+        M(CartService::TABLE_NAME)->where($where)->delete();
       
         // 5 记录log 日志
         $data4['user_id'] = $user_id;
@@ -281,7 +282,7 @@ function cart_freight2($shipping_code,$province,$city,$district,$weight)
      * @return array
      */
     public function cart_count($user_id,$mode = 0){
-        $count = M('Cart')->where("user_id = $user_id and selected = 1")->count();
+        $count = M('ShopSpecItem')->where("user_id = $user_id and selected = 1")->count();
         if($mode == 1) return  $count;
         
         return array('status'=>1,'msg'=>'','result'=>$count);         
@@ -315,7 +316,7 @@ function cart_freight2($shipping_code,$province,$city,$district,$weight)
 	   if(empty($session_id) || empty($user_id))
 	     return false;
         // 登录后将购物车的商品的 user_id 改为当前登录的id            
-        M('cart')->where("session_id = '$session_id'")->save(array('user_id'=>$user_id));                    
+        M('ShopSpecItem')->where("session_id = '$session_id'")->save(array('user_id'=>$user_id));                    
         
         $Model = new \Think\Model();
         // 查找购物车两件完全相同的商品
@@ -324,7 +325,7 @@ function cart_freight2($shipping_code,$province,$city,$district,$weight)
         {
             $cart_id_arr = get_arr_column($cart_id_arr, 'id');
             $cart_id_str = implode(',', $cart_id_arr);
-            M('cart')->delete($cart_id_str); // 删除购物车完全相同的商品
+            M('ShopSpecItem')->delete($cart_id_str); // 删除购物车完全相同的商品
         }
    }
 }
