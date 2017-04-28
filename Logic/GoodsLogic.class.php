@@ -339,6 +339,7 @@ class GoodsLogic extends RelationModel{
      * @param int $spec_id 规格id
      * @return array 返回数组
      */
+    //TODO 已整合到GoodsService,后期可考虑删除
     public function getSpecItem($spec_id)
     { 
         $model = M('SpecItem');        

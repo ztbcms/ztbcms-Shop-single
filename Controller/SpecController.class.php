@@ -7,6 +7,7 @@
 namespace Shop\Controller;
 
 use Common\Controller\AdminBase;
+use Shop\Service\GoodsService;
 use Shop\Util\Page;
 use Shop\Logic\GoodsLogic;
 
@@ -29,7 +30,7 @@ class SpecController extends AdminBase {
      */
     public function addEditGoodsType() {
         $_GET['id'] = $_GET['id'] ? $_GET['id'] : 0;
-        $model = M("GoodsType");
+        $model = M(GoodsService::GOODS_TYPE_TABLE_NAME);
         if (IS_POST) {
             $model->create();
             if ($_GET['id']) {
@@ -57,7 +58,7 @@ class SpecController extends AdminBase {
         $count = M("GoodsAttribute")->where("type_id = {$_GET['id']}")->count("1");
         $count > 0 && $this->error('该类型下有商品属性不得删除!', U('Type/index'));
         // 删除分类
-        M('GoodsType')->where("id = {$_GET['id']}")->delete();
+        M(GoodsService::GOODS_TYPE_TABLE_NAME)->where("id = {$_GET['id']}")->delete();
         $this->success("操作成功", U('Type/index'));
     }
 
@@ -80,14 +81,14 @@ class SpecController extends AdminBase {
         );
 
         $specList = $model->where($where)->order('`order` desc')->page($page, $limit)->select();
-        $GoodsLogic = new GoodsLogic();
+        $GoodsService = new GoodsService();
         foreach ($specList as $k => $v) {       // 获取规格项
-            $arr = $GoodsLogic->getSpecItem($v['id']);
+            $arr = $GoodsService->getSpecItem($v['id']);
             $specList[$k]['spec_item'] = implode(' , ', $arr);
         }
 
 
-        $goodsTypeList = M("GoodsType")->select(); // 规格分类
+        $goodsTypeList = M(GoodsService::GOODS_TYPE_TABLE_NAME)->select(); // 规格分类
         $goodsTypeList = convert_arr_key($goodsTypeList, 'id');
 
         return ['goodsTypeList' => $goodsTypeList, 'specList' => $specList, 'page' => $pageArr];
@@ -105,8 +106,7 @@ class SpecController extends AdminBase {
             }
 
             $items = $post['items'];
-            $itemsArr = explode('
-', $items);
+            $itemsArr = explode('，', $items);
             $model = M('Spec');
             $id = I('id', 0);
             if ($id == 0) {
@@ -128,7 +128,6 @@ class SpecController extends AdminBase {
                 }
             }
             $this->ajaxReturn(['data' => $res, 'status' => true]);
-
         }
     }
 
@@ -136,7 +135,7 @@ class SpecController extends AdminBase {
         $id = I('id', 0);
         if (IS_AJAX) {
             $res = M("Spec")->find($id);
-            $goodsType = M("GoodsType")->select();
+            $goodsType = M(GoodsService::GOODS_TYPE_TABLE_NAME)->select();
             if ($res) {
                 $specItem = M('SpecItem')->where(['spec_id' => $id])->select();
                 $specItemStr = '';

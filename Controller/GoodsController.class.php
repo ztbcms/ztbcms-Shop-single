@@ -133,7 +133,7 @@ class GoodsController extends AdminBase {
         $level_cat2 = GoodsService::find_parent_cat($goodsInfo['extend_cat_id'])['data']; // 获取分类默认选中的下拉框
         $cat_list = M(CategoryService::TABLE_NAME)->where("parent_id = 0")->select(); // 已经改成联动菜单
         $brandList = BrandService::getSortBrands()['data'];
-        $goodsType = M("GoodsType")->select();
+        $goodsType = M(GoodsService::GOODS_TYPE_TABLE_NAME)->select();
         $suppliersList = M(GoodsService::SUPPLIERS_TABLE_NAME)->select();
         $this->assign('suppliersList', $suppliersList);
         $this->assign('level_cat', $level_cat);

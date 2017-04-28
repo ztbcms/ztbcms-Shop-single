@@ -9,6 +9,9 @@ class GoodsService extends BaseService {
     //定义供应商表名
     const SUPPLIERS_TABLE_NAME = 'ShopSuppliers';
 
+    //定义商品类型表
+    const GOODS_TYPE_TABLE_NAME = 'ShopGoodsType';
+
     /**
      * 获取指定的商品列表
      * @param array $where 查询条件
@@ -328,6 +331,19 @@ class GoodsService extends BaseService {
         }
         $str .= "</table>";
         return $str;
+    }
+
+    /**
+     * 获取 cms_shop_spec_item表 指定规格id的 规格项
+     * @param int $spec_id 规格id
+     * @return array 返回数组
+     */
+    public function getSpecItem($spec_id)
+    {
+        $model = M('SpecItem');
+        $arr = $model->where("spec_id = $spec_id")->order('id')->select();
+        $arr = get_id_val($arr, 'id','item');
+        return $arr;
     }
 }
 

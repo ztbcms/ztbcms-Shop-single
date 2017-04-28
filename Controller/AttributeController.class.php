@@ -7,6 +7,7 @@
 namespace Shop\Controller;
 
 use Common\Controller\AdminBase;
+use Shop\Service\GoodsService;
 use Shop\Util\Page;
 use Shop\Util\AjaxPage;
 
@@ -43,7 +44,7 @@ class AttributeController extends AdminBase {
         );
 
         $goodsAttributeList = $model->where($where)->order('`order` desc,attr_id DESC')->page($page, $limit)->select();
-        $goodsTypeList = M("GoodsType")->select(); // 分类
+        $goodsTypeList = M(GoodsService::GOODS_TYPE_TABLE_NAME)->select(); // 分类
         $goodsTypeList = convert_arr_key($goodsTypeList, 'id');
         $attr_input_type = array(0 => '手工录入', 1 => ' 从列表中选择', 2 => ' 多行文本框');
 
@@ -85,7 +86,7 @@ class AttributeController extends AdminBase {
         $id = I('id', 0);
         if (IS_AJAX) {
             $res = M("GoodsAttribute")->find($id);
-            $goodsType = M("GoodsType")->select();
+            $goodsType = M(GoodsService::GOODS_TYPE_TABLE_NAME)->select();
             if ($res) {
                 $this->ajaxReturn(['goodsType' => $goodsType, 'data' => $res, 'status' => true]);
             } else {

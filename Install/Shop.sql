@@ -273,14 +273,14 @@ CREATE TABLE `cms_order` (
 -- ----------------------------
 -- 商品类型
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_goods_type`;
-CREATE TABLE `cms_goods_type` (
+DROP TABLE IF EXISTS `cms_shop_goods_type`;
+CREATE TABLE `cms_shop_goods_type` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id自增',
   `name` varchar(60) NOT NULL DEFAULT '' COMMENT '类型名称',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
--- 商品类型
+-- 商品相册
 -- ----------------------------
 DROP TABLE IF EXISTS `cms_goods_images`;
 CREATE TABLE `cms_goods_images` (

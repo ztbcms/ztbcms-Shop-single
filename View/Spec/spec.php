@@ -44,7 +44,7 @@
                                         <td>规格项：</td>
                                         <td>
                                             <textarea rows="5" cols="30" name="items" id="items" class="form-control">{{ specItemStr }}</textarea>
-                                            一行为一个规格项
+                                            每个规格项请以中文逗号，隔开
                                             <span id="err_items" style="color:#F00; display:none;"></span>
                                         </td>
                                     </tr>
