@@ -2,7 +2,7 @@
 -- 用户等级表
 -- ----------------------------
 DROP TABLE IF EXISTS `cms_shop_user_level`;
-CREATE TABLE `cms_user_level` (
+CREATE TABLE `cms_shop_user_level` (
   `level_id` smallint(4) unsigned NOT NULL AUTO_INCREMENT COMMENT '表id',
   `level_name` varchar(30) DEFAULT NULL COMMENT '头衔名称',
   `amount` decimal(10,2) DEFAULT NULL COMMENT '等级必要金额',
