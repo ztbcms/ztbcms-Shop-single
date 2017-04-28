@@ -142,7 +142,7 @@ class OrderService extends BaseService {
             //扣除商品库存
             if ($val['spec_key']) {
                 //如果存在sku库存
-                M('SpecGoodsPrice')->where("`goods_id`='%d' AND `key`='%s' ", $val['goods_id'],
+                M('ShopSpecGoodsPrice')->where("`goods_id`='%d' AND `key`='%s' ", $val['goods_id'],
                     $val['spec_key'])->setDec('store_count', $val['goods_num']);
             } else {
                 M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = " . $val['goods_id'])->setDec('store_count', $val['goods_num']); // 商品减少库存
@@ -417,7 +417,7 @@ class OrderService extends BaseService {
             foreach ($goods_list as $key => $value) {
                 if ($value['spec_key']) {
                     //如果是有规格
-                    M('SpecGoodsPrice')->where([
+                    M('ShopSpecGoodsPrice')->where([
                         'goods_id' => $value['goods_id'],
                         'key' => $value['spec_key']
                     ])->setInc('store_count', $value['goods_num']);

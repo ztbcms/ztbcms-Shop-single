@@ -225,14 +225,14 @@ function delFile($dir, $file_type = '') {
  * @return bool
  */
 function refresh_stock($goods_id) {
-    $count = M("SpecGoodsPrice")->where("goods_id = $goods_id")->count();
+    $count = M("ShopSpecGoodsPrice")->where("goods_id = $goods_id")->count();
     if ($count == 0) {
         return false;
     }
     // 没有使用规格方式 没必要更改总库存
 
-    $store_count = M("SpecGoodsPrice")->where("goods_id = $goods_id")->sum('store_count');
-    M("ShopGoods")->where("goods_id = $goods_id")->save(array('store_count' => $store_count)); // 更新商品的总库存
+    $store_count = M("ShopSpecGoodsPrice")->where("goods_id = $goods_id")->sum('store_count');
+    M("ShopShopGoods")->where("goods_id = $goods_id")->save(array('store_count' => $store_count)); // 更新商品的总库存
 }
 
 /**
@@ -293,9 +293,9 @@ function get_arr_column($arr, $key_name) {
  */
 function getGoodNum($goods_id, $key) {
     if (!empty($key)) {
-        return M("SpecGoodsPrice")->where("goods_id = $goods_id and `key` = '$key'")->getField('store_count');
+        return M("ShopSpecGoodsPrice")->where("goods_id = $goods_id and `key` = '$key'")->getField('store_count');
     } else {
-        return M("Goods")->where("goods_id = $goods_id")->getField('store_count');
+        return M("ShopGoods")->where("goods_id = $goods_id")->getField('store_count');
     }
 
 }
@@ -543,7 +543,7 @@ function minus_stock($order_id) {
     foreach ($orderGoodsArr as $key => $val) {
         // 有选择规格的商品
         if (!empty($val['spec_key'])) { // 先到规格表里面扣除数量 再重新刷新一个 这件商品的总数量
-            M('SpecGoodsPrice')->where("goods_id = {$val['goods_id']} and `key` = '{$val['spec_key']}'")->setDec('store_count', $val['goods_num']);
+            M('ShopSpecGoodsPrice')->where("goods_id = {$val['goods_id']} and `key` = '{$val['spec_key']}'")->setDec('store_count', $val['goods_num']);
             refresh_stock($val['goods_id']);
         } else {
             M('ShopGoods')->where("goods_id = {$val['goods_id']}")->setDec('store_count', $val['goods_num']); // 直接扣除商品总数量
@@ -754,7 +754,7 @@ function navigate_goods($id, $type = 0) {
     if ($type == 1) {
         $cat_id = M('ShopGoods')->where("goods_id = $id")->getField('cat_id');
     }
-    $categoryList = M('GoodsCategory')->getField("id,name,parent_id");
+    $categoryList = M('ShopGoodsCategory')->getField("id,name,parent_id");
 
     // 第一个先装起来
     $arr[$cat_id] = $categoryList[$cat_id]['name'];

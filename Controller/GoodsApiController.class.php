@@ -20,7 +20,7 @@ class GoodsApiController extends Base {
         $goods_attribute = M('GoodsAttribute')->where("type_id='%d'",
             $goods['goods_type'])->getField('attr_id,attr_name'); // 查询属性
         $goods_attr_list = M('GoodsAttr')->where("goods_id = '%d'", $goods_id)->select(); // 查询商品属性表
-        $spec_goods_price = M('spec_goods_price')->where("goods_id = '%d'",
+        $spec_goods_price = M('shop_spec_goods_price')->where("goods_id = '%d'",
             $goods_id)->getField("key,price,store_count"); // 规格 对应 价格 库存表
         $filter_spec = GoodsService::get_spec($goods_id);
         $data = [

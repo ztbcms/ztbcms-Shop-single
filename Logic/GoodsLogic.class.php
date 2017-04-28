@@ -25,8 +25,8 @@ class GoodsLogic extends RelationModel{
     {
         if (empty($cat_id))
             return array();
-        $cate_info = M('goods_category')->where("id=$cat_id")->find();
-        $siblings_cate = M('goods_category')->where("id!=$cat_id and parent_id=" . $cate_info['parent_id'])->select();
+        $cate_info = M('shop_goods_category')->where("id=$cat_id")->find();
+        $siblings_cate = M('shop_goods_category')->where("id!=$cat_id and parent_id=" . $cate_info['parent_id'])->select();
         return empty($siblings_cate) ? array() : $siblings_cate;
     }
 
@@ -54,10 +54,10 @@ class GoodsLogic extends RelationModel{
     public function get_spec($goods_id)
     {
         //商品规格 价钱 库存表 找出 所有 规格项id
-        $keys = M('SpecGoodsPrice')->where("goods_id = $goods_id")->getField("GROUP_CONCAT(`key` SEPARATOR '_') ");
+        $keys = M('ShopSpecGoodsPrice')->where("goods_id = $goods_id")->getField("GROUP_CONCAT(`key` SEPARATOR '_') ");
         $filter_spec = array();
         if ($keys) {
-            $specImage = M('SpecImage')->where("goods_id = $goods_id and src != '' ")->getField("spec_image_id,src");// 规格对应的 图片表， 例如颜色
+            $specImage = M('ShopSpecImage')->where("goods_id = $goods_id and src != '' ")->getField("spec_image_id,src");// 规格对应的 图片表， 例如颜色
             $keys = str_replace('_', ',', $keys);
             $sql = "SELECT a.name,a.order,b.* FROM __PREFIX__spec AS a INNER JOIN __PREFIX__spec_item AS b ON a.id = b.spec_id WHERE b.id IN($keys) ORDER BY b.id";
             $filter_spec2 = M()->query($sql);
@@ -379,9 +379,9 @@ class GoodsLogic extends RelationModel{
          $clo_name = array_keys($spec_arr2);         
          $spec_arr2 = combineDika($spec_arr2); //  获取 规格的 笛卡尔积                 
                        
-         $spec = M('Spec')->getField('id,name'); // 规格表
-         $specItem = M('SpecItem')->getField('id,item,spec_id');//规格项
-         $keySpecGoodsPrice = M('SpecGoodsPrice')->where('goods_id = '.$goods_id)->getField('key,key_name,price,store_count,bar_code,sku');//规格项
+         $spec = M('ShopSpec')->getField('id,name'); // 规格表
+         $specItem = M('ShopSpecItem')->getField('id,item,spec_id');//规格项
+         $keySpecGoodsPrice = M('ShopSpecGoodsPrice')->where('goods_id = '.$goods_id)->getField('key,key_name,price,store_count,bar_code,sku');//规格项
                           
        $str = "<table class='table table-bordered' id='spec_input_tab'>";
        $str .="<tr>";       
@@ -427,7 +427,7 @@ class GoodsLogic extends RelationModel{
      * @return string
      */
     function GetSpecCheckboxList($type_id, $checked = array()){
-        $list = M('Spec')->where("type_id = $type_id")->order('`order` desc')->select();        
+        $list = M('ShopSpec')->where("type_id = $type_id")->order('`order` desc')->select();
         //$list = M('Spec')->where("1=1")->order('`order` desc')->select();        
         $str = '';
         
@@ -473,7 +473,7 @@ class GoodsLogic extends RelationModel{
         if($cat_id == null) 
             return array();
         
-        $cat_list =  M('goods_category')->getField('id,parent_id,level');
+        $cat_list =  M('shop_goods_category')->getField('id,parent_id,level');
         $cat_level_arr[$cat_list[$cat_id]['level']] = $cat_id;
 
         // 找出他老爸

@@ -909,7 +909,7 @@ class OrderController extends AdminBase {
         $goodsList = M(GoodsService::GOODS_TABLE_NAME)->where($where)->order('goods_id DESC')->limit(10)->select();
 
         foreach ($goodsList as $key => $val) {
-            $spec_goods = M('spec_goods_price')->where("goods_id = {$val['goods_id']}")->select();
+            $spec_goods = M('shop_spec_goods_price')->where("goods_id = {$val['goods_id']}")->select();
             $goodsList[$key]['spec_goods'] = $spec_goods;
         }
         $this->assign('goodsList', $goodsList);

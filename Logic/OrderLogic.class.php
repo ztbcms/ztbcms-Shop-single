@@ -73,7 +73,7 @@ class OrderLogic extends RelationModel {
                 // 如果这商品有规格
                 if ($k != 'key') {
                     $arr['spec_key'] = $k;
-                    $spec_goods = M('spec_goods_price')->where("goods_id = $key and `key` = '{$k}'")->find();
+                    $spec_goods = M('shop_spec_goods_price')->where("goods_id = $key and `key` = '{$k}'")->find();
                     $arr['spec_key_name'] = $spec_goods['key_name'];
                     $arr['member_goods_price'] = $arr['goods_price'] = $spec_goods['price'];
                     $arr['sku'] = $spec_goods['sku']; // 参考 sku  http://www.zhihu.com/question/19841574
@@ -244,7 +244,7 @@ class OrderLogic extends RelationModel {
         foreach ($orderGoodsArr as $key => $val) {
             if (!empty($val['spec_key']))// 有选择规格的商品
             {   // 先到规格表里面增加数量 再重新刷新一个 这件商品的总数量
-                M('SpecGoodsPrice')->where("goods_id = {$val['goods_id']} and `key` = '{$val['spec_key']}'")->setInc('store_count',
+                M('ShopSpecGoodsPrice')->where("goods_id = {$val['goods_id']} and `key` = '{$val['spec_key']}'")->setInc('store_count',
                     $val['goods_num']);
                 refresh_stock($val['goods_id']);
             } else {

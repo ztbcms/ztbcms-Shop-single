@@ -178,8 +178,8 @@ class GoodsController extends AdminBase {
         // M("comment")->where('goods_id ='.$goods_id)->delete();  //商品评论
         // M("goods_consult")->where('goods_id ='.$goods_id)->delete();  //商品咨询
         M("goods_images")->where('goods_id =' . $goods_id)->delete();  //商品相册
-        M("spec_goods_price")->where('goods_id =' . $goods_id)->delete();  //商品规格
-        M("spec_image")->where('goods_id =' . $goods_id)->delete();  //商品规格图片
+        M("shop_spec_goods_price")->where('goods_id =' . $goods_id)->delete();  //商品规格
+        M("shop_spec_image")->where('goods_id =' . $goods_id)->delete();  //商品规格图片
         // M("goods_attr")->where('goods_id ='.$goods_id)->delete();  //商品属性     
         // M("goods_collect")->where('goods_id ='.$goods_id)->delete();  //商品收藏          
 
@@ -198,17 +198,17 @@ class GoodsController extends AdminBase {
     public function ajaxGetSpecSelect() {
         $goods_id = $_GET['goods_id'] ? $_GET['goods_id'] : 0;
         //$_GET['spec_type'] =  13;
-        $specList = M('Spec')->where("type_id = " . $_GET['spec_type'])->order('`order` desc')->select();
+        $specList = M('ShopSpec')->where("type_id = " . $_GET['spec_type'])->order('`order` desc')->select();
         foreach ($specList as $k => $v) {
-            $specList[$k]['spec_item'] = M('SpecItem')->where("spec_id = " . $v['id'])->order('id')->getField('id,item');
+            $specList[$k]['spec_item'] = M('ShopSpecItem')->where("spec_id = " . $v['id'])->order('id')->getField('id,item');
         } // 获取规格项
 
-        $items_id = M('SpecGoodsPrice')->where('goods_id = ' . $goods_id)->getField("GROUP_CONCAT(`key` SEPARATOR '_') AS items_id");
+        $items_id = M('ShopSpecGoodsPrice')->where('goods_id = ' . $goods_id)->getField("GROUP_CONCAT(`key` SEPARATOR '_') AS items_id");
         $items_ids = explode('_', $items_id);
 
         // 获取商品规格图片                
         if ($goods_id) {
-            $specImageList = M('SpecImage')->where("goods_id = $goods_id")->getField('spec_image_id,src');
+            $specImageList = M('ShopSpecImage')->where("goods_id = $goods_id")->getField('spec_image_id,src');
         }
         $this->assign('specImageList', $specImageList);
 

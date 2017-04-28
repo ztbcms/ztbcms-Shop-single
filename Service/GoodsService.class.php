@@ -49,12 +49,12 @@ class GoodsService extends BaseService {
 
     static function get_spec($goods_id) {
         //商品规格 价钱 库存表 找出 所有 规格项id
-        $keys = M('SpecGoodsPrice')->where("goods_id = $goods_id")->getField("GROUP_CONCAT(`key` SEPARATOR '_') ");
+        $keys = M('ShopSpecGoodsPrice')->where("goods_id = $goods_id")->getField("GROUP_CONCAT(`key` SEPARATOR '_') ");
         $filter_spec = array();
         if ($keys) {
-            $specImage = M('SpecImage')->where("goods_id = $goods_id and src != '' ")->getField("spec_image_id,src");// 规格对应的 图片表， 例如颜色
+            $specImage = M('ShopSpecImage')->where("goods_id = $goods_id and src != '' ")->getField("spec_image_id,src");// 规格对应的 图片表， 例如颜色
             $keys = str_replace('_', ',', $keys);
-            $sql = "SELECT a.name,a.order,b.* FROM __PREFIX__spec AS a INNER JOIN __PREFIX__spec_item AS b ON a.id = b.spec_id WHERE b.id IN($keys) ORDER BY b.id";
+            $sql = "SELECT a.name,a.order,b.* FROM __PREFIX__shop_spec AS a INNER JOIN __PREFIX__shop_spec_item AS b ON a.id = b.spec_id WHERE b.id IN($keys) ORDER BY b.id";
             $filter_spec2 = M()->query($sql);
             foreach ($filter_spec2 as $key => $val) {
                 $filter_spec[$val['name']][] = array(
@@ -292,9 +292,9 @@ class GoodsService extends BaseService {
         $clo_name = array_keys($spec_arr2);
         $spec_arr2 = combineDika($spec_arr2); //  获取 规格的 笛卡尔积
 
-        $spec = M('Spec')->getField('id,name'); // 规格表
-        $specItem = M('SpecItem')->getField('id,item,spec_id');//规格项
-        $keySpecGoodsPrice = M('SpecGoodsPrice')->where('goods_id = '.$goods_id)->getField('key,key_name,price,store_count,bar_code,sku');//规格项
+        $spec = M('ShopSpec')->getField('id,name'); // 规格表
+        $specItem = M('ShopSpecItem')->getField('id,item,spec_id');//规格项
+        $keySpecGoodsPrice = M('ShopSpecGoodsPrice')->where('goods_id = '.$goods_id)->getField('key,key_name,price,store_count,bar_code,sku');//规格项
 
         $str = "<table class='table table-bordered' id='spec_input_tab'>";
         $str .="<tr>";
@@ -340,7 +340,7 @@ class GoodsService extends BaseService {
      */
     public function getSpecItem($spec_id)
     {
-        $model = M('SpecItem');
+        $model = M('ShopSpecItem');
         $arr = $model->where("spec_id = $spec_id")->order('id')->select();
         $arr = get_id_val($arr, 'id','item');
         return $arr;

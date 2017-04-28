@@ -89,11 +89,11 @@ class GoodsModel extends Model {
         delFile("./Public/upload/goods/thumb/$goods_id"); // 删除缩略图
 
         // 商品规格价钱处理
-        $specGoodsPrice = M("SpecGoodsPrice"); // 实例化 商品规格 价格对象
+        $specGoodsPrice = M("ShopSpecGoodsPrice"); // 实例化 商品规格 价格对象
         $specGoodsPrice->where('goods_id = ' . $goods_id)->delete(); // 删除原有的价格规格对象
         if ($_POST['item']) {
-            $spec = M('Spec')->getField('id,name'); // 规格表
-            $specItem = M('SpecItem')->getField('id,item'); //规格项
+            $spec = M('ShopSpec')->getField('id,name'); // 规格表
+            $specItem = M('ShopSpecItem')->getField('id,item'); //规格项
             foreach ($_POST['item'] as $k => $v) {
                 // 批量添加数据
                 $v['price'] = trim($v['price']);
@@ -121,9 +121,9 @@ class GoodsModel extends Model {
 
         // 商品规格图片处理
         if ($_POST['item_img']) {
-            M('SpecImage')->where("goods_id = $goods_id")->delete(); // 把原来是删除再重新插入
+            M('ShopSpecImage')->where("goods_id = $goods_id")->delete(); // 把原来是删除再重新插入
             foreach ($_POST['item_img'] as $key => $val) {
-                M('SpecImage')->data(array('goods_id' => $goods_id, 'spec_image_id' => $key, 'src' => $val))->add();
+                M('ShopSpecImage')->data(array('goods_id' => $goods_id, 'spec_image_id' => $key, 'src' => $val))->add();
             }
         }
         refresh_stock($goods_id); // 刷新商品库存

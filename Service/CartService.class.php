@@ -17,7 +17,7 @@ class CartService extends BaseService {
      */
     function add_cart($goods_id, $goods_num, $goods_spec, $session_id, $user_id = 0) {
         $goods = M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = $goods_id")->find(); // 找出这个商品
-        $specGoodsPriceList = M('SpecGoodsPrice')->where("goods_id = $goods_id")->getField("key,key_name,price,store_count,sku"); // 获取商品对应的规格价钱 库存 条码
+        $specGoodsPriceList = M('ShopSpecGoodsPrice')->where("goods_id = $goods_id")->getField("key,key_name,price,store_count,sku"); // 获取商品对应的规格价钱 库存 条码
         $user_id = $user_id ? $user_id : 0;
         foreach ($goods_spec as $key => $val) {
             $spec_item[] = $val;

@@ -76,7 +76,7 @@ class TypeController extends AdminBase {
     public function delGoodsType() {
         $id = I('post.id', 0);
         // 判断 商品规格        
-        $count = M("Spec")->where(['type_id' => $id])->count("1");
+        $count = M("ShopSpec")->where(['type_id' => $id])->count("1");
         $count > 0 && $this->error('该类型下有商品规格不得删除!', U('Type/index'));
         // 判断 商品属性        
         $count = M("GoodsAttribute")->where(['type_id' => $id])->count("1");

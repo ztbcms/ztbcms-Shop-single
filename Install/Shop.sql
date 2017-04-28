@@ -48,8 +48,8 @@ CREATE TABLE `cms_shop_suppliers` (
 -- ----------------------------
 -- 商品规格单元表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_spec_item`;
-CREATE TABLE `cms_spec_item` (
+DROP TABLE IF EXISTS `cms_shop_spec_item`;
+CREATE TABLE `cms_shop_spec_item` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '规格项id',
   `spec_id` int(11) DEFAULT NULL COMMENT '规格id',
   `item` varchar(54) DEFAULT NULL COMMENT '规格项',
@@ -58,8 +58,8 @@ CREATE TABLE `cms_spec_item` (
 -- ----------------------------
 -- 商品规格对应图片表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_spec_image`;
-CREATE TABLE `cms_spec_image` (
+DROP TABLE IF EXISTS `cms_shop_spec_image`;
+CREATE TABLE `cms_shop_spec_image` (
   `goods_id` int(11) DEFAULT '0' COMMENT '商品规格图片表id',
   `spec_image_id` int(11) DEFAULT '0' COMMENT '规格项id',
   `src` varchar(512) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT '商品规格图片路径'
@@ -67,8 +67,8 @@ CREATE TABLE `cms_spec_image` (
 -- ----------------------------
 -- 商品规格对应价格库存表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_spec_goods_price`;
-CREATE TABLE `cms_spec_goods_price` (
+DROP TABLE IF EXISTS `cms_shop_spec_goods_price`;
+CREATE TABLE `cms_shop_spec_goods_price` (
   `goods_id` int(11) DEFAULT '0' COMMENT '商品id',
   `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '规格键名',
   `key_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '规格键名中文',
@@ -80,8 +80,8 @@ CREATE TABLE `cms_spec_goods_price` (
 -- ----------------------------
 -- 商品规格表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_spec`;
-CREATE TABLE `cms_spec` (
+DROP TABLE IF EXISTS `cms_shop_spec`;
+CREATE TABLE `cms_shop_spec` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '规格表',
   `type_id` int(11) DEFAULT '0' COMMENT '规格类型',
   `name` varchar(55) DEFAULT NULL COMMENT '规格名称',

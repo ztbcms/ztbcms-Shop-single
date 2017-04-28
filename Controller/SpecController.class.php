@@ -52,7 +52,7 @@ class SpecController extends AdminBase {
      */
     public function delGoodsType() {
         // 判断 商品规格        
-        $count = M("Spec")->where("type_id = {$_GET['id']}")->count("1");
+        $count = M("ShopSpec")->where("type_id = {$_GET['id']}")->count("1");
         $count > 0 && $this->error('该类型下有商品规格不得删除!', U('Type/index'));
         // 判断 商品属性        
         $count = M("GoodsAttribute")->where("type_id = {$_GET['id']}")->count("1");
@@ -107,23 +107,23 @@ class SpecController extends AdminBase {
 
             $items = $post['items'];
             $itemsArr = explode('，', $items);
-            $model = M('Spec');
+            $model = M('ShopSpec');
             $id = I('id', 0);
             if ($id == 0) {
                 // 添加
                 $res = $model->add($post['detail']); // 插入id
                 foreach ($itemsArr as $val) {
                     if ($val != '') {
-                        M('specItem')->add(['spec_id' => $res, 'item' => $val]);
+                        M('ShopSpecItem')->add(['spec_id' => $res, 'item' => $val]);
                     }
                 }
             } else {
                 // 修改
                 $res = $model->where(['id' => $id])->save($post['detail']);
-                M('specItem')->where(['spec_id' => $id])->delete();
+                M('ShopSpecItem')->where(['spec_id' => $id])->delete();
                 foreach ($itemsArr as $val) {
                     if ($val != '') {
-                        M('specItem')->add(['spec_id' => $id, 'item' => $val]);
+                        M('ShopSpecItem')->add(['spec_id' => $id, 'item' => $val]);
                     }
                 }
             }
@@ -134,14 +134,13 @@ class SpecController extends AdminBase {
     public function getSpecDetail() {
         $id = I('id', 0);
         if (IS_AJAX) {
-            $res = M("Spec")->find($id);
+            $res = M("ShopSpec")->find($id);
             $goodsType = M(GoodsService::GOODS_TYPE_TABLE_NAME)->select();
             if ($res) {
-                $specItem = M('SpecItem')->where(['spec_id' => $id])->select();
+                $specItem = M('ShopSpecItem')->where(['spec_id' => $id])->select();
                 $specItemStr = '';
                 foreach ($specItem as $val) {
-                    $specItemStr .= $val['item'] . "
-";
+                    $specItemStr .= $val['item'] . "，";
                 }
                 $specItemStr = rtrim($specItemStr);
                 $this->ajaxReturn([
@@ -173,7 +172,7 @@ class SpecController extends AdminBase {
         $count = M("SpecItem")->where("spec_id = '%d'", $id)->count("1");
         $count > 0 && $this->error('清空规格项后才可以删除!', U('Spec/index'));
         // 删除分类
-        M('Spec')->where("id = '%d'", $id)->delete();
+        M('ShopSpec')->where("id = '%d'", $id)->delete();
         $this->success("删除成功", U('Spec/index'));
     }
 }
