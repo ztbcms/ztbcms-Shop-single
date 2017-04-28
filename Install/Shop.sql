@@ -172,8 +172,8 @@ CREATE TABLE `cms_shop_return_goods` (
 -- ----------------------------
 -- 订单商品表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_order_goods`;
-CREATE TABLE `cms_order_goods` (
+DROP TABLE IF EXISTS `cms_shop_order_goods`;
+CREATE TABLE `cms_shop_order_goods` (
   `rec_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '表id自增',
   `order_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '订单id',
   `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '商品id',
@@ -201,8 +201,8 @@ CREATE TABLE `cms_order_goods` (
 -- ----------------------------
 -- 订单跟进表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_order_action`;
-CREATE TABLE `cms_order_action` (
+DROP TABLE IF EXISTS `cms_shop_order_action`;
+CREATE TABLE `cms_shop_order_action` (
   `action_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '表id',
   `order_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '订单ID',
   `action_user` int(11) DEFAULT '0' COMMENT '操作人 0 为管理员操作',
@@ -218,8 +218,8 @@ CREATE TABLE `cms_order_action` (
 -- ----------------------------
 -- 订单表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_order`;
-CREATE TABLE `cms_order` (
+DROP TABLE IF EXISTS `cms_shop_order`;
+CREATE TABLE `cms_shop_order` (
   `order_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '订单id',
   `order_sn` varchar(20) NOT NULL DEFAULT '' COMMENT '订单编号',
   `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',

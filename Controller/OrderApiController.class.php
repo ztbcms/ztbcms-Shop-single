@@ -21,7 +21,7 @@ class OrderApiController extends BaseController {
         $id = I('get.id');
         $map['order_id'] = $id;
         $map['user_id'] = $this->userid;
-        $order_info = M('order')->where($map)->find();
+        $order_info = M(OrderService::TABLE_NAME)->where($map)->find();
 
         $order_info['province_name'] = getRegionName($order_info['province'], 1);
         $order_info['city_name'] = getRegionName($order_info['city'], 2);
@@ -63,9 +63,9 @@ class OrderApiController extends BaseController {
         if (I('get.shipping_status') != '') {
             $where['shipping_status'] = I('get.shipping_status');
         }
-        $total = M('order')->where($where)->count();
+        $total = M(OrderService::TABLE_NAME)->where($where)->count();
         $order_str = "order_id DESC";
-        $order_list = M('order')->order($order_str)->where($where)->page($page, $limit)->select();
+        $order_list = M(OrderService::TABLE_NAME)->order($order_str)->where($where)->page($page, $limit)->select();
 
         //获取订单商品
         foreach ($order_list as $k => $v) {
@@ -105,7 +105,7 @@ class OrderApiController extends BaseController {
             $this->error('你的购物车没有选中商品');
         } // 返回结果状态
         //检测地址是否存在
-        $address = M('UserAddress')->where(['address_id' => $address_id])->find();
+        $address = M(UserService::ADDRESS_TABLE_NAME)->where(['address_id' => $address_id])->find();
         if (!$address || !$address_id) {
             $this->error('请先填写收货人信息');
         } // 返回结果状态

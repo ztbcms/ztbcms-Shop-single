@@ -47,7 +47,7 @@ class OrderController extends AdminBase {
      * 订单列表
      */
     public function orderList() {
-        $orderLogic = new OrderLogic();
+        $orderService = new OrderService();
         $timegap = I('timegap');
         if ($timegap) {
             $gap = explode('-', $timegap);
@@ -73,7 +73,7 @@ class OrderController extends AdminBase {
         $total = M(OrderService::TABLE_NAME)->where($condition)->count();
         $page_count = ceil($total / $limit);
         //获取订单列表
-        $orderList = $orderLogic->getOrderList($condition, $sort_order, $page, $limit);
+        $orderList = $orderService->getOrderList($condition, $sort_order, $page, $limit);
 
         $res = [
             'lists' => $orderList,
@@ -92,7 +92,7 @@ class OrderController extends AdminBase {
      * Ajax首页
      */
     public function ajaxindex() {
-        $orderLogic = new OrderLogic();
+        $orderService = new OrderService();
         $timegap = I('timegap');
         if ($timegap) {
             $gap = explode('-', $timegap);
@@ -120,7 +120,7 @@ class OrderController extends AdminBase {
         }
         $show = $Page->show();
         //获取订单列表
-        $orderList = $orderLogic->getOrderList($condition, $sort_order, $Page->firstRow, $Page->listRows);
+        $orderList = $orderService->getOrderList($condition, $sort_order, $Page->firstRow, $Page->listRows);
         $this->assign('orderList', $orderList);
         $this->assign('page', $show);// 赋值分页输出
         $this->display();
@@ -152,14 +152,15 @@ class OrderController extends AdminBase {
 
     /**
      * 订单详情
+     * @param int $order_id 订单ID
      */
     public function detail($order_id) {
-        $orderLogic = new OrderLogic();
-        $order = $orderLogic->getOrderInfo($order_id);
-        $orderGoods = $orderLogic->getOrderGoods($order_id);
-        $button = $orderLogic->getOrderButton($order);
+        $orderService = new OrderService();
+        $order = $orderService->getOrderInfo($order_id);
+        $orderGoods = $orderService->getOrderGoods($order_id);
+        $button = $orderService->getOrderButton($order);
         // 获取操作记录
-        $action_log = M('order_action')->where(array('order_id' => $order_id))->order('log_time desc')->select();
+        $action_log = M(OrderService::ORDER_ACTION_TABLE_NAME)->where(array('order_id' => $order_id))->order('log_time desc')->select();
         $this->assign('order', $order);
         $this->assign('action_log', $action_log);
         $this->assign('orderGoods', $orderGoods);
@@ -180,14 +181,14 @@ class OrderController extends AdminBase {
      */
     public function edit_order() {
         $order_id = I('order_id');
-        $orderLogic = new OrderLogic();
-        $order = $orderLogic->getOrderInfo($order_id);
+        $orderService = new OrderService();
+        $order = $orderService->getOrderInfo($order_id);
         if ($order['shipping_status'] != 0) {
             $this->error('已发货订单不允许编辑');
             exit;
         }
 
-        $orderGoods = $orderLogic->getOrderGoods($order_id);
+        $orderGoods = $orderService->getOrderGoods($order_id);
 
         if (IS_POST) {
             $order['consignee'] = I('consignee');// 收货人
@@ -203,10 +204,10 @@ class OrderController extends AdminBase {
             $new_goods = $old_goods_arr = array();
             //################################订单添加商品
             if ($goods_id_arr) {
-                $new_goods = $orderLogic->get_spec_goods($goods_id_arr);
+                $new_goods = $orderService->get_spec_goods($goods_id_arr);
                 foreach ($new_goods as $key => $val) {
                     $val['order_id'] = $order_id;
-                    $rec_id = M('order_goods')->add($val);//订单添加商品
+                    $rec_id = M(OrderService::ORDER_GOODS_TABLE_NAME)->add($val);//订单添加商品
                     if (!$rec_id) {
                         $this->error('添加失败');
                     }
@@ -217,12 +218,12 @@ class OrderController extends AdminBase {
             $old_goods = I('old_goods');
             foreach ($orderGoods as $val) {
                 if (empty($old_goods[$val['rec_id']])) {
-                    M('order_goods')->where("rec_id=" . $val['rec_id'])->delete();//删除商品
+                    M(OrderService::ORDER_GOODS_TABLE_NAME)->where("rec_id=" . $val['rec_id'])->delete();//删除商品
                 } else {
                     //修改商品数量
                     if ($old_goods[$val['rec_id']] != $val['goods_num']) {
                         $val['goods_num'] = $old_goods[$val['rec_id']];
-                        M('order_goods')->where("rec_id=" . $val['rec_id'])->save(array('goods_num' => $val['goods_num']));
+                        M(OrderService::ORDER_GOODS_TABLE_NAME)->where("rec_id=" . $val['rec_id'])->save(array('goods_num' => $val['goods_num']));
                     }
                     $old_goods_arr[] = $val;
                 }
@@ -242,7 +243,7 @@ class OrderController extends AdminBase {
             $order['total_amount'] = $result['result']['total_amount']; // 订单总价           
             $o = M(OrderService::TABLE_NAME)->where('order_id=' . $order_id)->save($order);
 
-            $l = $orderLogic->orderActionLog($order_id, 'edit', '修改订单');//操作日志
+            $l = $orderService->orderActionLog($order_id, 'edit', '修改订单');//操作日志
             if ($o && $l) {
                 $this->success('修改成功', U('Order/editprice', array('order_id' => $order_id)));
             } else {
@@ -273,25 +274,25 @@ class OrderController extends AdminBase {
      */
     public function split_order() {
         $order_id = I('order_id');
-        $orderLogic = new OrderLogic();
-        $order = $orderLogic->getOrderInfo($order_id);
+        $orderService = new OrderService();
+        $order = $orderService->getOrderInfo($order_id);
         if ($order['shipping_status'] != 0) {
             $this->error('已发货订单不允许编辑');
             exit;
         }
-        $orderGoods = $orderLogic->getOrderGoods($order_id);
+        $orderGoods = $orderService->getOrderGoods($order_id);
         if (IS_POST) {
             $data = I('post.');
             //################################先处理原单剩余商品和原订单信息
             $old_goods = I('old_goods');
             foreach ($orderGoods as $val) {
                 if (empty($old_goods[$val['rec_id']])) {
-                    M('order_goods')->where("rec_id=" . $val['rec_id'])->delete();//删除商品
+                    M(OrderService::ORDER_GOODS_TABLE_NAME)->where("rec_id=" . $val['rec_id'])->delete();//删除商品
                 } else {
                     //修改商品数量
                     if ($old_goods[$val['rec_id']] != $val['goods_num']) {
                         $val['goods_num'] = $old_goods[$val['rec_id']];
-                        M('order_goods')->where("rec_id=" . $val['rec_id'])->save(array('goods_num' => $val['goods_num']));
+                        M(OrderService::ORDER_GOODS_TABLE_NAME)->where("rec_id=" . $val['rec_id'])->save(array('goods_num' => $val['goods_num']));
                     }
                     $oldArr[] = $val;//剩余商品
                 }
@@ -342,7 +343,7 @@ class OrderController extends AdminBase {
                 foreach ($goods as $vv) {
                     $vv['order_id'] = $new_order_id;
                     unset($vv['rec_id']);
-                    $nid = M('order_goods')->add($vv);//插入订单商品表
+                    $nid = M(OrderService::ORDER_GOODS_TABLE_NAME)->add($vv);//插入订单商品表
                 }
             }
             //################################新单处理结束
@@ -366,8 +367,8 @@ class OrderController extends AdminBase {
      * 价钱修改
      */
     public function editprice($order_id) {
-        $orderLogic = new OrderLogic();
-        $order = $orderLogic->getOrderInfo($order_id);
+        $orderService = new OrderService();
+        $order = $orderService->getOrderInfo($order_id);
         $this->editable($order);
         if (IS_POST) {
             $update['discount'] = I('post.discount');
@@ -391,8 +392,8 @@ class OrderController extends AdminBase {
      * @param $order_id
      */
     public function delete_order($order_id) {
-        $orderLogic = new OrderLogic();
-        $del = $orderLogic->delOrder($order_id);
+        $orderService = new OrderService();
+        $del = $orderService->delOrder($order_id);
         if ($del) {
             $this->success('删除订单成功', '', true);
         } else {
@@ -410,9 +411,9 @@ class OrderController extends AdminBase {
             if ($data['refundType'] == 0 && $data['amount'] > 0) {
                 accountLog($data['user_id'], $data['amount'], 0, '退款到用户余额');
             }
-            $orderLogic = new OrderLogic();
-            $orderLogic->orderProcessHandle($data['order_id'], 'pay_cancel');
-            $d = $orderLogic->orderActionLog($data['order_id'], 'pay_cancel',
+            $orderService = new OrderService();
+            $orderService->orderProcessHandle($data['order_id'], 'pay_cancel');
+            $d = $orderService->orderActionLog($data['order_id'], 'pay_cancel',
                 $data['remark'] . ':' . $note[$data['refundType']]);
             if ($d) {
                 exit("<script>window.parent.pay_callback(1);</script>");
@@ -433,13 +434,13 @@ class OrderController extends AdminBase {
      */
     public function order_print() {
         $order_id = I('order_id');
-        $orderLogic = new OrderLogic();
-        $order = $orderLogic->getOrderInfo($order_id);
+        $orderService = new OrderService();
+        $order = $orderService->getOrderInfo($order_id);
         $order['province'] = getRegionName($order['province'], 1);
         $order['city'] = getRegionName($order['city'], 2);
         $order['district'] = getRegionName($order['district'], 3);
         $order['full_address'] = $order['province'] . ' ' . $order['city'] . ' ' . $order['district'] . ' ' . $order['address'];
-        $orderGoods = $orderLogic->getOrderGoods($order_id);
+        $orderGoods = $orderService->getOrderGoods($order_id);
         $shop = tpCache('shop_info');
         $this->assign('order', $order);
         $this->assign('shop', $shop);
@@ -453,8 +454,8 @@ class OrderController extends AdminBase {
      */
     public function shipping_print() {
         $order_id = I('get.order_id');
-        $orderLogic = new OrderLogic();
-        $order = $orderLogic->getOrderInfo($order_id);
+        $orderService = new OrderService();
+        $order = $orderService->getOrderInfo($order_id);
         //查询是否存在订单及物流
         $shipping = M('plugin')->where(array('code' => $order['shipping_code'], 'type' => 'shipping'))->find();
         if (!$shipping) {
@@ -536,9 +537,9 @@ class OrderController extends AdminBase {
      * 生成发货单
      */
     public function deliveryHandle() {
-        $orderLogic = new OrderLogic();
+        $orderService = new OrderService();
         $data = I('post.');
-        $res = $orderLogic->deliveryHandle($data);
+        $res = $orderService->deliveryHandle($data);
         if ($res) {
             $this->ajaxReturn(['msg'=>'操作成功', 'status'=>true, 'icon'=>1]);
         } else {
@@ -550,9 +551,9 @@ class OrderController extends AdminBase {
     public function delivery_info() {
         $order_id = I('order_id');
         if (IS_POST) {
-            $orderLogic = new OrderLogic();
-            $order = $orderLogic->getOrderInfo($order_id);
-            $orderGoods = $orderLogic->getOrderGoods($order_id);
+            $orderService = new OrderService();
+            $order = $orderService->getOrderInfo($order_id);
+            $orderGoods = $orderService->getOrderGoods($order_id);
             $delivery_record = M(DeliveryService::TABLE_NAME)->where('order_id=' . $order_id)->select();
             if ($delivery_record) {
                 $order['invoice_no'] = $delivery_record[count($delivery_record) - 1]['invoice_no'];
@@ -630,9 +631,9 @@ class OrderController extends AdminBase {
             if ($result) {
                 $type = empty($data['type']) ? 2 : 3;
                 $where = " order_id = " . $return_goods['order_id'] . " and goods_id=" . $return_goods['goods_id'];
-                M('order_goods')->where($where)->save(array('is_send' => $type));//更改商品状态        
-                $orderLogic = new OrderLogic();
-                $log = $orderLogic->orderActionLog($return_goods[order_id], 'refund', $note);
+                M(OrderService::ORDER_GOODS_TABLE_NAME)->where($where)->save(array('is_send' => $type));//更改商品状态
+                $orderService = new OrderService();
+                $log = $orderService->orderActionLog($return_goods[order_id], 'refund', $note);
                 $this->success('修改成功!');
                 exit;
             }
@@ -674,12 +675,12 @@ class OrderController extends AdminBase {
      * 订单操作
      */
     public function order_action() {
-        $orderLogic = new OrderLogic();
+        $orderService = new OrderService();
         $action = I('get.type');
         $order_id = I('get.order_id');
         $order = M(OrderService::TABLE_NAME)->find($order_id);
         if ($action && $order) {
-            $res = $orderLogic->orderProcessHandle($order_id, $action);
+            $res = $orderService->orderProcessHandle($order_id, $action);
             if ($res) {
                 exit(json_encode(array('status' => 1, 'msg' => '操作成功')));
             } else {
@@ -701,7 +702,7 @@ class OrderController extends AdminBase {
             $end = strtotime($gap[1]);
         }
         $condition = array();
-        $log = M('order_action');
+        $log = M(OrderService::ORDER_ACTION_TABLE_NAME);
         if ($begin && $end) {
             $condition['log_time'] = array('between', "$begin,$end");
         }
@@ -791,7 +792,7 @@ class OrderController extends AdminBase {
                 $strTable .= '<td style="text-align:left;font-size:12px;">' . $val['pay_name'] . '</td>';
                 $strTable .= '<td style="text-align:left;font-size:12px;">' . $this->pay_status[$val['pay_status']] . '</td>';
                 $strTable .= '<td style="text-align:left;font-size:12px;">' . $this->shipping_status[$val['shipping_status']] . '</td>';
-                $orderGoods = D('order_goods')->where('order_id=' . $val['order_id'])->select();
+                $orderGoods = M(OrderService::ORDER_GOODS_TABLE_NAME)->where('order_id=' . $val['order_id'])->select();
                 $strGoods = "";
                 foreach ($orderGoods as $goods) {
                     $strGoods .= "商品编号：" . $goods['goods_sn'] . " 商品名称：" . $goods['goods_name'];
@@ -846,8 +847,8 @@ class OrderController extends AdminBase {
             $order['pay_code'] = I('payment');// 支付方式
 
             $goods_id_arr = I("goods_id");
-            $orderLogic = new OrderLogic();
-            $order_goods = $orderLogic->get_spec_goods($goods_id_arr);
+            $orderService = new OrderService();
+            $order_goods = $orderService->get_spec_goods($goods_id_arr);
             $result = calculate_price($order['user_id'], $order_goods, $order['shipping_code'], 0, $order['province'],
                 $order['city'], $order['district'], 0, 0, 0, 0);
             if ($result['status'] < 0) {
@@ -864,7 +865,7 @@ class OrderController extends AdminBase {
             if ($order_id) {
                 foreach ($order_goods as $key => $val) {
                     $val['order_id'] = $order_id;
-                    $rec_id = M('order_goods')->add($val);
+                    $rec_id = M(OrderService::ORDER_GOODS_TABLE_NAME)->add($val);
                     if (!$rec_id) {
                         $this->error('添加失败');
                     }
