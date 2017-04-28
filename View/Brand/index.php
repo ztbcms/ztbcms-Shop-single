@@ -144,11 +144,11 @@
                 } else {
                     obj.is_hot = 1;
                 }
-                that.changeTableVal('Brand', 'id', obj.id, 'is_hot', obj.is_hot)
+                that.changeTableVal('ShopBrand', 'id', obj.id, 'is_hot', obj.is_hot)
             },
             updateSort: function (obj) {
                 var that = this
-                that.changeTableVal('Brand', 'id', obj.id, 'sort', obj.sort)
+                that.changeTableVal('ShopBrand', 'id', obj.id, 'sort', obj.sort)
             },
             del: function (id) {
                 var that = this
