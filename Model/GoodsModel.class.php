@@ -15,6 +15,7 @@
 namespace Shop\Model;
 
 use Shop\Service\CartService;
+use Shop\Service\GoodsService;
 use Think\Model;
 
 class GoodsModel extends Model {
@@ -57,12 +58,12 @@ class GoodsModel extends Model {
         // 商品图片相册  图册
         if (count($_POST['goods_images']) > 1) {
             array_pop($_POST['goods_images']); // 弹出最后一个
-            $goodsImagesArr = M('GoodsImages')->where("goods_id = $goods_id")->getField('img_id,image_url'); // 查出所有已经存在的图片
+            $goodsImagesArr = M(GoodsService::GOODS_IMAGES_TABLE_NAME)->where("goods_id = $goods_id")->getField('img_id,image_url'); // 查出所有已经存在的图片
 
             // 删除图片
             foreach ($goodsImagesArr as $key => $val) {
                 if (!in_array($val, $_POST['goods_images'])) {
-                    M('GoodsImages')->where("img_id = {$key}")->delete();
+                    M(GoodsService::GOODS_IMAGES_TABLE_NAME)->where("img_id = {$key}")->delete();
                 }
                 //
             }
@@ -77,14 +78,14 @@ class GoodsModel extends Model {
                         'goods_id' => $goods_id,
                         'image_url' => $val,
                     );
-                    M("GoodsImages")->data($data)->add(); // 实例化User对象
+                    M(GoodsService::GOODS_IMAGES_TABLE_NAME)->data($data)->add(); // 实例化User对象
                 }
             }
         }
         // 查看主图是否已经存在相册中
-        $c = M('GoodsImages')->where("goods_id = $goods_id and image_url = '{$_POST['original_img']}'")->count();
+        $c = M(GoodsService::GOODS_IMAGES_TABLE_NAME)->where("goods_id = $goods_id and image_url = '{$_POST['original_img']}'")->count();
         if ($c == 0 && $_POST['original_img']) {
-            M("GoodsImages")->add(array('goods_id' => $goods_id, 'image_url' => $_POST['original_img']));
+            M(GoodsService::GOODS_IMAGES_TABLE_NAME)->add(array('goods_id' => $goods_id, 'image_url' => $_POST['original_img']));
         }
         delFile("./Public/upload/goods/thumb/$goods_id"); // 删除缩略图
 

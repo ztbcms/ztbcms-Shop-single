@@ -282,8 +282,8 @@ CREATE TABLE `cms_shop_goods_type` (
 -- ----------------------------
 -- 商品相册
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_goods_images`;
-CREATE TABLE `cms_goods_images` (
+DROP TABLE IF EXISTS `cms_shop_goods_images`;
+CREATE TABLE `cms_shop_goods_images` (
   `img_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '图片id 自增',
   `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '商品id',
   `image_url` varchar(255) NOT NULL DEFAULT '' COMMENT '图片地址',
@@ -293,8 +293,8 @@ CREATE TABLE `cms_goods_images` (
 -- ----------------------------
 -- 商品咨询表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_goods_consult`;
-CREATE TABLE `cms_goods_consult` (
+DROP TABLE IF EXISTS `cms_shop_goods_consult`;
+CREATE TABLE `cms_shop_goods_consult` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '商品咨询id',
   `goods_id` int(11) DEFAULT '0' COMMENT '商品id',
   `username` varchar(32) CHARACTER SET utf8 DEFAULT '' COMMENT '网名',

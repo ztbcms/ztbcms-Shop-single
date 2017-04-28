@@ -12,6 +12,9 @@ class GoodsService extends BaseService {
     //定义商品类型表
     const GOODS_TYPE_TABLE_NAME = 'ShopGoodsType';
 
+    //定义商品相册表
+    const GOODS_IMAGES_TABLE_NAME = 'ShopGoodsImages';
+
     /**
      * 获取指定的商品列表
      * @param array $where 查询条件

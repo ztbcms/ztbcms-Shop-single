@@ -142,7 +142,7 @@ class GoodsController extends AdminBase {
         $this->assign('brandList', $brandList);
         $this->assign('goodsType', $goodsType);
         $this->assign('goodsInfo', $goodsInfo);  // 商品详情
-        $goodsImages = M("GoodsImages")->where('goods_id =' . I('GET.id', 0))->select();
+        $goodsImages = M(GoodsService::GOODS_IMAGES_TABLE_NAME)->where('goods_id =' . I('GET.id', 0))->select();
         $this->assign('goodsImages', $goodsImages);  // 商品相册
         $this->initEditor(); // 编辑器
         $this->display('add_edit_goods');
@@ -177,7 +177,7 @@ class GoodsController extends AdminBase {
         M(CartService::TABLE_NAME)->where('goods_id =' . $goods_id)->delete();  // 购物车
         // M("comment")->where('goods_id ='.$goods_id)->delete();  //商品评论
         // M("goods_consult")->where('goods_id ='.$goods_id)->delete();  //商品咨询
-        M("goods_images")->where('goods_id =' . $goods_id)->delete();  //商品相册
+        M(GoodsService::GOODS_IMAGES_TABLE_NAME)->where('goods_id =' . $goods_id)->delete();  //商品相册
         M("shop_spec_goods_price")->where('goods_id =' . $goods_id)->delete();  //商品规格
         M("shop_spec_image")->where('goods_id =' . $goods_id)->delete();  //商品规格图片
         // M("goods_attr")->where('goods_id ='.$goods_id)->delete();  //商品属性     
@@ -232,7 +232,7 @@ class GoodsController extends AdminBase {
      */
     public function del_goods_images() {
         $path = I('filename', '');
-        M('goods_images')->where("image_url = '$path'")->delete();
+        M(GoodsService::GOODS_IMAGES_TABLE_NAME)->where("image_url = '$path'")->delete();
     }
 
     /**

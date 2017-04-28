@@ -16,7 +16,7 @@ class GoodsApiController extends Base {
         if (empty($goods) || ($goods['is_on_sale'] == 0)) {
             $this->error('该商品已经下架', '', true);
         }
-        $goods_images_list = M('GoodsImages')->where("goods_id = '%d'", $goods_id)->select(); // 商品 图册
+        $goods_images_list = M(GoodsService::GOODS_IMAGES_TABLE_NAME)->where("goods_id = '%d'", $goods_id)->select(); // 商品 图册
         $goods_attribute = M('GoodsAttribute')->where("type_id='%d'",
             $goods['goods_type'])->getField('attr_id,attr_name'); // 查询属性
         $goods_attr_list = M('GoodsAttr')->where("goods_id = '%d'", $goods_id)->select(); // 查询商品属性表

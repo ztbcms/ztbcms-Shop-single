@@ -52,6 +52,7 @@ class GoodsLogic extends RelationModel{
      * 获取商品规格
      */
     public function get_spec($goods_id)
+    //TODO 已整合到CategoryService,后期可考虑删除
     {
         //商品规格 价钱 库存表 找出 所有 规格项id
         $keys = M('ShopSpecGoodsPrice')->where("goods_id = $goods_id")->getField("GROUP_CONCAT(`key` SEPARATOR '_') ");
@@ -149,13 +150,13 @@ class GoodsLogic extends RelationModel{
      */
     public function refresh_cat($id)
     {            
-        $GoodsCategory = M("GoodsCategory"); // 实例化User对象
+        $GoodsCategory = M("ShopGoodsCategory"); // 实例化User对象
         $cat = $GoodsCategory->where("id = $id")->find(); // 找出他自己
         // 刚新增的分类先把它的值重置一下
         if($cat['parent_id_path'] == '')
         {
             ($cat['parent_id'] == 0) && $GoodsCategory->execute("UPDATE __PREFIX__goods_category set  parent_id_path = '0_$id', level = 1 where id = $id"); // 如果是一级分类               
-            $GoodsCategory->execute("UPDATE __PREFIX__goods_category AS a ,__PREFIX__goods_category AS b SET a.parent_id_path = CONCAT_WS('_',b.parent_id_path,'$id'),a.level = (b.level+1) WHERE a.parent_id=b.id AND a.id = $id");                
+            $GoodsCategory->execute("UPDATE __PREFIX__shop_goods_category AS a ,__PREFIX__shop_goods_category AS b SET a.parent_id_path = CONCAT_WS('_',b.parent_id_path,'$id'),a.level = (b.level+1) WHERE a.parent_id=b.id AND a.id = $id");
             $cat = $GoodsCategory->where("id = $id")->find(); // 从新找出他自己
         }        
         
@@ -525,7 +526,7 @@ class GoodsLogic extends RelationModel{
     //TODO 已整合到GoodsService,后期可考虑删除
     function getSortCategory()
     {
-        $categoryList =  M("GoodsCategory")->getField('id,name,parent_id,level');
+        $categoryList =  M("ShopGoodsCategory")->getField('id,name,parent_id,level');
         $nameList = array();
         foreach($categoryList as $k => $v)
         {
