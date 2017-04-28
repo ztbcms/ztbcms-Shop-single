@@ -2,6 +2,7 @@
 namespace Shop\Controller;
 
 use Common\Controller\Base;
+use Shop\Service\CategoryService;
 use Shop\Service\GoodsService;
 
 class GoodsApiController extends Base {
@@ -77,7 +78,7 @@ class GoodsApiController extends Base {
             $where['parent_id'] = I('get.parent_id');
         }
         $where['is_show'] = 1;
-        $res = M('GoodsCategory')->where($where)->select();
+        $res = M(CategoryService::TABLE_NAME)->where($where)->select();
         if ($res) {
             $this->success($res ? $res : [], '', true);
         } else {

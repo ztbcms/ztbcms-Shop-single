@@ -21,7 +21,7 @@ class BrandService extends BaseService
     static function getSortBrands(){
         $brandList =  M(self::TABLIE_NAME)->select();
         $brandIdArr =  M(self::TABLIE_NAME)->where("name in (select `name` from `".C('DB_PREFIX')."shop_brand` group by name having COUNT(id) > 1)")->getField('id,cat_id');
-        $goodsCategoryArr = M('goodsCategory')->where("level = 1")->getField('id,name');
+        $goodsCategoryArr = M(CategoryService::TABLE_NAME)->where("level = 1")->getField('id,name');
         $nameList = array();
         foreach($brandList as $k => $v)
         {

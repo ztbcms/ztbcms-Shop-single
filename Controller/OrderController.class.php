@@ -5,6 +5,7 @@ namespace Shop\Controller;
 use Shop\Logic\OrderLogic;
 use Shop\Logic\CartLogic;
 use Shop\Service\BrandService;
+use Shop\Service\CategoryService;
 use Shop\Service\DeliveryService;
 use Shop\Service\GoodsService;
 use Shop\Service\OrderService;
@@ -886,7 +887,7 @@ class OrderController extends AdminBase {
      */
     public function search_goods() {
         $brandList = M(BrandService::TABLIE_NAME)->select();
-        $categoryList = M("goods_category")->select();
+        $categoryList = M(CategoryService::TABLE_NAME)->select();
         $this->assign('categoryList', $categoryList);
         $this->assign('brandList', $brandList);
         $where = ' is_on_sale = 1 ';//搜索条件

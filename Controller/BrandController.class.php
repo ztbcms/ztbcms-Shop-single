@@ -8,6 +8,7 @@ namespace Shop\Controller;
 
 use Common\Controller\AdminBase;
 use Shop\Service\BrandService;
+use Shop\Service\CategoryService;
 use Shop\Service\GoodsService;
 use Shop\Util\Page;
 
@@ -39,7 +40,7 @@ class BrandController extends AdminBase {
 
             $brandList = $model->where($where)->order("`sort` asc")->page($page, $limit)->select();
 
-            $cat_list = M('goods_category')->getField('id,name'); // 已经改成联动菜单
+            $cat_list = M(CategoryService::TABLE_NAME)->getField('id,name'); // 已经改成联动菜单
 
             return ['cat_list' => $cat_list, 'brandList' => $brandList, 'page' => $pageArr];
         }
@@ -70,7 +71,7 @@ class BrandController extends AdminBase {
         $id = I('id');
         if (IS_AJAX) {
             $model = M(BrandService::TABLIE_NAME);
-            $cat_list = M('goods_category')->select(); // 已经改成联动菜单
+            $cat_list = M(CategoryService::TABLE_NAME)->select(); // 已经改成联动菜单
 
             $brand = $model->find($id);
             if ($brand) {

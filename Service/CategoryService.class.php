@@ -11,6 +11,9 @@ namespace Shop\Service;
 
 class CategoryService extends BaseService
 {
+    //定义商品分类表
+    const TABLE_NAME = 'ShopGoodsCategory';
+
     /**
      * 获得指定分类下的子分类的数组
      * @access  public
@@ -23,8 +26,8 @@ class CategoryService extends BaseService
     public function goods_cat_list($cat_id = 0, $selected = 0, $re_type = true, $level = 0)
     {
         global $goods_category, $goods_category2;
-        $sql = "SELECT * FROM  __PREFIX__goods_category ORDER BY parent_id , sort_order ASC";
-        $goods_category = D('goods_category')->query($sql);
+        $sql = "SELECT * FROM  __PREFIX__shop_goods_category ORDER BY parent_id , sort_order ASC";
+        $goods_category = D(self::TABLE_NAME)->query($sql);
         $goods_category = convert_arr_key($goods_category, 'id');
 
         foreach ($goods_category AS $key => $value)

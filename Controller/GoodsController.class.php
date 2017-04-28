@@ -10,6 +10,7 @@ use Common\Controller\AdminBase;
 use Shop\Model\GoodsModel;
 use Shop\Service\BrandService;
 use Shop\Service\CartService;
+use Shop\Service\CategoryService;
 use Shop\Service\GoodsService;
 
 class GoodsController extends AdminBase {
@@ -53,7 +54,7 @@ class GoodsController extends AdminBase {
         $goodsList = $model->where($where)->order($order_str)->page($page, $limit)->order($order_str)->select();
 
         //分类
-        $catList = D('GoodsCategory')->select();
+        $catList = D(CategoryService::TABLE_NAME)->select();
         $catList = convert_arr_key($catList, 'id');
 
         foreach ($goodsList as $key => $item) {
@@ -130,7 +131,7 @@ class GoodsController extends AdminBase {
         $goodsInfo = M(GoodsService::GOODS_TABLE_NAME)->where('goods_id=' . I('GET.id', 0))->find();
         $level_cat = GoodsService::find_parent_cat($goodsInfo['cat_id'])['data']; // 获取分类默认选中的下拉框
         $level_cat2 = GoodsService::find_parent_cat($goodsInfo['extend_cat_id'])['data']; // 获取分类默认选中的下拉框
-        $cat_list = M('goods_category')->where("parent_id = 0")->select(); // 已经改成联动菜单
+        $cat_list = M(CategoryService::TABLE_NAME)->where("parent_id = 0")->select(); // 已经改成联动菜单
         $brandList = BrandService::getSortBrands()['data'];
         $goodsType = M("GoodsType")->select();
         $suppliersList = M(GoodsService::SUPPLIERS_TABLE_NAME)->select();

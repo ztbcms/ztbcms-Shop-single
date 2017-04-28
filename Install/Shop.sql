@@ -308,8 +308,8 @@ CREATE TABLE `cms_goods_consult` (
 -- ----------------------------
 -- 商品分类表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_goods_category`;
-CREATE TABLE `cms_goods_category` (
+DROP TABLE IF EXISTS `cms_shop_goods_category`;
+CREATE TABLE `cms_shop_goods_category` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT '商品分类id',
   `name` varchar(90) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT '商品分类名称',
   `mobile_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '' COMMENT '手机端显示的商品分类名',

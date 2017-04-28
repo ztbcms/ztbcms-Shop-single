@@ -70,7 +70,7 @@ class GoodsService extends BaseService {
      * @return mixed
      */
     static function getSortCategory() {
-        $categoryList =  M("GoodsCategory")->getField('id,name,parent_id,level');
+        $categoryList =  M(CategoryService::TABLE_NAME)->getField('id,name,parent_id,level');
         $nameList = array();
         foreach($categoryList as $k => $v) {
             $name = getFirstCharter($v['name']) .' '. $v['name']; // 前面加上拼音首字母
@@ -175,7 +175,7 @@ class GoodsService extends BaseService {
         if($cat_id == null)
             return array();
 
-        $cat_list =  M('goods_category')->getField('id,parent_id,level');
+        $cat_list =  M(CategoryService::TABLE_NAME)->getField('id,parent_id,level');
         $cat_level_arr[$cat_list[$cat_id]['level']] = $cat_id;
 
         // 找出他老爸
