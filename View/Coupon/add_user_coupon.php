@@ -37,7 +37,7 @@
                                                 <select id="userid" name="userid" class="form-control"
                                                         v-model="selectUserId">
                                                     <template v-for="item in userLists">
-                                                        <option :value="item.userid">{{ item.nickname }}</option>
+                                                        <option :value="item.userid">{{ item.username }}</option>
                                                     </template>
                                                 </select>
                                             </div>
@@ -86,6 +86,7 @@
                 that.httpPost('index.php?g=Shop&m=Coupon&a=getUserLists',{},function (res) {
                     if(res.status == 1){
                         that.userLists = res.info
+                        console.log(res.info);
                     }
                 })
             },

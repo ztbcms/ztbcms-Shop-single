@@ -134,7 +134,7 @@ class CouponController extends AdminBase
      */
     public function getUserLists()
     {
-        $res = M('ShopUsers')->select();
+        $res = M('Member')->where('islock = 0')->select();//查出所有未冻结的会员
         if($res){
             $this->ajaxReturn(['status'=>1,'info'=>$res,'msg'=>'ok']);
         }
