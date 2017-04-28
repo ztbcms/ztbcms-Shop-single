@@ -73,18 +73,18 @@
                                     </td>
                                     <td></td>
                                 </tr>
-                                <tr>
-                                    <td>冻结用户:</td>
-                                    <td>
-                                        <input name="islock" type="radio" value="1"
-                                        <if condition="$user['islock'] eq 1">checked</if>
-                                        >是
-                                        <input name="islock" type="radio" value="0"
-                                        <if condition="$user['islock'] eq 0">checked</if>
-                                        >否
-                                    </td>
-                                    <td></td>
-                                </tr>
+<!--                                <tr>-->
+<!--                                    <td>冻结用户:</td>-->
+<!--                                    <td>-->
+<!--                                        <input name="islock" type="radio" value="1"-->
+<!--                                        <if condition="$user['islock'] eq 1">checked</if>-->
+<!--                                        >是-->
+<!--                                        <input name="islock" type="radio" value="0"-->
+<!--                                        <if condition="$user['islock'] eq 0">checked</if>-->
+<!--                                        >否-->
+<!--                                    </td>-->
+<!--                                    <td></td>-->
+<!--                                </tr>-->
                                 <tr>
                                     <td>上次登录时间:</td>
                                     <td>
