@@ -4,6 +4,7 @@ namespace Shop\Controller;
 use Shop\Service\CartService;
 use Shop\Service\CouponService;
 use Shop\Service\OrderService;
+use Shop\Service\UserService;
 
 class OrderApiController extends BaseController {
     /**
