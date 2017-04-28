@@ -3,6 +3,7 @@ namespace Shop\Logic;
 
 use Common\Model\RelationModel;
 use Shop\Service\BrandService;
+use Shop\Service\GoodsService;
 
 /**
  * 分类逻辑定义
@@ -449,7 +450,7 @@ class GoodsLogic extends RelationModel{
      * @return string
      */
     function GetAttrCheckboxList($type_id, $checked = array()){                
-        $list = M('GoodsAttribute')->where("type_id = $type_id and attr_index > 0 ")->order('`order` desc')->select();        
+        $list = M(GoodsService::GOODS_ATTRIBUTE_TABLE_NAME)->where("type_id = $type_id and attr_index > 0 ")->order('`order` desc')->select();
         //$list = M('Spec')->where("1=1")->order('`order` desc')->select();        
         $str = '';
         

@@ -79,7 +79,7 @@ class TypeController extends AdminBase {
         $count = M("ShopSpec")->where(['type_id' => $id])->count("1");
         $count > 0 && $this->error('该类型下有商品规格不得删除!', U('Type/index'));
         // 判断 商品属性        
-        $count = M("GoodsAttribute")->where(['type_id' => $id])->count("1");
+        $count = M(GoodsService::Goods_ATTRIBUT_TABLE_NAME)->where(['type_id' => $id])->count("1");
         $count > 0 && $this->error('该类型下有商品属性不得删除!', U('Type/index'));
         // 删除分类
         M(GoodsService::GOODS_TYPE_TABLE_NAME)->where(['id' => $id])->delete();

@@ -15,6 +15,12 @@ class GoodsService extends BaseService {
     //定义商品相册表
     const GOODS_IMAGES_TABLE_NAME = 'ShopGoodsImages';
 
+    //定义商品属性
+    const GOODS_ATTRIBUTE_TABLE_NAME = 'ShopGoodsAttribute';
+
+    //定义商品所属属性表
+    const GOODS_ATTR_TABLE_NAME = 'ShopGoodsAttr';
+
     /**
      * 获取指定的商品列表
      * @param array $where 查询条件
@@ -97,7 +103,7 @@ class GoodsService extends BaseService {
      */
     public function getGoodsAttrVal($goods_attr_id = 0 ,$goods_id = 0, $attr_id = 0)
     {
-        $GoodsAttr = D('GoodsAttr');
+        $GoodsAttr = D('ShopGoodsAttr');
         if($goods_attr_id > 0)
             return $GoodsAttr->where("goods_attr_id = $goods_attr_id")->select();
         if($goods_id > 0 && $attr_id > 0)
@@ -110,7 +116,7 @@ class GoodsService extends BaseService {
      * @param int $goods_type  商品类型id
      */
     public function saveGoodsAttr($goods_id,$goods_type) {
-        $GoodsAttr = D('GoodsAttr');
+        $GoodsAttr = D('ShopGoodsAttr');
 //        $Goods = M(GoodsService::GOODS_TABLE_NAME);
 
         // 属性类型被更改了 就先删除以前的属性类型 或者没有属性 则删除
@@ -210,7 +216,7 @@ class GoodsService extends BaseService {
      */
     public function getAttrInput($goods_id,$type_id){
         header("Content-type: text/html; charset=utf-8");
-        $GoodsAttribute = D('GoodsAttribute');
+        $GoodsAttribute = D(self::GOODS_ATTRIBUTE_TABLE_NAME);
         $attributeList = $GoodsAttribute->where("type_id = $type_id")->select();
 
         $str = '';

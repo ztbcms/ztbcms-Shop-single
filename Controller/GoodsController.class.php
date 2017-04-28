@@ -109,7 +109,6 @@ class GoodsController extends AdminBase {
                         'goods_price' => $_POST['shop_price'], // 本店价
                         'member_goods_price' => $_POST['shop_price'], // 会员折扣价
                     ));
-//                    echo 'ok';exit;
                     $Goods->afterSave($goods_id);
                 } else {
                     $goods_id = $insert_id = $Goods->add(); // 写入数据到数据库

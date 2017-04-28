@@ -328,8 +328,8 @@ CREATE TABLE `cms_shop_goods_category` (
 -- ----------------------------
 -- 商品属性表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_goods_attribute`;
-CREATE TABLE `cms_goods_attribute` (
+DROP TABLE IF EXISTS `cms_shop_goods_attribute`;
+CREATE TABLE `cms_shop_goods_attribute` (
   `attr_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '属性id',
   `attr_name` varchar(60) NOT NULL DEFAULT '' COMMENT '属性名称',
   `type_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT '属性分类id',
@@ -344,8 +344,8 @@ CREATE TABLE `cms_goods_attribute` (
 -- ----------------------------
 -- 商品所属属性表
 -- ----------------------------
-DROP TABLE IF EXISTS `cms_goods_attr`;
-CREATE TABLE `cms_goods_attr` (
+DROP TABLE IF EXISTS `cms_shop_goods_attr`;
+CREATE TABLE `cms_shop_goods_attr` (
   `goods_attr_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '商品属性id自增',
   `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '商品id',
   `attr_id` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT '属性id',

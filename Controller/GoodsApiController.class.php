@@ -17,9 +17,9 @@ class GoodsApiController extends Base {
             $this->error('该商品已经下架', '', true);
         }
         $goods_images_list = M(GoodsService::GOODS_IMAGES_TABLE_NAME)->where("goods_id = '%d'", $goods_id)->select(); // 商品 图册
-        $goods_attribute = M('GoodsAttribute')->where("type_id='%d'",
+        $goods_attribute = M(GoodsService::GOODS_ATTRIBUTE_TABLE_NAME)->where("type_id='%d'",
             $goods['goods_type'])->getField('attr_id,attr_name'); // 查询属性
-        $goods_attr_list = M('GoodsAttr')->where("goods_id = '%d'", $goods_id)->select(); // 查询商品属性表
+        $goods_attr_list = M(GoodsService::GOODS_ATTR_TABLE_NAME)->where("goods_id = '%d'", $goods_id)->select(); // 查询商品属性表
         $spec_goods_price = M('shop_spec_goods_price')->where("goods_id = '%d'",
             $goods_id)->getField("key,price,store_count"); // 规格 对应 价格 库存表
         $filter_spec = GoodsService::get_spec($goods_id);

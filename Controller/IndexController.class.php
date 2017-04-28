@@ -19,8 +19,8 @@ class IndexController extends BaseController {
             $goods['brand_name'] = $brnad['name'];
         }
         $goods_images_list = M(GoodsService::GOODS_IMAGES_TABLE_NAME)->where("goods_id = $goods_id")->select(); // 商品 图册
-        $goods_attribute = M('GoodsAttribute')->getField('attr_id,attr_name'); // 查询属性
-        $goods_attr_list = M('GoodsAttr')->where("goods_id = $goods_id")->select(); // 查询商品属性表                        
+        $goods_attribute = M(GoodsService::GOODS_ATTRIBUTE_TABLE_NAME)->getField('attr_id,attr_name'); // 查询属性
+        $goods_attr_list = M(GoodsService::GOODS_ATTR_TABLE_NAME)->where("goods_id = $goods_id")->select(); // 查询商品属性表
 		$filter_spec = $goodsLogic->get_spec($goods_id);
                 
         //商品是否正在促销中        
