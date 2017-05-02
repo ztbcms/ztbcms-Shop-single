@@ -761,7 +761,7 @@ class OrderController extends AdminBase {
             $where .= " AND add_time>$begin and add_time<$end ";
         }
 
-        $sql = "select *,FROM_UNIXTIME(add_time,'%Y-%m-%d') as create_time from __PREFIX__order $where order by order_id";
+        $sql = "select *,FROM_UNIXTIME(add_time,'%Y-%m-%d') as create_time from __PREFIX__shop_order $where order by order_id";
         $orderList = D()->query($sql);
         $strTable = '<table width="500" border="1">';
         $strTable .= '<tr>';
