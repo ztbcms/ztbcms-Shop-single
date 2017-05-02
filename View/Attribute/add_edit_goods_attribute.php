@@ -64,7 +64,7 @@
                                                     for="attr_input_type0">手工录入</label>
                                             <input id="attr_input_type1" type="radio" value="1" name="attr_input_type"
                                                    v-bind:checked="detail.attr_input_type == 1 ? 'checked' : ''"/><label
-                                                    for="attr_input_type1">从下面的列表中选择（一行代表一个可选值）</label>
+                                                    for="attr_input_type1">从下面的列表中选择（多个可选值请以 | 隔开）</label>
                                             <input id="attr_input_type2" type="radio" value="2" name="attr_input_type"
                                                    v-bind:checked="detail.attr_input_type == 2 ? 'checked' : ''"/><label
                                                     for="attr_input_type2">多行文本框</label>

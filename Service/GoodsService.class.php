@@ -253,7 +253,7 @@ class GoodsService extends BaseService {
                 if($val['attr_input_type'] == 1)
                 {
                     $str .= "<select name='attr_{$val['attr_id']}[]'>";
-                    $tmp_option_val = explode(PHP_EOL, $val['attr_values']);
+                    $tmp_option_val = explode('|', $val['attr_values']);
                     foreach($tmp_option_val as $k2=>$v2)
                     {
                         // 编辑的时候 有选中值
