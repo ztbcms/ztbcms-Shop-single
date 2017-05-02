@@ -106,7 +106,7 @@ class SpecController extends AdminBase {
             }
 
             $items = $post['items'];
-            $itemsArr = explode('，', $items);
+            $itemsArr = explode('|', $items);
             $model = M('ShopSpec');
             $id = I('id', 0);
             if ($id == 0) {
@@ -140,7 +140,7 @@ class SpecController extends AdminBase {
                 $specItem = M('ShopSpecItem')->where(['spec_id' => $id])->select();
                 $specItemStr = '';
                 foreach ($specItem as $val) {
-                    $specItemStr .= $val['item'] . "，";
+                    $specItemStr .= $val['item'] . "|";
                 }
                 $specItemStr = rtrim($specItemStr);
                 $this->ajaxReturn([
