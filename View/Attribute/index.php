@@ -149,11 +149,11 @@
                 } else {
                     obj.attr_index = 1;
                 }
-                that.changeTableVal('goodsAttribute', 'attr_id', obj.attr_id, 'attr_index', obj.attr_index)
+                that.changeTableVal('ShopGoodsAttribute', 'attr_id', obj.attr_id, 'attr_index', obj.attr_index)
             },
             updateOrder: function (obj) {
                 var that = this
-                that.changeTableVal('goodsAttribute', 'attr_id', obj.attr_id, 'order', obj.order)
+                that.changeTableVal('ShopGoodsAttribute', 'attr_id', obj.attr_id, 'order', obj.order)
             },
             delGoodsAttr: function (id) {
                 var that = this
