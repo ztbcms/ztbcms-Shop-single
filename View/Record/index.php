@@ -11,8 +11,8 @@
     <div>
         <div class="search_type cc mb10">
             订单号：<input type="text" v-model="where.target" name="" class="input">
-            发送者：<input type="text" v-model="where.from" name="" class="input">
-            接收者：<input type="text" v-model="where.to" name="" class="input">
+<!--            发送者：<input type="text" v-model="where.from" name="" class="input">-->
+            用户：<input type="text" v-model="where.to" name="" class="input">
             状态：<select v-model="where.status" name="" id="">
                 <option value="">全部</option>
                 <option value="0">正常</option>
@@ -29,8 +29,8 @@
                 <tr>
                     <td width="100" align="center">id</td>
                     <td width="120" align="center">订单号</td>
-                    <td width="120" align="center">发送者</td>
-                    <td width="120" align="center">接收者</td>
+<!--                    <td width="120" align="center">发送者</td>-->
+                    <td width="120" align="center">用户</td>
                     <td align="center">内容</td>
                     <td width="100" align="center">收入</td>
                     <td width="100" align="center">支出</td>
@@ -48,12 +48,12 @@
                         {{ item.target }}
                         <p>{{ item.target_type }}</p>
                     </td>
-                    <td align="center">
-                        {{ item.from }}
-                        <p>
-                            {{ item.from_type }}
-                        </p>
-                    </td>
+<!--                    <td align="center">-->
+<!--                        {{ item.from }}-->
+<!--                        <p>-->
+<!--                            {{ item.from_type }}-->
+<!--                        </p>-->
+<!--                    </td>-->
                     <td align="center">
                         {{ item.to }}
                         <p>
