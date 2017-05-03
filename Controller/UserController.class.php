@@ -2,6 +2,7 @@
 namespace Shop\Controller;
 
 use Common\Controller\AdminBase;
+use Shop\Service\UserService;
 use Shop\Util\AjaxPage;
 use Shop\Util\Page;
 use Shop\Logic\ShopUsersLogic;
@@ -185,7 +186,7 @@ class UserController extends AdminBase {
     public function add_address() {
         if (IS_POST) {
             $data = I('post.');
-            $res = M(self::ADDRESS_TABLE_NAME)->add($data);
+            $res = M(UserService::ADDRESS_TABLE_NAME)->add($data);
             if ($res) {
                 $this->success('添加成功', U('User/address', ['id' => $data['userid']]));
             } else {
