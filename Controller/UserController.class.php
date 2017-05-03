@@ -153,7 +153,7 @@ class UserController extends AdminBase {
      */
     public function address() {
         $uid = I('get.id');
-        $lists = M(self::ADDRESS_TABLE_NAME)->where(array('userid' => $uid))->select();
+        $lists = M(UserService::ADDRESS_TABLE_NAME)->where(array('userid' => $uid))->select();
         // 获取省份
         $province = M('AreaProvince')->getField('id,areaname');
         //获取订单城市
@@ -172,9 +172,9 @@ class UserController extends AdminBase {
             // 设置默认地址
             $default_id = I('default_id');
             $address_id = I('address_id');
-            $res = M(self::ADDRESS_TABLE_NAME)->where(['address_id' => $default_id])->save(['is_default' => 0]);
+            $res = M(UserService::ADDRESS_TABLE_NAME)->where(['address_id' => $default_id])->save(['is_default' => 0]);
             if ($res !== false) {
-                $res = M(self::ADDRESS_TABLE_NAME)->where(['address_id' => $address_id])->save(['is_default' => 1]);
+                $res = M(UserService::ADDRESS_TABLE_NAME)->where(['address_id' => $address_id])->save(['is_default' => 1]);
             }
             if ($res !== false) {
                 $this->ajaxReturn(['msg' => '设置成功']);
@@ -200,7 +200,7 @@ class UserController extends AdminBase {
     public function del_address() {
         if (IS_POST) {
             $id = I('id');
-            $res = M(self::ADDRESS_TABLE_NAME)->where(['address_id' => $id])->delete();
+            $res = M(UserService::ADDRESS_TABLE_NAME)->where(['address_id' => $id])->delete();
             if ($res) {
                 $this->ajaxReturn(['msg' => '删除成功']);
             }
@@ -212,7 +212,7 @@ class UserController extends AdminBase {
         if (IS_POST) {
             $data = I('post.');
             $id = $data['id'];
-            $res = M(self::ADDRESS_TABLE_NAME)->where(['address_id' => $id])->save($data);
+            $res = M(UserService::ADDRESS_TABLE_NAME)->where(['address_id' => $id])->save($data);
             if ($res) {
                 $this->success('修改成功', U('User/address', ['id' => $data['userid']]));
             } else {
@@ -221,7 +221,7 @@ class UserController extends AdminBase {
             exit;
         }
         $id = I('id');
-        $address = M(self::ADDRESS_TABLE_NAME)->where(['address_id' => $id])->find();
+        $address = M(UserService::ADDRESS_TABLE_NAME)->where(['address_id' => $id])->find();
         $this->assign('address', $address);
         $this->display();
     }
