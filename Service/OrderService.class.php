@@ -852,11 +852,11 @@ class OrderService extends BaseService {
      * @return bool
      */
     public function delOrder($order_id) {
-        $order = M(OrderService::TABLE_NAME)->where(array('order_id' => $order_id))->find();
+        $order = M(self::TABLE_NAME)->where(array('order_id' => $order_id))->find();
         if ($order['order_status'] == 3 || $order['order_status'] == 5) {
             return false;
         }
-        $a = M(OrderService::TABLE_NAME)->where(array('order_id' => $order_id))->delete();
+        $a = M(self::TABLE_NAME)->where(array('order_id' => $order_id))->delete();
         $b = M(self::ORDER_GOODS_TABLE_NAME)->where(array('order_id' => $order_id))->delete();
 
         return $a && $b;
