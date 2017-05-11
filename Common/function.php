@@ -506,15 +506,15 @@ function update_pay_status($order_sn, $pay_status = 1) {
         accountLog($order['user_id'], $order['account'], 0, '会员在线充值');
     } else {
         // 如果这笔订单已经处理过了
-        $count = M('order')->where("order_sn = '$order_sn' and pay_status = 0")->count(); // 看看有没已经处理过这笔订单  支付宝返回不重复处理操作
+        $count = M('ShopOrder')->where("order_sn = '$order_sn' and pay_status = 0")->count(); // 看看有没已经处理过这笔订单  支付宝返回不重复处理操作
         if ($count == 0) {
             return false;
         }
 
         // 找出对应的订单
-        $order = M('order')->where("order_sn = '$order_sn'")->find();
+        $order = M('ShopOrder')->where("order_sn = '$order_sn'")->find();
         // 修改支付状态  已支付
-        M('order')->where("order_sn = '$order_sn'")->save(array('pay_status' => 1, 'pay_time' => time()));
+        M('ShopOrder')->where("order_sn = '$order_sn'")->save(array('pay_status' => 1, 'pay_time' => time()));
         // 减少对应商品的库存
         minus_stock($order['order_id']);
         // 给他升级, 根据order表查看消费记录 给他会员等级升级 修改他的折扣 和 总金额
@@ -539,7 +539,7 @@ function update_pay_status($order_sn, $pay_status = 1) {
  * @param string $order_id  订单id
  */
 function minus_stock($order_id) {
-    $orderGoodsArr = M('OrderGoods')->where("order_id = $order_id")->select();
+    $orderGoodsArr = M('ShopOrderGoods')->where("order_id = $order_id")->select();
     foreach ($orderGoodsArr as $key => $val) {
         // 有选择规格的商品
         if (!empty($val['spec_key'])) { // 先到规格表里面扣除数量 再重新刷新一个 这件商品的总数量
@@ -567,7 +567,7 @@ function minus_stock($order_id) {
  */
 function update_user_level($user_id) {
     $level_info = M('user_level')->order('level_id')->select();
-    $total_amount = M('order')->where("user_id=$user_id AND pay_status=1 and order_status not in (3,5)")->sum('order_amount');
+    $total_amount = M('ShopOrder')->where("user_id=$user_id AND pay_status=1 and order_status not in (3,5)")->sum('order_amount');
     if ($level_info) {
         foreach ($level_info as $k => $v) {
             if ($total_amount >= $v['amount']) {
@@ -599,7 +599,7 @@ function logOrder($order_id, $action_note, $status_desc, $user_id = 0) {
     // if(!in_array($status_desc, $status_desc_arr))
     // return false;
 
-    $order = M('order')->where("order_id = $order_id")->find();
+    $order = M('ShopOrder')->where("order_id = $order_id")->find();
     $action_info = array(
         'order_id' => $order_id,
         'action_user' => $user_id,
@@ -610,7 +610,7 @@ function logOrder($order_id, $action_note, $status_desc, $user_id = 0) {
         'status_desc' => $status_desc, //''
          'log_time' => time(),
     );
-    return M('order_action')->add($action_info);
+    return M('shop_order_action')->add($action_info);
 }
 
 /**
@@ -653,7 +653,7 @@ function confirm_order($id, $user_id = 0) {
     $where = "order_id = $id";
     $user_id && $where .= " and user_id = $user_id ";
 
-    $order = M('order')->where($where)->find();
+    $order = M('ShopOrder')->where($where)->find();
     if ($order['order_status'] != 1) {
         return array('status' => -1, 'msg' => '该订单不能收货确认');
     }
@@ -664,7 +664,7 @@ function confirm_order($id, $user_id = 0) {
     if ($order['pay_code'] == 'cod') {
         $data['pay_time'] = time();
     }
-    $row = M('order')->where(array('order_id' => $id))->save($data);
+    $row = M('ShopOrder')->where(array('order_id' => $id))->save($data);
     if (!$row) {
         return array('status' => -3, 'msg' => '操作失败');
     }
@@ -682,7 +682,7 @@ function confirm_order($id, $user_id = 0) {
  * @param array
  */
 function order_give($order) {
-    $order_goods = M('order_goods')->where("order_id=" . $order['order_id'])->cache(true)->select();
+    $order_goods = M('shop_order_goods')->where("order_id=" . $order['order_id'])->cache(true)->select();
     //查找购买商品送优惠券活动
     foreach ($order_goods as $val) {
         if ($val['prom_type'] == 3) {
@@ -721,7 +721,7 @@ function order_give($order) {
             accountLog($order['user_id'], 0, $prom['expression'], "订单活动赠送积分");
         }
     }
-    $points = M('order_goods')->where("order_id = {$order[order_id]}")->sum("give_integral * goods_num");
+    $points = M('shop_order_goods')->where("order_id = {$order[order_id]}")->sum("give_integral * goods_num");
     $points && accountLog($order['user_id'], 0, $points, "下单赠送积分");
 }
 
