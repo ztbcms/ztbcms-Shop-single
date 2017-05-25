@@ -205,7 +205,32 @@ class UserService extends BaseService {
     }
 
 
-    
+    /**
+     * 删除地址信息
+     * @param int   $user_id    用户ID
+     * @param int   $address_id 地址ID
+     * @return array
+     */
+    public static function del_address($user_id, $address_id){
+
+        if($address_id == 0){
+            return self::createReturn(false, $address_id, '缺少参数!');
+        }
+
+        $address = M(UserService::ADDRESS_TABLE_NAME)->where("address_id = $address_id")->find();
+        $row = M(UserService::ADDRESS_TABLE_NAME)->where(array('userid' => $user_id, 'address_id' => $address_id))->delete();
+
+        // 如果删除的是默认收货地址 则要把第一个地址设置为默认收货地址
+        if ($address['is_default'] == 1) {
+            $address2 = M(UserService::ADDRESS_TABLE_NAME)->where(['userid'=>$user_id])->find();
+            $address2 && M(UserService::ADDRESS_TABLE_NAME)->where(['address_id' => $address2['address_id']])->save(array('is_default' => 1));
+        }
+        if (!$row) {
+            return self::createReturn(false, $address_id, '删除失败!');
+        } else {
+            return self::createReturn(true, $address_id, '删除成功!');
+        }
+    }
 
     /**
      * 通过用户名获取用户信息

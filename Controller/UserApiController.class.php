@@ -123,30 +123,15 @@ class UserApiController extends BaseController {
     }
 
     /**
-     * 地址删除
+     * 删除收货地址
      */
     public function del_address() {
         if(IS_POST){
-            $id = I('post.id');
-            $address = M(UserService::ADDRESS_TABLE_NAME)->where("address_id = $id")->find();
-            $row = M(UserService::ADDRESS_TABLE_NAME)->where(array('userid' => $this->userid, 'address_id' => $id))->delete();
-            // 如果删除的是默认收货地址 则要把第一个地址设置为默认收货地址
-            if ($address['is_default'] == 1) {
-                $address2 = M(UserService::ADDRESS_TABLE_NAME)->where("userid = {$this->userid}")->find();
-                $address2 && M(UserService::ADDRESS_TABLE_NAME)->where("address_id = {$address2['address_id']}")->save(array('is_default' => 1));
-            }
-            if (!$row) {
-                $this->error('操作失败', '', true);
-            } else {
-                $this->success('操作成功', '', true);
-            }
-
+            $address_id = I('post.id',0);
+            $res = UserService::del_address($this->userid,$address_id);
+            $this->ajaxReturn($res);
         }else{
-
             $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'请求方法错误'));
-
         }
-
-
     }
 }
