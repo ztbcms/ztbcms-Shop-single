@@ -147,7 +147,7 @@ class OrderService extends BaseService {
             $order_goods['give_integral'] = $goods['give_integral']; // 购买商品赠送积分
             $order_goods['prom_type'] = $val['prom_type']; // 0 普通订单,1 限时抢购, 2 团购 , 3 促销优惠
             $order_goods['prom_id'] = $val['prom_id']; // 活动id
-            M("OrderGoods")->data($order_goods)->add();
+            M(self::ORDER_GOODS_TABLE_NAME)->data($order_goods)->add();
             //扣除商品库存
             if ($val['spec_key']) {
                 //如果存在sku库存
