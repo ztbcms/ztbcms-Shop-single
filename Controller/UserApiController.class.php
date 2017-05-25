@@ -1,6 +1,7 @@
 <?php
 namespace Shop\Controller;
 
+use Libs\System\Service;
 use Shop\Service\UserService;
 
 class UserApiController extends BaseController {
@@ -38,48 +39,43 @@ class UserApiController extends BaseController {
         $username = trim($username);
         $password = trim($password);
 
-        $user_service = new UserService();
-        $res = $user_service->login($username, $password);
-        if ($res) {
-            unset($res['password']);
-            unset($res['encrypt']);
-            $this->success($res, '', true);
-        } else {
-            $this->error($user_service->get_err_msg(), '', true);
+
+        $res = UserService::login($username, $password);
+        if ($res['status']) {
+            session('user', $res['data']);
         }
+        $this->ajaxReturn($res);
     }
 
+    /**
+     * 用户注册api
+     */
     public function register() {
+
         //验证码检验
         $username = I('post.username', '');
         $password = I('post.password', '');
         $password2 = I('post.password2', '');
         $share_id = I('post.share_id', null);
-        $user_service = new UserService();
-        $res = $user_service->register($username, $password, $password2, $share_id);
-        if ($res) {
-            session('user', $res);
-            unset($res['password']);
-            unset($res['encrypt']);
-            $this->success($res, '', true);
-        } else {
-            $this->error($user_service->get_err_msg(), '', true);
+
+        $res = UserService::register($username, $password, $password2, $share_id);
+        if ($res['status']) {
+            session('user', $res['data']);
         }
+        $this->ajaxReturn($res);
     }
 
     /**
-     * 用户地址列表
+     * 获取用户地址列表
      */
     public function address_list() {
-        $address_lists = M(UserService::ADDRESS_TABLE_NAME)->where(array('userid' => $this->userid))->order('is_default desc')->select();
-        $list = [];
-        foreach ($address_lists as $key => $value) {
-            $value['province_name'] = getRegionName($value['province'], 1);
-            $value['city_name'] = getRegionName($value['city'], 2);
-            $value['district_name'] = getRegionName($value['district'], 3);
-            $list[] = $value;
+
+        if(IS_GET){
+
+            $res = UserService::get_address_list($this->userid);
+            $this->ajaxReturn($res);
         }
-        $this->success($list, '', true);
+
     }
 
     /**
@@ -87,13 +83,10 @@ class UserApiController extends BaseController {
      */
     public function add_address() {
         if (IS_POST) {
-            $user_service = new UserService();
-            $data = $user_service->add_eidt_address($this->userid, 0, I('post.'));
-            if ($data) {
-                $this->success($data, '', true);
-            } else {
-                $this->error($user_service->get_err_msg(), '', true);
-            }
+
+            $res = UserService::add_edit_address($this->userid,0,I('post.'));
+            $this->ajaxReturn($res);
+
         } else {
             $this->error('请求方法错误', '', true);
         }
@@ -110,6 +103,7 @@ class UserApiController extends BaseController {
             }
             $post = I('post.');
             unset($post['address_id']);
+
             $user_service = new UserService();
             $data = $user_service->add_eidt_address($this->userid, $address_id, I('post.'));
             $this->success($data, '', true);

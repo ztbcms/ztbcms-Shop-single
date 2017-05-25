@@ -9,23 +9,31 @@ class UserService extends BaseService {
     //定义用户地址表名
     const ADDRESS_TABLE_NAME = 'ShopUserAddress';
 
-    public function login($username, $password) {
-        if (!$username || !$password) {
-            $this->set_err_msg('请填写账号或密码');
 
-            return false;
+    /**
+     * 用户登录
+     *
+     * @param $username string 用户名，默认是使用手机登录
+     * @param $password
+     * @return array
+     */
+    public static function login($username, $password) {
+        if (!$username || !$password) {
+            return self::createReturn(false, null, '请填写账号或密码');
         }
         //mobile_ 拼凑作为cms的用户名。
         $userid = service('Passport')->loginLocal('mobile_' . $username, $password, 7 * 86400);
         if (!$userid) {
-            $this->set_err_msg('账号/密码错误');
-
-            return false;
+            return self::createReturn(false, null, '账号或密码错误');
         }
-        $user = M('Member')->where("userid='%d'", $userid)->find();
 
-        return $user;
+        $user = M('Member')->where(['userid' => $userid])->field('password,encrypt',true)->find();
+
+        return self::createReturn(true, $user, '登录成功');
+
     }
+
+
 
     /**
      * 用户注册
@@ -37,7 +45,7 @@ class UserService extends BaseService {
      * @return array
      */
 
-    public function register($username, $password, $password2, $share_id = null) {
+    public static function register($username, $password, $password2, $share_id = null) {
 
         $is_validated = 0;
         //检查是手机
@@ -49,45 +57,42 @@ class UserService extends BaseService {
         }
 
         if ($is_validated != 1) {
-            $this->set_err_msg('请用手机注册');
-
-            return false;
+            return self::createReturn(false, null, '请用手机注册');
         }
 
         if (!$username || !$password) {
-            $this->set_err_msg('请输入用户名或密码');
 
-            return false;
+            return self::createReturn(false, null, '请输入用户名或密码');
+
         }
 
         //验证两次密码是否匹配
         if ($password2 != $password) {
-            $this->set_err_msg('两次输入密码不一致');
 
-            return false;
+            return self::createReturn(false, null, '两次输入密码不一致');
         }
 
         //验证是否存在用户名
         if (self::getUserInfo($member_username)) {
-            $this->set_err_msg('账号已存在');
 
-            return false;
+            return self::createReturn(false, null, '账号已存在');
+
         }
 
         $map['token'] = md5(time() . mt_rand(1, 99999));
         $member_user_id = service("Passport")->userRegister($member_username, $password, $map['mobile'] . "@139.com");
         if (!$member_user_id) {
-            $this->set_err_msg('注册失败1');
 
-            return false;
+            return self::createReturn(false, null, '注册失败1');
+
         } else {
             $map['userid'] = $member_user_id;
             $user_id = M('ShopUsers')->add($map);
             if (!$user_id) {
                 M('Member')->delete($member_user_id);
-                $this->set_err_msg('注册失败2');
 
-                return false;
+                return self::createReturn(false, null, '注册失败2');
+
             }
         }
         //如果有推荐者id传入
@@ -95,10 +100,32 @@ class UserService extends BaseService {
             self::share($member_user_id, $share_id);
         }
 
-        $user = M('Member')->where(['userid' => $member_user_id])->find();
+        $user = M('Member')->where(['userid' => $member_user_id])->field('password,encrypt',true)->find();
 
-        return $user;
+        return self::createReturn(true, $user, '注册成功');
     }
+
+
+    /**
+     * 获取用户地址列表
+     * @param $userid int 用户id
+     * @return array 地址列表
+     */
+
+    public static function get_address_list($userid){
+
+        $address_lists = M(UserService::ADDRESS_TABLE_NAME)->where(array('userid' => $userid))->order('is_default desc')->select();
+        $list = [];
+        foreach ($address_lists as $key => $value) {
+            $value['province_name'] = getRegionName($value['province'], 1);
+            $value['city_name'] = getRegionName($value['city'], 2);
+            $value['district_name'] = getRegionName($value['district'], 3);
+            $list[] = $value;
+        }
+
+        return self::createReturn(true, $list, '获取成功');
+    }
+
 
     /**
      * 添加编辑地址信息
@@ -108,37 +135,34 @@ class UserService extends BaseService {
      * @param array $data       传入参数
      * @return bool|int|mixed
      */
-    public function add_eidt_address($user_id, $address_id = 0, $data) {
+    public static function add_edit_address($user_id, $address_id = 0, $data) {
         $post = $data;
         if ($address_id == 0) {
             $c = M(self::ADDRESS_TABLE_NAME)->where("userid = $user_id")->count();
             if ($c >= 20) {
-                $this->set_err_msg('最多只能添加20个收货地址');
-
-                return false;
+                return self::createReturn(false, null, '最多只能添加20个收货地址');
             }
         }
 
         //检查手机格式
         if ($post['consignee'] == '') {
-            $this->set_err_msg('收货人不能为空');
 
-            return false;
+            return self::createReturn(false, null, '收货人不能为空');
         }
         if (!$post['province'] || !$post['city'] || !$post['district']) {
-            $this->set_err_msg('所在地区不能为空');
 
-            return false;
+            return self::createReturn(false, null, '所在地区不能为空');
+
         }
         if (!$post['address']) {
-            $this->set_err_msg('地址不能为空');
 
-            return false;
+            return self::createReturn(false, null, '地址不能为空');
+
         }
         if (!self::checkMobile($post['mobile'])) {
-            $this->set_err_msg('手机号码格式有误' . $post['mobile']);
 
-            return false;
+            return self::createReturn(false, null, '手机号码格式有误'. $post['mobile']);
+
         }
 
         //编辑模式
@@ -173,12 +197,13 @@ class UserService extends BaseService {
             M(self::ADDRESS_TABLE_NAME)->where($map)->save(array('is_default' => 0));
         }
         if (!$address_id) {
-            $this->set_err_msg('添加失败');
 
-            return false;
+            return self::createReturn(false, null, '添加失败');
         }
 
-        return $address_id;
+        $new_address = M(self::ADDRESS_TABLE_NAME)->where(['id'=>$address_id])->find();
+        return self::createReturn(true, $new_address, '添加成功');
+
     }
 
     /**
