@@ -109,17 +109,14 @@ class UserApiController extends BaseController {
      * 设置默认收货地址
      */
     public function set_default() {
-        $id = I('post.id');
-        M(UserService::ADDRESS_TABLE_NAME)->where(array('userid' => $this->userid))->save(array('is_default' => 0));
-        $row = M(UserService::ADDRESS_TABLE_NAME)->where(array(
-            'userid' => $this->userid,
-            'address_id' => $id
-        ))->save(array('is_default' => 1));
-        if (!$row) {
-            $this->error('操作失败', '', true);
-        } else {
-            $this->success('操作成功', '', true);
+        if(IS_POST){
+            $address_id = I('post.id',0);
+            $res = UserService::set_default($this->userid,$address_id);
+            $this->ajaxReturn($res);
+        }else{
+            $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'请求方法错误'));
         }
+
     }
 
     /**

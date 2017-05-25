@@ -233,6 +233,37 @@ class UserService extends BaseService {
     }
 
     /**
+     * 设置默认地址
+     * @param int   $user_id    用户ID
+     * @param int   $address_id 地址ID
+     * @return array
+     */
+    public static function set_default($user_id, $address_id){
+        if($address_id == 0){
+            return self::createReturn(false, $address_id, '缺少参数!');
+        }
+
+        $row = M(UserService::ADDRESS_TABLE_NAME)->where(array(
+            'userid' => $user_id,
+            'address_id' => $address_id
+        ))->save(array('is_default' => 1));
+
+        $new_address = M(self::ADDRESS_TABLE_NAME)->where(['address_id'=>$address_id])->find();
+        if (!$row) {
+            return self::createReturn(true, $new_address, '修改失败!');
+        } else {
+            //将其他地址设置为 不是默认地址
+            M(UserService::ADDRESS_TABLE_NAME)->where(array(
+                'userid' => $user_id,
+                'address_id' => array('neq',$address_id)
+            ))->save(array('is_default' => 0));
+
+            return self::createReturn(true, $new_address, '修改成功!');
+        }
+    }
+
+
+    /**
      * 通过用户名获取用户信息
      *
      * @param $username
