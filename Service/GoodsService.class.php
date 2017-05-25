@@ -32,8 +32,9 @@ class GoodsService extends BaseService {
      * @return array
      */
     public function get_goods_list($where, $catid, $order, $onsale, $page = 1, $limit = 20) {
+        $category_service = new CategoryService();
         if ($catid) {
-            $where['cat_id'] = ['in', getCatGrandson($catid)];
+            $where['cat_id'] = ['in', $category_service->getCatGrandson($catid)];
         }
         $where['is_on_sale'] = $onsale;
         $goods_list = M(self::GOODS_TABLE_NAME)->where($where)->page($page, $limit)->order($order)->select();
