@@ -111,7 +111,6 @@ class UserService extends BaseService {
      * @param $userid int 用户id
      * @return array 地址列表
      */
-
     public static function get_address_list($userid){
 
         $address_lists = M(UserService::ADDRESS_TABLE_NAME)->where(array('userid' => $userid))->order('is_default desc')->select();
@@ -146,7 +145,6 @@ class UserService extends BaseService {
 
         //检查手机格式
         if ($post['consignee'] == '') {
-
             return self::createReturn(false, null, '收货人不能为空');
         }
         if (!$post['province'] || !$post['city'] || !$post['district']) {
@@ -160,9 +158,7 @@ class UserService extends BaseService {
 
         }
         if (!self::checkMobile($post['mobile'])) {
-
             return self::createReturn(false, null, '手机号码格式有误'. $post['mobile']);
-
         }
 
         //编辑模式
@@ -171,12 +167,14 @@ class UserService extends BaseService {
             if ($post['is_default'] == 1 && $address['is_default'] != 1) {
                 M(self::ADDRESS_TABLE_NAME)->where(array('userid' => $user_id))->save(array('is_default' => 0));
             }
-            $row = M(self::ADDRESS_TABLE_NAME)->where(array('address_id' => $address_id, 'user_id' => $user_id))->save($post);
-            if (!$row) {
-                return true;
-            }
 
-            return true;
+            $row = M(self::ADDRESS_TABLE_NAME)->where(array('address_id' => $address_id, 'user_id' => $user_id))->save($post);
+
+            $new_address = M(self::ADDRESS_TABLE_NAME)->where(['address_id'=>$address_id])->find();
+            if (!$row) {
+                return self::createReturn(true, $new_address, '没有修改!');
+            }
+            return self::createReturn(true, $new_address, '修改成功!');
         }
         //添加模式
         $post['userid'] = $user_id;
@@ -201,10 +199,13 @@ class UserService extends BaseService {
             return self::createReturn(false, null, '添加失败');
         }
 
-        $new_address = M(self::ADDRESS_TABLE_NAME)->where(['id'=>$address_id])->find();
+        $new_address = M(self::ADDRESS_TABLE_NAME)->where(['address_id'=>$address_id])->find();
         return self::createReturn(true, $new_address, '添加成功');
 
     }
+
+
+    
 
     /**
      * 通过用户名获取用户信息

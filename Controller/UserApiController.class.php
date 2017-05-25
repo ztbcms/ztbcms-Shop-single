@@ -69,13 +69,10 @@ class UserApiController extends BaseController {
      * 获取用户地址列表
      */
     public function address_list() {
-
         if(IS_GET){
-
             $res = UserService::get_address_list($this->userid);
             $this->ajaxReturn($res);
         }
-
     }
 
     /**
@@ -83,12 +80,10 @@ class UserApiController extends BaseController {
      */
     public function add_address() {
         if (IS_POST) {
-
             $res = UserService::add_edit_address($this->userid,0,I('post.'));
             $this->ajaxReturn($res);
-
         } else {
-            $this->error('请求方法错误', '', true);
+            $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'请求方法错误'));
         }
     }
 
@@ -99,16 +94,14 @@ class UserApiController extends BaseController {
         if (IS_POST) {
             $address_id = I('post.address_id');
             if (!$address_id) {
-                $this->error('参数错误', '', true);
+                $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'请求方法错误'));
             }
             $post = I('post.');
             unset($post['address_id']);
-
-            $user_service = new UserService();
-            $data = $user_service->add_eidt_address($this->userid, $address_id, I('post.'));
-            $this->success($data, '', true);
+            $res = UserService::add_edit_address($this->userid,$address_id,$post);
+            $this->ajaxReturn($res);
         } else {
-            $this->error('请求方法错误', '', true);
+            $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'请求方法错误'));
         }
     }
 
@@ -133,18 +126,27 @@ class UserApiController extends BaseController {
      * 地址删除
      */
     public function del_address() {
-        $id = I('post.id');
-        $address = M(UserService::ADDRESS_TABLE_NAME)->where("address_id = $id")->find();
-        $row = M(UserService::ADDRESS_TABLE_NAME)->where(array('userid' => $this->userid, 'address_id' => $id))->delete();
-        // 如果删除的是默认收货地址 则要把第一个地址设置为默认收货地址
-        if ($address['is_default'] == 1) {
-            $address2 = M(UserService::ADDRESS_TABLE_NAME)->where("userid = {$this->userid}")->find();
-            $address2 && M(UserService::ADDRESS_TABLE_NAME)->where("address_id = {$address2['address_id']}")->save(array('is_default' => 1));
+        if(IS_POST){
+            $id = I('post.id');
+            $address = M(UserService::ADDRESS_TABLE_NAME)->where("address_id = $id")->find();
+            $row = M(UserService::ADDRESS_TABLE_NAME)->where(array('userid' => $this->userid, 'address_id' => $id))->delete();
+            // 如果删除的是默认收货地址 则要把第一个地址设置为默认收货地址
+            if ($address['is_default'] == 1) {
+                $address2 = M(UserService::ADDRESS_TABLE_NAME)->where("userid = {$this->userid}")->find();
+                $address2 && M(UserService::ADDRESS_TABLE_NAME)->where("address_id = {$address2['address_id']}")->save(array('is_default' => 1));
+            }
+            if (!$row) {
+                $this->error('操作失败', '', true);
+            } else {
+                $this->success('操作成功', '', true);
+            }
+
+        }else{
+
+            $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'请求方法错误'));
+
         }
-        if (!$row) {
-            $this->error('操作失败', '', true);
-        } else {
-            $this->success('操作成功', '', true);
-        }
+
+
     }
 }
