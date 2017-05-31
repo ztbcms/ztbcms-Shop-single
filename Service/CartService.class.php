@@ -13,23 +13,25 @@ class CartService extends BaseService {
      * @param array $goods_spec 商品规格
      * @param       $session_id
      * @param int   $user_id    用户ID
-     * @return bool|int
+     * @return bool|int|array
      */
-    function add_cart($goods_id, $goods_num, $goods_spec, $session_id, $user_id = 0) {
+    static function add_cart($goods_id, $goods_num, $goods_spec, $session_id, $user_id = 0) {
         $goods = M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = $goods_id")->find(); // 找出这个商品
         $specGoodsPriceList = M('ShopSpecGoodsPrice')->where("goods_id = $goods_id")->getField("key,key_name,price,store_count,sku"); // 获取商品对应的规格价钱 库存 条码
         $user_id = $user_id ? $user_id : 0;
+
         foreach ($goods_spec as $key => $val) {
             $spec_item[] = $val;
         } // 所选择的规格项
+
         if (!empty($spec_item)) {
             // 有选择商品规格
             sort($spec_item);
             $spec_key = implode('_', $spec_item);
             if ($specGoodsPriceList[$spec_key]['store_count'] < $goods_num) {
-                $this->set_err_msg('商品库存不足');
-
-                return false;
+                return self::createReturn(false,'','商品库存不足');
+//                $this->set_err_msg('商品库存不足');
+//                return false;
             }
             $spec_price = $specGoodsPriceList[$spec_key]['price']; // 获取规格指定的价格
         }
@@ -41,7 +43,7 @@ class CartService extends BaseService {
             $where .= " and  session_id = '$session_id' ";
         }
 
-        $cart_goods = M(self::TABLE_NAME)->where($where)->find(); // 查找购物车是否已经存在该商品
+        $cart_goods = M(self::TABLE_NAME)->where($where)->find();  // 查找购物车是否已经存在该商品
         $price = $spec_price ? $spec_price : $goods['shop_price']; // 如果商品规格没有指定价格则用商品原始价格
 
 
@@ -50,31 +52,40 @@ class CartService extends BaseService {
         }
         $catr_count = M(self::TABLE_NAME)->where($where)->count(); // 查找购物车商品总数量
         if ($catr_count >= 20) {
-            $this->set_err_msg('购物车最多只能放20种商品');
+            return self::createReturn(false,'','购物车最多只能放20种商品');
 
-            return false;
+//            $this->set_err_msg('购物车最多只能放20种商品');
+//
+//            return false;
         }
 
         if (!empty($specGoodsPriceList) && empty($goods_spec)) {
             // 有商品规格 但是前台没有传递过来
-            $this->set_err_msg('必须传递商品规格');
-
-            return false;
+            return self::createReturn(false,'','必须传递商品规格');
+//            $this->set_err_msg('必须传递商品规格');
+//
+//            return false;
         }
         if ($cart_goods['goods_num'] + $goods_num <= 0) {
-            $this->set_err_msg('购买商品数量不能为0');
+            return self::createReturn(false,'','购买商品数量不能为0');
 
-            return false;
+//            $this->set_err_msg('购买商品数量不能为0');
+//
+//            return false;
         }
         if (empty($goods)) {
-            $this->set_err_msg('购买商品不存在');
+            return self::createReturn(false,'','购买商品不存在');
 
-            return false;
+//            $this->set_err_msg('购买商品不存在');
+//
+//            return false;
         }
         if (($goods['store_count'] < ($cart_goods['goods_num'] + $goods_num))) {
-            $this->set_err_msg('商品库存不足');
+            return self::createReturn(false,'','商品库存不足');
 
-            return false;
+//            $this->set_err_msg('商品库存不足');
+//
+//            return false;
         }
 
         $data = array(
@@ -114,11 +125,66 @@ class CartService extends BaseService {
             setcookie('cn', $cart_count, null, '/');
         }
         if ($res) {
-            return $cart_goods ? $cart_goods['id'] : $res;
-        } else {
-            $this->set_err_msg('添加购物车失败');
+            //返回购物车id
+            if($cart_goods){
+                return self::createReturn(true,$cart_goods['id'],'添加购物车成功');
+            }else{
+                return self::createReturn(true,$res,'添加购物车成功');
+            }
+//            return $cart_goods ? $cart_goods['id'] : $res;
 
-            return false;
+        } else {
+            return self::createReturn(false,'','添加购物车失败');
+
+//            $this->set_err_msg('添加购物车失败');
+//
+//            return false;
         }
     }
+
+    /**
+     * 获取购物车列表
+     *
+     * @param int $userid 用户id
+     * @param int $ids
+     * @return array
+     */
+    static function get_cart_list($userid,$ids=0){
+        //如果用户没有登录，是用session_id加入购物车
+        $where = ['user_id' => $userid];
+        if ($ids != 0) {
+            $where['id'] = ['in', $ids];
+        }
+        $cart_list = M(CartService::TABLE_NAME)->where($where)->order('id DESC')->select();
+        if($cart_list){
+            return self::createReturn(true,$cart_list,'获取购物车成功!');
+        }else{
+            return self::createReturn(true,[],'购物车为空');
+        }
+    }
+
+//    /**
+//     * 设置购物车数量
+//     */
+//    static function set_num(){
+//
+//    }
+
+    /**
+     * 移除购物车
+     *
+     * @param $cart_id int 购物车id
+     * @param $userid int 用户id
+     * @return array
+     */
+      static function del_cart($cart_id,$userid){
+          $where['userid'] = $userid;
+          $where['id'] = $cart_id;
+          $res = M(CartService::TABLE_NAME)->where($where)->delete();
+          if ($res) {
+              return self::createReturn(true,$res,'移除购物车成功!');
+          } else {
+              return self::createReturn(false,$res,'无可删除内容!');
+          }
+      }
 }

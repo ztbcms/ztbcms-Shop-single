@@ -116,7 +116,6 @@ class UserApiController extends BaseController {
         }else{
             $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'请求方法错误'));
         }
-
     }
 
     /**
