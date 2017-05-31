@@ -22,7 +22,7 @@ class BaseController extends Base {
         }else if(ACTION_NAME=='login'||ACTION_NAME=='register'){
             //不需要登录的action
         } else {
-            exit(json_encode(array('status' => false, 'data'=>null, 'msg' => '没有登录')));
+            exit(json_encode(array('status' => false, 'data'=>null, 'msg' => '请先登录')));
         }
     }
 }

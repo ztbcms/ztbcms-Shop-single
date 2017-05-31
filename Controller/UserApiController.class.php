@@ -48,6 +48,16 @@ class UserApiController extends BaseController {
     }
 
     /**
+     * 用户退出api
+     */
+    public function logout() {
+
+        $res = UserService::logout();
+        $this->ajaxReturn($res);
+    }
+
+
+    /**
      * 用户注册api
      */
     public function register() {

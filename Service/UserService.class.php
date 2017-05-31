@@ -30,8 +30,17 @@ class UserService extends BaseService {
         $user = M('Member')->where(['userid' => $userid])->field('password,encrypt',true)->find();
 
         return self::createReturn(true, $user, '登录成功');
-
     }
+
+    /**
+     * 用户退出
+     *
+     */
+    public static function logout(){
+        service("Passport")->logoutLocal();
+        return self::createReturn(true, null, '退出成功');
+    }
+
 
 
 

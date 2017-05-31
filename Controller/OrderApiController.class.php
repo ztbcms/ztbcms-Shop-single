@@ -47,7 +47,10 @@ class OrderApiController extends BaseController {
         $res_data['pay_status'] = OrderService::PAY_STATUS();
         $res_data['order_info'] = $order_info;
         $res_data['order_action'] = $order_action;
-        $this->success($res_data, '', true);
+
+        $this->ajaxReturn(array('status'=>true, 'data'=>$res_data, 'msg'=>'获取订单详情成功'));
+
+//        $this->success($res_data, '', true);
     }
 
     /*
@@ -85,7 +88,10 @@ class OrderApiController extends BaseController {
         $res_data['pay_status'] = OrderService::PAY_STATUS();
         //订单列表
         $res_data['lists'] = $order_list;
-        $this->success($res_data, '', true);
+
+
+        $this->ajaxReturn(array('status'=>true, 'data'=>$res_data, 'msg'=>'获取订单列表成功'));
+//        $this->success($res_data, '', true);
     }
 
     /**

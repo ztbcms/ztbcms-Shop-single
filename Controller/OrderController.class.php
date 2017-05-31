@@ -72,6 +72,7 @@ class OrderController extends AdminBase {
         $limit = I('get.limit', 20);
         $total = M(OrderService::TABLE_NAME)->where($condition)->count();
         $page_count = ceil($total / $limit);
+
         //获取订单列表
         $orderList = $orderService->getOrderList($condition, $sort_order, $page, $limit);
 
@@ -85,6 +86,8 @@ class OrderController extends AdminBase {
             'pay_status' => $this->pay_status,
             'shipping_status' => $this->shipping_status
         ];
+
+
         $this->success($res, '', true);
     }
 

@@ -121,6 +121,7 @@
                     </tr>
                     </thead>
                     <tbody>
+
                     <volist name="orderGoods" id="good">
                         <tr>
                             <td class="text-left"><a href="{:U('Shop/Goods/addEditGoods',array('id'=>$good['goods_id']))}" >{$good.goods_name}</a>
