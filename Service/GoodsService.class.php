@@ -31,7 +31,7 @@ class GoodsService extends BaseService {
      * @param int $limit 每页显示数据
      * @return array
      */
-    public function get_goods_list($where, $catid, $order, $onsale, $page = 1, $limit = 20) {
+    public static function get_goods_list($where, $catid, $order, $onsale, $page = 1, $limit = 20) {
         if ($catid) {
             $where['cat_id'] = ['in', getCatGrandson($catid)];
         }
@@ -46,8 +46,40 @@ class GoodsService extends BaseService {
             'total_count' => $total_count,
         ];
 
-        return $res;
+        return self::createReturn(true,$res,'获取成功');
+
+//        return $res;
     }
+
+
+    //获取商品详情
+    public static function get_goods_info($goods_id){
+        $goods = M('ShopGoods')->where("goods_id = $goods_id")->find();
+        //将商品详情转义html
+        $goods['goods_content'] = htmlspecialchars_decode($goods['goods_content']);
+        if (empty($goods) || ($goods['is_on_sale'] == 0)) {
+            return self::createReturn(false,null,'该商品已经下架');
+        }
+        $goods_images_list = M(GoodsService::GOODS_IMAGES_TABLE_NAME)->where("goods_id = '%d'", $goods_id)->select(); // 商品 图册
+        $goods_attribute = M(GoodsService::GOODS_ATTRIBUTE_TABLE_NAME)->where("type_id='%d'",
+            $goods['goods_type'])->getField('attr_id,attr_name'); // 查询属性
+        $goods_attr_list = M(GoodsService::GOODS_ATTR_TABLE_NAME)->where("goods_id = '%d'", $goods_id)->select(); // 查询商品属性表
+        $spec_goods_price = M('shop_spec_goods_price')->where("goods_id = '%d'",
+            $goods_id)->getField("key,price,store_count"); // 规格 对应 价格 库存表
+        $filter_spec = GoodsService::get_spec($goods_id);
+        $data = [
+            'goods_info' => $goods,
+            'goods_images_list' => $goods_images_list, //商品图册
+            'goods_attribute' => $goods_attribute, //商品所属的属性
+            'goods_attr_list' => $goods_attr_list, //商品属性的值
+            'spec_goods_price' => $spec_goods_price, //各个规格商品的价格
+            'filter_spec' => $filter_spec //商品所属规格信息
+        ];
+
+
+        return self::createReturn(true,$data,'获取成功');
+    }
+
 
     /**
      * 获取商品所属的规格信息
