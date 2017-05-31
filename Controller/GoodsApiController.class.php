@@ -17,7 +17,6 @@ class GoodsApiController extends Base {
             }
             $res = GoodsService::get_goods_info($goods_id);
             $this->ajaxReturn($res);
-
         }else{
             $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'请求方法错误'));
         }

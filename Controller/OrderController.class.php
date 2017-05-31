@@ -155,10 +155,12 @@ class OrderController extends AdminBase {
      * @param int $order_id 订单ID
      */
     public function detail($order_id) {
+
         $orderService = new OrderService();
         $order = $orderService->getOrderInfo($order_id);
         $orderGoods = $orderService->getOrderGoods($order_id);
         $button = $orderService->getOrderButton($order);
+
         // 获取操作记录
         $action_log = M(OrderService::ORDER_ACTION_TABLE_NAME)->where(array('order_id' => $order_id))->order('log_time desc')->select();
         $this->assign('order', $order);

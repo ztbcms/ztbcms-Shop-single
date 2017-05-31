@@ -77,7 +77,7 @@ class OrderService extends BaseService {
      * @param array      $cart_price    各种价格
      * @return string $order_id 返回新增的订单id
      */
-    public function addOrder(
+    public static function addOrder(
         $user_id,
         $cartList,
         $address_id,
@@ -120,9 +120,10 @@ class OrderService extends BaseService {
 
         $order_id = M(self::TABLE_NAME)->data($data)->add();
         if (!$order_id) {
-            $this->set_err_msg('添加订单失败');
+            return self::createReturn(false,null,'添加订单失败');
+//            $this->set_err_msg('添加订单失败');
+//            return false;
 
-            return false;
         }
         // 记录订单操作日志
         logOrder($order_id, '您提交了订单，请等待系统确认', '提交订单', $user_id);
@@ -182,7 +183,9 @@ class OrderService extends BaseService {
             update_pay_status($order['order_sn'], 1);
         }
 
-        return $order_id;
+        return self::createReturn(true,$order_id,'添加订单成功');
+
+//        return $order_id;
     }
 
     /**
@@ -210,7 +213,7 @@ class OrderService extends BaseService {
      * @param int $coupon_id
      * @return array|bool
      */
-    public function calculate_price(
+    public static function calculate_price(
         $userid = 0,
         $order_goods,
         $shipping_price = 0,
@@ -219,18 +222,24 @@ class OrderService extends BaseService {
         $coupon_id = 0
     ) {
         if (empty($order_goods)) {
-            $this->set_err_msg('商品列表不能为空');
+//            $this->set_err_msg('商品列表不能为空');
+//
+//            return false;
 
-            return false;
+            return self::createReturn(false,null,'商品列表不能为空');
+
         }
 
         //检测是否使用优惠券
         if ($coupon_id) {
             $coupon_res = CouponService::getUserCouponInfo(I('usercoupon_id'), $userid);
             if ($coupon_res['status']) {
-                $this->set_err_msg($coupon_res['msg']);
+//                $this->set_err_msg($coupon_res['msg']);
+//
+//                return false;
 
-                return false;
+                return self::createReturn(false,null,$coupon_res['msg']);
+
             }
             $coupon_info = $coupon_res['data'];
             $coupon_price = $coupon_info['discount_price'];
@@ -243,10 +252,13 @@ class OrderService extends BaseService {
             $user_service = new UserService();
             $balance = $user_service->getBalance($userid);
             if ($balance < $user_money) {
-                //余额不足
-                $this->set_err_msg('余额不足');
+//                //余额不足
+//                $this->set_err_msg('余额不足');
+//
+//                return false;
 
-                return false;
+                return self::createReturn(false,null,'余额不足');
+
             }
         }
 
@@ -267,9 +279,13 @@ class OrderService extends BaseService {
             $order_goods[$key]['goods_fee'] = $val['goods_num'] * $val['member_goods_price']; // 小计
             $order_goods[$key]['store_count'] = getGoodNum($val['goods_id'], $val['spec_key']); // 最多可购买的库存数量
             if ($order_goods[$key]['store_count'] <= 0) {
-                $this->set_err_msg('库存不足,请重新下单');
 
-                return false;
+//                $this->set_err_msg('库存不足,请重新下单');
+//
+//                return false;
+
+                return self::createReturn(false,null,'库存不足,请重新下单');
+
             }
 
             $goods_price += $order_goods[$key]['goods_fee']; // 商品总价
@@ -309,13 +325,15 @@ class OrderService extends BaseService {
             'order_goods' => $order_goods, // 商品列表 多加几个字段原样返回
         );
 
-        return $result;
+//        return $result;
+        return self::createReturn(true,$result,'计算成功');
+
+
     }
 
 
     public function updateInfo($order_id, $data) {
         $res = M(self::TABLE_NAME)->where(['order_id' => $order_id])->save($data);
-
         return $res;
     }
 
