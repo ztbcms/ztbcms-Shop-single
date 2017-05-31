@@ -37,7 +37,7 @@ class OrderApiController extends BaseController {
         $order_info['goods_list'] = $data;
 
         //获取订单操作记录
-        $order_action = M('order_action')->where(array('order_id' => $id))->select();
+        $order_action = M(OrderService::ORDER_ACTION_TABLE_NAME)->where(array('order_id' => $id))->select();
 
         //订单状态对应的中文描述
         $res_data['order_status'] = OrderService::ORDER_STATUS();

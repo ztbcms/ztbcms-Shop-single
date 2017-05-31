@@ -12,6 +12,7 @@ use Shop\Service\BrandService;
 use Shop\Service\CartService;
 use Shop\Service\CategoryService;
 use Shop\Service\GoodsService;
+use Shop\Service\OrderService;
 
 class GoodsController extends AdminBase {
     /**
@@ -155,7 +156,7 @@ class GoodsController extends AdminBase {
         $error = '';
 
         // 判断此商品是否有订单
-        $c1 = M('OrderGoods')->where("goods_id = $goods_id")->count('1');
+        $c1 = M(OrderService::ORDER_GOODS_TABLE_NAME)->where("goods_id = $goods_id")->count('1');
         $c1 && $error .= '此商品有订单,不得删除! <br/>';
 
         // 商品退货记录
