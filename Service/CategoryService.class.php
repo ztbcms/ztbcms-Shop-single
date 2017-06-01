@@ -11,6 +11,26 @@ namespace Shop\Service;
 
 class CategoryService extends BaseService
 {
+    /**
+     * 获取某个商品分类的 儿子 孙子  重子重孙 的 id
+     * @param string $cat_id
+     * @return array|string
+     */
+    public function getCatGrandson($cat_id) {
+        $GLOBALS['catGrandson'] = array();
+        $GLOBALS['category_id_arr'] = array();
+        // 先把自己的id 保存起来
+        $GLOBALS['catGrandson'][] = $cat_id;
+        // 把整张表找出来
+        $GLOBALS['category_id_arr'] = M('ShopGoodsCategory')->getField('id,parent_id');
+        // 先把所有儿子找出来
+        $son_id_arr = M('ShopGoodsCategory')->where("parent_id = $cat_id")->getField('id', true);
+        foreach ($son_id_arr as $k => $v) {
+            getCatGrandson2($v);
+        }
+        return $GLOBALS['catGrandson'];
+    }
+
     //定义商品分类表
     const TABLE_NAME = 'ShopGoodsCategory';
 

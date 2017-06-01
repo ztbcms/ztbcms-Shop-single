@@ -2,6 +2,7 @@
 namespace Shop\Controller;
 
 use Shop\Service\CartService;
+use Shop\Service\OrderService;
 
 class CartController extends BaseController {
 
@@ -150,7 +151,7 @@ class CartController extends BaseController {
     public function order_again() {
         if(IS_POST){
             $order_id = I('post.order_id');
-            $goods_list = M('OrderGoods')->where(['order_id' => $order_id])->select();
+            $goods_list = M(OrderService::ORDER_GOODS_TABLE_NAME)->where(['order_id' => $order_id])->select();
             $result_arr = [];
             foreach ($goods_list as $key => $value) {
                 $goods_id = $value['goods_id'];
@@ -179,6 +180,7 @@ class CartController extends BaseController {
                     $this->ajaxReturn($res);
                 }
 //            $result_arr[] = $result;
+
             }
 
             if ($res['status']) {
