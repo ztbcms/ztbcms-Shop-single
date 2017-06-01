@@ -65,6 +65,33 @@ class OrderService extends BaseService {
         );
     }
 
+    public function getOrders($where, $page, $limit, $order = '') {
+        $total = M(self::TABLE_NAME)->where($where)->count();
+        $order_str = "order_id DESC";
+        $order_list = M(self::TABLE_NAME)->order($order_str)->where($where)->page($page,
+            $limit)->order($order)->select();
+
+        //获取订单商品
+        foreach ($order_list as $k => $v) {
+            $data = self::get_order_goods($v['order_id']);
+            $order_list[$k]['goods_list'] = $data;
+        }
+        $res_data['total'] = $total;
+        $res_data['page'] = $page;
+        $res_data['page_count'] = ceil($total / $limit);
+        $res_data['limit'] = $limit;
+        //订单状态对应的中文描述
+        $res_data['order_status'] = self::ORDER_STATUS();
+        //订单物流状态对应的中文描述
+        $res_data['shipping_status'] = self::SHIPPING_STATUS();
+        //订单支付状态
+        $res_data['pay_status'] = self::PAY_STATUS();
+        //订单列表
+        $res_data['lists'] = $order_list;
+
+        return self::createReturn(true, $res_data, '');
+    }
+
     /**
      *  添加一个订单
      *
@@ -120,10 +147,7 @@ class OrderService extends BaseService {
 
         $order_id = M(self::TABLE_NAME)->data($data)->add();
         if (!$order_id) {
-            return self::createReturn(false,null,'添加订单失败');
-//            $this->set_err_msg('添加订单失败');
-//            return false;
-
+            return self::createReturn(false, null, '添加订单失败');
         }
         // 记录订单操作日志
         logOrder($order_id, '您提交了订单，请等待系统确认', '提交订单', $user_id);
@@ -155,7 +179,8 @@ class OrderService extends BaseService {
                 M('ShopSpecGoodsPrice')->where("`goods_id`='%d' AND `key`='%s' ", $val['goods_id'],
                     $val['spec_key'])->setDec('store_count', $val['goods_num']);
             } else {
-                M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = " . $val['goods_id'])->setDec('store_count', $val['goods_num']); // 商品减少库存
+                M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = " . $val['goods_id'])->setDec('store_count',
+                    $val['goods_num']); // 商品减少库存
             }
         }
 
@@ -180,12 +205,10 @@ class OrderService extends BaseService {
 
         // 如果应付金额为0  可能是余额支付 + 积分 + 优惠券 这里订单支付状态直接变成已支付
         if ($data['order_amount'] == 0) {
-            update_pay_status($order['order_sn'], 1);
+            self::payOrder($order['order_sn']);
         }
 
-        return self::createReturn(true,$order_id,'添加订单成功');
-
-//        return $order_id;
+        return self::createReturn(true, $order_id, '添加订单成功');
     }
 
     /**
@@ -213,7 +236,7 @@ class OrderService extends BaseService {
      * @param int $coupon_id
      * @return array|bool
      */
-    public static function calculate_price(
+    public static function calculatePrice(
         $userid = 0,
         $order_goods,
         $shipping_price = 0,
@@ -222,24 +245,14 @@ class OrderService extends BaseService {
         $coupon_id = 0
     ) {
         if (empty($order_goods)) {
-//            $this->set_err_msg('商品列表不能为空');
-//
-//            return false;
-
-            return self::createReturn(false,null,'商品列表不能为空');
-
+            return self::createReturn(false, null, '商品列表不能为空');
         }
 
         //检测是否使用优惠券
         if ($coupon_id) {
             $coupon_res = CouponService::getUserCouponInfo(I('usercoupon_id'), $userid);
             if ($coupon_res['status']) {
-//                $this->set_err_msg($coupon_res['msg']);
-//
-//                return false;
-
-                return self::createReturn(false,null,$coupon_res['msg']);
-
+                return self::createReturn(false, null, $coupon_res['msg']);
             }
             $coupon_info = $coupon_res['data'];
             $coupon_price = $coupon_info['discount_price'];
@@ -252,13 +265,8 @@ class OrderService extends BaseService {
             $user_service = new UserService();
             $balance = $user_service->getBalance($userid);
             if ($balance < $user_money) {
-//                //余额不足
-//                $this->set_err_msg('余额不足');
-//
-//                return false;
-
-                return self::createReturn(false,null,'余额不足');
-
+                //余额不足
+                return self::createReturn(false, null, '余额不足');
             }
         }
 
@@ -279,13 +287,7 @@ class OrderService extends BaseService {
             $order_goods[$key]['goods_fee'] = $val['goods_num'] * $val['member_goods_price']; // 小计
             $order_goods[$key]['store_count'] = getGoodNum($val['goods_id'], $val['spec_key']); // 最多可购买的库存数量
             if ($order_goods[$key]['store_count'] <= 0) {
-
-//                $this->set_err_msg('库存不足,请重新下单');
-//
-//                return false;
-
-                return self::createReturn(false,null,'库存不足,请重新下单');
-
+                return self::createReturn(false, null, '库存不足,请重新下单');
             }
 
             $goods_price += $order_goods[$key]['goods_fee']; // 商品总价
@@ -325,10 +327,7 @@ class OrderService extends BaseService {
             'order_goods' => $order_goods, // 商品列表 多加几个字段原样返回
         );
 
-//        return $result;
-        return self::createReturn(true,$result,'计算成功');
-
-
+        return self::createReturn(true, $result, '计算成功');
     }
 
 
@@ -451,9 +450,11 @@ class OrderService extends BaseService {
                     ])->setInc('store_count', $value['goods_num']);
                 } else {
                     //没有规格商品,增加库存
-                    M(GoodsService::GOODS_TABLE_NAME)->where(['goods_id' => $value['goods_id']])->setInc('store_count', $value['goods_num']);
+                    M(GoodsService::GOODS_TABLE_NAME)->where(['goods_id' => $value['goods_id']])->setInc('store_count',
+                        $value['goods_num']);
                 }
-                M(GoodsService::GOODS_TABLE_NAME)->where(['goods_id' => $value['goods_id']])->setDec('sales_sum', $value['goods_num']);
+                M(GoodsService::GOODS_TABLE_NAME)->where(['goods_id' => $value['goods_id']])->setDec('sales_sum',
+                    $value['goods_num']);
             }
             self::logOrder($order['order_id'], '订单取消', '订单取消', $order['user_id']);
 
@@ -774,9 +775,11 @@ class OrderService extends BaseService {
                     $val['goods_num']);
                 refresh_stock($val['goods_id']);
             } else {
-                M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = {$val['goods_id']}")->setInc('store_count', $val['goods_num']); // 增加商品总数量
+                M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = {$val['goods_id']}")->setInc('store_count',
+                    $val['goods_num']); // 增加商品总数量
             }
-            M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = {$val['goods_id']}")->setDec('sales_sum', $val['goods_num']); // 减少商品销售量
+            M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = {$val['goods_id']}")->setDec('sales_sum',
+                $val['goods_num']); // 减少商品销售量
             //更新活动商品购买量
             if ($val['prom_type'] == 1 || $val['prom_type'] == 2) {
                 $prom = get_goods_promotion($val['goods_id']);

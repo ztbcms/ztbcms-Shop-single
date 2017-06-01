@@ -18,7 +18,7 @@ class CartController extends BaseController {
                 $ids = 0;
             }
 
-            $res = CartService::get_cart_list($this->userid, $ids);
+            $res = CartService::getCartList($this->userid, $ids);
 
             $this->ajaxReturn($res);
 
@@ -70,7 +70,7 @@ class CartController extends BaseController {
 //            } else {
 //                $this->error($cart_service->get_err_msg(), '', true);
 //            }
-                $result = CartService::add_cart($goods_id, $goods_num, $goods_spec, $this->session_id,$this->userid); // 将商品加入购物车
+                $result = CartService::addCart($goods_id, $goods_num, $goods_spec, $this->session_id,$this->userid); // 将商品加入购物车
                 $this->ajaxReturn($result);
 
 
@@ -88,7 +88,7 @@ class CartController extends BaseController {
                     $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'缺少商品规格'));
                 }
 
-                $result = CartService::add_cart($goods_id, $goods_num, $goods_spec, $this->session_id,$this->userid); // 将商品加入购物车
+                $result = CartService::addCart($goods_id, $goods_num, $goods_spec, $this->session_id,$this->userid); // 将商品加入购物车
                 $this->ajaxReturn($result);
             }
 
@@ -116,7 +116,7 @@ class CartController extends BaseController {
                 $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'缺少商品规格'));
             }
 
-            $result = CartService::add_cart($goods_id, $goods_num, $goods_spec, $this->session_id,$this->userid); // 将商品加入购物车
+            $result = CartService::addCart($goods_id, $goods_num, $goods_spec, $this->session_id,$this->userid); // 将商品加入购物车
             $this->ajaxReturn($result);
 
 
@@ -138,7 +138,7 @@ class CartController extends BaseController {
                 $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'缺少购物车id'));
             }
 
-            $res = CartService::del_cart($id,$this->userid);
+            $res = CartService::delCart($id,$this->userid);
             $this->ajaxReturn($res);
         }else{
             $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'请求方法错误'));
@@ -172,7 +172,7 @@ class CartController extends BaseController {
 //            $result = $cart_service->add_cart($goods_id, $goods_num, $goods_spec, $this->session_id,
 //                $this->userid); // 将商品加入购物车
 
-                $res = CartService::add_cart($goods_id, $goods_num, $goods_spec, $this->session_id,$this->userid);
+                $res = CartService::addCart($goods_id, $goods_num, $goods_spec, $this->session_id,$this->userid);
 
                 if($res['status']){
                     $result_arr[] = $res['data'];

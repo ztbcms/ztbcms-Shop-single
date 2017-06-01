@@ -125,7 +125,7 @@ class OrderApiController extends BaseController {
             $order_service = new OrderService();
 
             //按选中购物车的商品，计算出各个部分的价格
-            $res = OrderService::calculate_price($this->userid, $order_goods, 0, $pay_points, $user_money, $coupon_id);
+            $res = OrderService::calculatePrice($this->userid, $order_goods, 0, $pay_points, $user_money, $coupon_id);
             if ($res['status']) {
                 $result = $res['data'];
             }else{

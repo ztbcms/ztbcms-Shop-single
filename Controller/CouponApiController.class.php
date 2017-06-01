@@ -41,7 +41,7 @@ class CouponApiController extends BaseController
             } // 返回结果状态
             $order_service = new OrderService();
             //按选中购物车的商品，计算出各个部分的价格
-            $result = $order_service->calculate_price($this->userid, $order_goods);
+            $result = $order_service->calculatePrice($this->userid, $order_goods);
             if (!$result) {
                 $this->error($order_service->get_err_msg());
             }
@@ -86,7 +86,7 @@ class CouponApiController extends BaseController
         } // 返回结果状态
         $order_service = new OrderService();
         //按选中购物车的商品，计算出各个部分的价格
-        $result = $order_service->calculate_price($this->userid, $order_goods);
+        $result = $order_service->calculatePrice($this->userid, $order_goods);
         if (!$result) {
             $this->error($order_service->get_err_msg());
         }

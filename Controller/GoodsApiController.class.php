@@ -15,7 +15,7 @@ class GoodsApiController extends Base {
             if($goods_id == 0){
                 $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'缺少商品id'));
             }
-            $res = GoodsService::get_goods_info($goods_id);
+            $res = GoodsService::getGoodsInfo($goods_id);
             $this->ajaxReturn($res);
         }else{
             $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'请求方法错误'));
@@ -52,7 +52,7 @@ class GoodsApiController extends Base {
             $where['_complex'] = $search;
         }
 
-        $res = GoodsService::get_goods_list($where, $catid, $order, $onsale, $page, $limit);
+        $res = GoodsService::getGoodsList($where, $catid, $order, $onsale, $page, $limit);
 
         $this->ajaxReturn($res);
 
