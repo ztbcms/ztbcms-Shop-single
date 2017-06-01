@@ -80,7 +80,7 @@ class UserApiController extends BaseController {
      */
     public function address_list() {
         if(IS_GET){
-            $res = UserService::get_address_list($this->userid);
+            $res = UserService::getAddressList($this->userid);
             $this->ajaxReturn($res);
         }
     }
@@ -90,7 +90,7 @@ class UserApiController extends BaseController {
      */
     public function add_address() {
         if (IS_POST) {
-            $res = UserService::add_edit_address($this->userid,0,I('post.'));
+            $res = UserService::addEditAddress($this->userid,0,I('post.'));
             $this->ajaxReturn($res);
         } else {
             $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'请求方法错误'));
@@ -108,7 +108,7 @@ class UserApiController extends BaseController {
             }
             $post = I('post.');
             unset($post['address_id']);
-            $res = UserService::add_edit_address($this->userid,$address_id,$post);
+            $res = UserService::addEditAddress($this->userid,$address_id,$post);
             $this->ajaxReturn($res);
         } else {
             $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'请求方法错误'));
@@ -121,7 +121,7 @@ class UserApiController extends BaseController {
     public function set_default() {
         if(IS_POST){
             $address_id = I('post.id',0);
-            $res = UserService::set_default($this->userid,$address_id);
+            $res = UserService::setDefault($this->userid,$address_id);
             $this->ajaxReturn($res);
         }else{
             $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'请求方法错误'));
@@ -134,7 +134,7 @@ class UserApiController extends BaseController {
     public function del_address() {
         if(IS_POST){
             $address_id = I('post.id',0);
-            $res = UserService::del_address($this->userid,$address_id);
+            $res = UserService::delAddress($this->userid,$address_id);
             $this->ajaxReturn($res);
         }else{
             $this->ajaxReturn(array('status'=>false, 'data'=>null, 'msg'=>'请求方法错误'));

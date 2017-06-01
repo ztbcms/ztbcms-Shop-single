@@ -472,9 +472,12 @@ function tpCache($config_key, $data = array()) {
         return F($param[0], $newData, TEMP_PATH);
     }
 }
+
 /**
  * 根据id获取地区名字
- * @param string $regionId id
+ * @param     $regionId
+ * @param int $level
+ * @return mixed
  */
 function getRegionName($regionId, $level = 1) {
     if ($level == 1) {
