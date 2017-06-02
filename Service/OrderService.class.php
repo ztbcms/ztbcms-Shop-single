@@ -135,7 +135,7 @@ class OrderService extends BaseService {
             'shipping_price' => $cart_price['postFee'],//'物流价格',
             'user_money' => $cart_price['balance'],//'使用余额',
             'coupon_price' => $cart_price['couponFee'],//'使用优惠券',
-            'integral' => ($cart_price['pointsFee'] * tpCache('shopping.point_rate')), //'使用积分',
+            'integral' => ($cart_price['pointsFee'] * self::tpCache('shopping.point_rate')['data']), //'使用积分',
             'integral_money' => $cart_price['pointsFee'],//'使用积分抵多少钱',
             'total_amount' => ($cart_price['goodsFee'] + $cart_price['postFee']),// 订单总额
             'order_amount' => $cart_price['payables'],//'应付款金额',
@@ -149,8 +149,10 @@ class OrderService extends BaseService {
         if (!$order_id) {
             return self::createReturn(false, null, '添加订单失败');
         }
+
         // 记录订单操作日志
-        logOrder($order_id, '您提交了订单，请等待系统确认', '提交订单', $user_id);
+        self::logOrder($order_id, '您提交了订单，请等待系统确认', '提交订单', $user_id);
+
         $order = M(self::TABLE_NAME)->where("order_id = $order_id")->find();
         // 1插入order_goods 表
         $order_goods_ids = array();
@@ -270,7 +272,7 @@ class OrderService extends BaseService {
             }
         }
 
-        $goods_id_arr = get_arr_column($order_goods, 'goods_id');
+        $goods_id_arr = self::get_arr_column($order_goods, 'goods_id')['data'];
         $goods_arr = M(GoodsService::GOODS_TABLE_NAME)->where("goods_id in(" . implode(',',
                 $goods_id_arr) . ")")->getField('goods_id,weight,market_price,is_free_shipping'); // 商品id 和重量对应的键值对
 
@@ -285,7 +287,8 @@ class OrderService extends BaseService {
             //累积商品重量 每种商品的重量 * 数量
 
             $order_goods[$key]['goods_fee'] = $val['goods_num'] * $val['member_goods_price']; // 小计
-            $order_goods[$key]['store_count'] = getGoodNum($val['goods_id'], $val['spec_key']); // 最多可购买的库存数量
+//            $order_goods[$key]['store_count'] = getGoodNum($val['goods_id'], $val['spec_key']); // 最多可购买的库存数量
+            $order_goods[$key]['store_count'] = GoodsService::getGoodNum($val['goods_id'], $val['spec_key'])['data']; // 最多可购买的库存数量
             if ($order_goods[$key]['store_count'] <= 0) {
                 return self::createReturn(false, null, '库存不足,请重新下单');
             }
@@ -794,7 +797,7 @@ class OrderService extends BaseService {
         M(OrderService::TABLE_NAME)->where("order_id=$order_id")->save(array('pay_status' => 0));
         update_user_level($order['user_id']);
         // 记录订单操作日志
-        logOrder($order['order_id'], '订单取消付款', '付款取消', $order['user_id']);
+        self::logOrder($order['order_id'], '订单取消付款', '付款取消', $order['user_id']);
         //分销设置
         M('rebate_log')->where("order_id = {$order['order_id']}")->save(array('status' => 0));
     }
@@ -866,6 +869,25 @@ class OrderService extends BaseService {
 
         return $p['areaname'] . ',' . $c['areaname'] . ',' . $d['areaname'] . ',';
     }
+
+    /**
+     * 根据id获取地区名字
+     * @param     $regionId
+     * @param int $level
+     * @return mixed
+     */
+    public static function getRegionName($regionId, $level = 1) {
+        if ($level == 1) {
+            $data = M('AreaProvince')->where(['id'=>$regionId])->find();
+        } elseif ($level == 2) {
+            $data = M('AreaCity')->where(['id'=>$regionId])->find();
+        } else {
+            $data = M('AreaDistrict')->where(['id'=>$regionId])->find();
+        }
+
+        return self::createReturn(true, $data['areaname'], '获取成功');
+    }
+
 
     /**
      * 删除订单

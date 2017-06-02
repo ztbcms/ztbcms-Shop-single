@@ -401,5 +401,22 @@ class GoodsService extends BaseService {
 
         return $arr;
     }
+
+
+    /**
+     * 获取商品库存
+     * @param string $goods_id 商品id
+     * @param string $key  库存 key
+     * @return array
+     */
+     public static function getGoodNum($goods_id, $key) {
+        if (!empty($key)) {
+            $data = M("ShopSpecGoodsPrice")->where("goods_id = $goods_id and `key` = '$key'")->getField('store_count');
+            return self::createReturn(true, $data, '获取成功');
+        } else {
+            $data = M("ShopGoods")->where("goods_id = $goods_id")->getField('store_count');
+            return self::createReturn(true, $data, '获取成功');
+        }
+    }
 }
 
