@@ -44,18 +44,26 @@ class BaseService {
         ];
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8d729bf8ff17b7ee971e9e232af72b287bf14bfb
     /**
      * 获取数组中的某一列
      * @param array $arr 数组
      * @param string $key_name  列名
      * @return array  返回那一列的数组
      */
+<<<<<<< HEAD
     public static function get_arr_column($arr, $key_name) {
+=======
+    function get_arr_column($arr, $key_name) {
+>>>>>>> 8d729bf8ff17b7ee971e9e232af72b287bf14bfb
         $arr2 = array();
         foreach ($arr as $key => $val) {
             $arr2[] = $val[$key_name];
         }
+<<<<<<< HEAD
         return self::createReturn(true,$arr2,'获取成功');
     }
 
@@ -119,5 +127,8 @@ class BaseService {
             return self::createReturn(true,F($param[0], $newData, TEMP_PATH),'获取成功');
 
         }
+=======
+        return $arr2;
+>>>>>>> 8d729bf8ff17b7ee971e9e232af72b287bf14bfb
     }
 }

@@ -135,7 +135,11 @@ class OrderService extends BaseService {
             'shipping_price' => $cart_price['postFee'],//'物流价格',
             'user_money' => $cart_price['balance'],//'使用余额',
             'coupon_price' => $cart_price['couponFee'],//'使用优惠券',
+<<<<<<< HEAD
             'integral' => ($cart_price['pointsFee'] * self::tpCache('shopping.point_rate')['data']), //'使用积分',
+=======
+            'integral' => $cart_price['pointsFee'], //'使用积分',
+>>>>>>> 8d729bf8ff17b7ee971e9e232af72b287bf14bfb
             'integral_money' => $cart_price['pointsFee'],//'使用积分抵多少钱',
             'total_amount' => ($cart_price['goodsFee'] + $cart_price['postFee']),// 订单总额
             'order_amount' => $cart_price['payables'],//'应付款金额',
@@ -152,7 +156,10 @@ class OrderService extends BaseService {
 
         // 记录订单操作日志
         self::logOrder($order_id, '您提交了订单，请等待系统确认', '提交订单', $user_id);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8d729bf8ff17b7ee971e9e232af72b287bf14bfb
         $order = M(self::TABLE_NAME)->where("order_id = $order_id")->find();
         // 1插入order_goods 表
         $order_goods_ids = array();
@@ -272,7 +279,11 @@ class OrderService extends BaseService {
             }
         }
 
+<<<<<<< HEAD
         $goods_id_arr = self::get_arr_column($order_goods, 'goods_id')['data'];
+=======
+        $goods_id_arr = self::get_arr_column($order_goods, 'goods_id');
+>>>>>>> 8d729bf8ff17b7ee971e9e232af72b287bf14bfb
         $goods_arr = M(GoodsService::GOODS_TABLE_NAME)->where("goods_id in(" . implode(',',
                 $goods_id_arr) . ")")->getField('goods_id,weight,market_price,is_free_shipping'); // 商品id 和重量对应的键值对
 
@@ -287,8 +298,13 @@ class OrderService extends BaseService {
             //累积商品重量 每种商品的重量 * 数量
 
             $order_goods[$key]['goods_fee'] = $val['goods_num'] * $val['member_goods_price']; // 小计
+<<<<<<< HEAD
 //            $order_goods[$key]['store_count'] = getGoodNum($val['goods_id'], $val['spec_key']); // 最多可购买的库存数量
             $order_goods[$key]['store_count'] = GoodsService::getGoodNum($val['goods_id'], $val['spec_key'])['data']; // 最多可购买的库存数量
+=======
+            $order_goods[$key]['store_count'] = GoodsService::getGoodNum($val['goods_id'],
+                $val['spec_key'])['data']; // 最多可购买的库存数量
+>>>>>>> 8d729bf8ff17b7ee971e9e232af72b287bf14bfb
             if ($order_goods[$key]['store_count'] <= 0) {
                 return self::createReturn(false, null, '库存不足,请重新下单');
             }
@@ -904,5 +920,17 @@ class OrderService extends BaseService {
         $b = M(self::ORDER_GOODS_TABLE_NAME)->where(array('order_id' => $order_id))->delete();
 
         return $a && $b;
+    }
+
+    /**
+     * 获取订单的发货记录
+     *
+     * @param $order_sn
+     * @return array
+     */
+    static function orderDelivery($order_sn) {
+        $deliverys = M('DeliveryDoc')->where(['order_sn' => $order_sn])->select();
+
+        return self::createReturn(true, $deliverys ? $deliverys : [], '');
     }
 }
