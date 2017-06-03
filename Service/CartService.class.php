@@ -213,10 +213,17 @@ class CartService extends BaseService {
         }
     }
 
-    static function setNum($cart_id = 0, $userid) {
+    /**
+     * 设置购物车商品的数量
+     *
+     * @param int $cart_id
+     * @param int $set_num
+     * @param     $userid
+     * @return array|bool|int
+     */
+    static function setNum($cart_id = 0, $set_num = 1, $userid) {
         $cart = M(CartService::TABLE_NAME)->find($cart_id);
         if ($cart && $cart_id) {
-            $set_num = (int)I('post.set_num');
             $goods_id = $cart['goods_id'];
             $goods_num = $set_num - $cart['goods_num'];
             //将sku信息转化成数组
@@ -236,9 +243,8 @@ class CartService extends BaseService {
         } else {
             //如果购物车没有，默认是添加
             $goods_id = I("post.goods_id"); // 商品id
-            $goods_num = I("post.goods_num", 1);// 商品数量
             $goods_spec = I("post.goods_spec"); // 商品规格
-            $result = self::addCart($goods_id, $goods_num, $goods_spec, '', $userid); // 将商品加入购物车
+            $result = self::addCart($goods_id, $set_num, $goods_spec, '', $userid); // 将商品加入购物车
             return $result;
         }
     }
