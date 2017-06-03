@@ -141,14 +141,8 @@ class UserService extends BaseService {
      * @return bool|int|mixed
      */
     public static function addEditAddress($user_id, $address_id = 0, $data) {
+        unset($data['address_id']);
         $post = $data;
-        if ($address_id == 0) {
-            $c = M(self::ADDRESS_TABLE_NAME)->where("userid = '%d'", $user_id)->count();
-            if ($c >= 20) {
-                return self::createReturn(false, null, '最多只能添加20个收货地址');
-            }
-        }
-
         //检查手机格式
         if ($post['consignee'] == '') {
             return self::createReturn(false, null, '收货人不能为空');
@@ -273,7 +267,7 @@ class UserService extends BaseService {
             'address_id' => $address_id
         ])->find();
 
-        if(!$is_exist){
+        if (!$is_exist) {
             return self::createReturn(false, null, '修改地址不存在!');
         }
 
@@ -372,12 +366,12 @@ class UserService extends BaseService {
      * @param $userid
      * @return int
      */
-    public function getBalance($userid) {
+    static function getBalance($userid) {
         $trade_recorde = new TradeRecord();
         $trade_recorde->setTo($userid);
         $trade_recorde->setToType('member');
         $res = TradeRecordService::getBalance($trade_recorde);
 
-        return $res['status'] ? $res['data'] : 0;
+        return self::createReturn(true, $res['status'] ? $res['data'] : 0, 'ok');
     }
 }

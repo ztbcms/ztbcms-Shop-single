@@ -263,8 +263,7 @@ class OrderService extends BaseService {
 
         // 检查账户余额的情况
         if ($user_money) {
-            $user_service = new UserService();
-            $balance = $user_service->getBalance($userid);
+            $balance = UserService::getBalance($userid)['data'];
             if ($balance < $user_money) {
                 //余额不足
                 return self::createReturn(false, null, '余额不足');
@@ -286,7 +285,8 @@ class OrderService extends BaseService {
             //累积商品重量 每种商品的重量 * 数量
 
             $order_goods[$key]['goods_fee'] = $val['goods_num'] * $val['member_goods_price']; // 小计
-            $order_goods[$key]['store_count'] = GoodsService::getGoodNum($val['goods_id'], $val['spec_key'])['data']; // 最多可购买的库存数量
+            $order_goods[$key]['store_count'] = GoodsService::getGoodNum($val['goods_id'],
+                $val['spec_key'])['data']; // 最多可购买的库存数量
 
             if ($order_goods[$key]['store_count'] <= 0) {
                 return self::createReturn(false, null, '库存不足,请重新下单');
@@ -871,17 +871,18 @@ class OrderService extends BaseService {
 
     /**
      * 根据id获取地区名字
+     *
      * @param     $regionId
      * @param int $level
      * @return mixed
      */
     public static function getRegionName($regionId, $level = 1) {
         if ($level == 1) {
-            $data = M('AreaProvince')->where(['id'=>$regionId])->find();
+            $data = M('AreaProvince')->where(['id' => $regionId])->find();
         } elseif ($level == 2) {
-            $data = M('AreaCity')->where(['id'=>$regionId])->find();
+            $data = M('AreaCity')->where(['id' => $regionId])->find();
         } else {
-            $data = M('AreaDistrict')->where(['id'=>$regionId])->find();
+            $data = M('AreaDistrict')->where(['id' => $regionId])->find();
         }
 
         return self::createReturn(true, $data['areaname'], '获取成功');
