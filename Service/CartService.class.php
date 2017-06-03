@@ -105,15 +105,15 @@ class CartService extends BaseService {
         }
         if ($res) {
             //返回购物车id
-            if($cart_goods){
+            if ($cart_goods) {
                 $cart_id = $cart_goods['id'];
-            }else{
+            } else {
                 $cart_id = $res;
             }
 
-            return self::createReturn(true, $cart_id, '添加购物车成功');
+            return self::createReturn(true, $cart_id, '操作购物车成功');
         } else {
-            return self::createReturn(false, '', '添加购物车失败');
+            return self::createReturn(false, '', '操作购物车失败');
         }
     }
 
@@ -173,5 +173,73 @@ class CartService extends BaseService {
         $cart_count = $cart_count ? $cart_count : 0;
 
         return self::createReturn(true, $cart_count, '');
+    }
+
+    /**
+     * 更具订单id 添加已经选购商品
+     *
+     * @param $order_id
+     * @param $userid
+     * @return array|bool|int
+     */
+    static function orderAgain($order_id, $userid) {
+        $goods_list = M(OrderService::ORDER_GOODS_TABLE_NAME)->where(['order_id' => $order_id])->select();
+        $result_arr = [];
+        foreach ($goods_list as $key => $value) {
+            $goods_id = $value['goods_id'];
+            $goods_num = $value['goods_num'];
+            //将sku信息转化成数组
+            if ($value['spec_key_name']) {
+                $spec_key_name = explode(' ', $value['spec_key_name']);
+                $spec_key = explode('_', $value['spec_key']);
+                $spec_arr = null;
+                foreach ($spec_key_name as $key => $value) {
+                    $spec_arr[explode(':', $value)[0]] = $spec_key[$key];
+                };
+                $goods_spec = $spec_arr;
+            }
+            $res = CartService::addCart($goods_id, $goods_num, $goods_spec, '', $userid);
+            if ($res['status']) {
+                $result_arr[] = $res['data'];
+            } else {
+                return $res;
+            }
+        }
+
+        if ($res['status']) {
+            return self::createReturn(true, $result_arr, '添加成功');
+        } else {
+            return $res;
+        }
+    }
+
+    static function setNum($cart_id = 0, $userid) {
+        $cart = M(CartService::TABLE_NAME)->find($cart_id);
+        if ($cart && $cart_id) {
+            $set_num = (int)I('post.set_num');
+            $goods_id = $cart['goods_id'];
+            $goods_num = $set_num - $cart['goods_num'];
+            //将sku信息转化成数组
+            if ($cart['spec_key_name']) {
+                $spec_key_name = explode(' ', $cart['spec_key_name']);
+                $spec_key = explode('_', $cart['spec_key']);
+                $spec_arr = null;
+                foreach ($spec_key_name as $key => $value) {
+                    $spec_arr[explode(':', $value)[0]] = $spec_key[$key];
+                };
+                $goods_spec = $spec_arr;
+            }
+
+            $result = self::addCart($goods_id, $goods_num, $goods_spec, '', $userid);
+
+            return $result;
+        } else {
+            //如果购物车没有，默认是添加
+            $goods_id = I("post.goods_id"); // 商品id
+            $goods_num = I("post.goods_num", 1);// 商品数量
+            $goods_spec = I("post.goods_spec"); // 商品规格
+            $result = self::addCart($goods_id, $goods_num, $goods_spec, '', $userid); // 将商品加入购物车
+            return $result;
+        }
     }
 }
