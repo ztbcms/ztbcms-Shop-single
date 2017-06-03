@@ -268,6 +268,15 @@ class UserService extends BaseService {
             return self::createReturn(false, $address_id, '缺少参数!');
         }
 
+        $is_exist = M(UserService::ADDRESS_TABLE_NAME)->where([
+            'userid' => $user_id,
+            'address_id' => $address_id
+        ])->find();
+
+        if(!$is_exist){
+            return self::createReturn(false, null, '修改地址不存在!');
+        }
+
         $row = M(UserService::ADDRESS_TABLE_NAME)->where([
             'userid' => $user_id,
             'address_id' => $address_id

@@ -44,17 +44,82 @@ class BaseService {
         ];
     }
 
+
     /**
      * 获取数组中的某一列
      * @param array $arr 数组
      * @param string $key_name  列名
      * @return array  返回那一列的数组
      */
-    function get_arr_column($arr, $key_name) {
+
+    public static function get_arr_column($arr, $key_name) {
         $arr2 = array();
         foreach ($arr as $key => $val) {
             $arr2[] = $val[$key_name];
         }
-        return $arr2;
+        return self::createReturn(true,$arr2,'获取成功');
+    }
+
+    /**
+     * 获取缓存或者更新缓存
+     * @param string $config_key 缓存文件名称
+     * @param array $data 缓存数据  array('k1'=>'v1','k2'=>'v3')
+     * @return array or string or bool
+     */
+    public static function tpCache($config_key, $data = array()) {
+        $param = explode('.', $config_key);
+        if (empty($data)) {
+            //如$config_key=shop_info则获取网站信息数组
+            //如$config_key=shop_info.logo则获取网站logo字符串
+            $config = F($param[0], '', TEMP_PATH); //直接获取缓存文件
+            if (empty($config)) {
+                //缓存文件不存在就读取数据库
+                $res = D('ShopConfig')->where("inc_type='$param[0]'")->select();
+                if ($res) {
+                    foreach ($res as $k => $val) {
+                        $config[$val['name']] = $val['value'];
+                    }
+                    F($param[0], $config, TEMP_PATH);
+                }
+            }
+            if (count($param) > 1) {
+                return self::createReturn(true,$config[$param[1]],'获取成功');
+            } else {
+                return self::createReturn(true,$config,'获取成功');
+            }
+        } else {
+            //更新缓存
+            $result = D('ShopConfig')->where("inc_type='$param[0]'")->select();
+            if ($result) {
+                foreach ($result as $val) {
+                    $temp[$val['name']] = $val['value'];
+                }
+                foreach ($data as $k => $v) {
+                    $newArr = array('name' => $k, 'value' => trim($v), 'inc_type' => $param[0]);
+                    if (!isset($temp[$k])) {
+                        M('ShopConfig')->add($newArr); //新key数据插入数据库
+                    } else {
+                        if ($v != $temp[$k]) {
+                            M('ShopConfig')->where("name='$k'")->save($newArr);
+                        }
+                        //缓存key存在且值有变更新此项
+                    }
+                }
+                //更新后的数据库记录
+                $newRes = D('ShopConfig')->where("inc_type='$param[0]'")->select();
+                foreach ($newRes as $rs) {
+                    $newData[$rs['name']] = $rs['value'];
+                }
+            } else {
+                foreach ($data as $k => $v) {
+                    $newArr[] = array('name' => $k, 'value' => trim($v), 'inc_type' => $param[0]);
+                }
+                M('ShopConfig')->addAll($newArr);
+                $newData = $data;
+            }
+            return self::createReturn(true,F($param[0], $newData, TEMP_PATH),'获取成功');
+
+        }
+
     }
 }

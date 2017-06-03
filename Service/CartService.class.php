@@ -19,6 +19,7 @@ class CartService extends BaseService {
         $goods = M(GoodsService::GOODS_TABLE_NAME)->where("goods_id = '%d'", $goods_id)->find(); // 找出这个商品
         $specGoodsPriceList = M('ShopSpecGoodsPrice')->where("goods_id = '%d'",
             $goods_id)->getField("key,key_name,price,store_count,sku"); // 获取商品对应的规格价钱 库存 条码
+
         $user_id = $user_id ? $user_id : 0;
 
         foreach ($goods_spec as $key => $val) {
@@ -87,7 +88,7 @@ class CartService extends BaseService {
 
         // 如果商品购物车已经存在
         if ($cart_goods) {
-            // 如果购物车的已有数量加上 这次要购买的数量  大于  库存输  则不再增加数量
+            // 如果购物车的已有数量加上 这次要购买的数量  大于  库存  则不再增加数量
             if (($cart_goods['goods_num'] + $goods_num) > $goods['store_count']) {
                 $goods_num = 0;
             }
@@ -98,13 +99,19 @@ class CartService extends BaseService {
             $cart_count = self::cartGoodsNum($user_id)['data']; // 查找购物车数量
             setcookie('cn', $cart_count, null, '/');
         } else {
-            $res = M(self::TABLE_NAME)->add($data)['data'];
+            $res = M(self::TABLE_NAME)->add($data);
             $cart_count = self::cartGoodsNum($user_id); // 查找购物车数量
             setcookie('cn', $cart_count, null, '/');
         }
         if ($res) {
             //返回购物车id
-            return self::createReturn(true, $cart_goods['id'], '添加购物车成功');
+            if($cart_goods){
+                $cart_id = $cart_goods['id'];
+            }else{
+                $cart_id = $res;
+            }
+
+            return self::createReturn(true, $cart_id, '添加购物车成功');
         } else {
             return self::createReturn(false, '', '添加购物车失败');
         }
@@ -131,12 +138,6 @@ class CartService extends BaseService {
         }
     }
 
-//    /**
-//     * 设置购物车数量
-//     */
-//    static function set_num(){
-//
-//    }
 
     /**
      * 移除购物车
@@ -153,7 +154,7 @@ class CartService extends BaseService {
         $where['id'] = $cart_id;
         $res = M(CartService::TABLE_NAME)->where($where)->delete();
         if ($res) {
-            return self::createReturn(true, $res, '移除购物车成功!');
+            return self::createReturn(true, $cart_id, '移除购物车成功!');
         } else {
             return self::createReturn(false, $res, '无可删除内容!');
         }
