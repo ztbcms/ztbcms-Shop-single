@@ -65,7 +65,7 @@ class OrderService extends BaseService {
         );
     }
 
-    public function getOrders($where, $page, $limit, $order = '') {
+    static function getOrders($where, $page, $limit, $order = '') {
         $total = M(self::TABLE_NAME)->where($where)->count();
         $order_str = "order_id DESC";
         $order_list = M(self::TABLE_NAME)->order($order_str)->where($where)->page($page,
@@ -102,9 +102,9 @@ class OrderService extends BaseService {
      * @param string     $invoice_title 发票
      * @param string|int $coupon_id     优惠券id
      * @param array      $cart_price    各种价格
-     * @return string $order_id 返回新增的订单id
+     * @return mixed $order_id 返回新增的订单id
      */
-    public static function addOrder(
+    static function addOrder(
         $user_id,
         $cartList,
         $address_id,
