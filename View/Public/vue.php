@@ -137,10 +137,10 @@
 <script type="text/x-template" id="vPage">
     <div class="col-sm-12">
         <div class="dataTables_paginate paging_simple_numbers">
-            <button class="btn btn-primary" v-on:click="preBtn">上一页</button>
+            <button class="btn btn-primary" @click="preBtn">上一页</button>
             <div style="display: inline; font-size: 16px; margin-left: 10px; margin-right: 10px;">
                 <span>{{page}}</span> / <span>{{page_count}}</span></div>
-            <button class="btn btn-primary" v-on:click="nextBtn">下一页</button>
+            <button class="btn btn-primary" @click="nextBtn">下一页</button>
             <input type="text" v-model="goPage" placeholder="跳转页码" class="form-control input-sm"
                    style="width: 70px; display: inline;">
             <button @click="goPageBtn" class="btn btn-primary">GO</button>

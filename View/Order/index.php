@@ -102,25 +102,25 @@
                                 <thead>
                                 <tr>
                                     <td class="text-center">
-                                        <a href="javascript:;">订单编号</a>
+                                        <a href="javascript:">订单编号</a>
                                     </td>
                                     <td class="text-center">
-                                        <a href="javascript:;">收货人</a>
+                                        <a href="javascript:">收货人</a>
                                     </td>
                                     <td class="text-center">
-                                        <a href="javascript:;">总金额</a>
+                                        <a href="javascript:">总金额</a>
                                     </td>
                                     <td class="text-center">
-                                        <a href="javascript:;">应付金额</a>
+                                        <a href="javascript:">应付金额</a>
                                     </td>
                                     <td class="text-center">
-                                        <a href="javascript:;">订单状态</a>
+                                        <a href="javascript:">订单状态</a>
                                     </td>
                                     <td class="text-center">支付状态</td>
                                     <td class="text-center">发货状态</td>
                                     <td class="text-center">支付方式</td>
                                     <td class="text-center">
-                                        <a href="javascript:;">下单时间</a>
+                                        <a href="javascript:">下单时间</a>
                                     </td>
                                     <td class="text-center">操作</td>
                                 </tr>
@@ -142,7 +142,7 @@
                                            data-original-title="查看详情">
                                             <i class="fa fa-eye"></i>
                                         </a>
-                                        <a @click="delOrder(item)" href="javascript:;" data-toggle="tooltip"
+                                        <a @click="delOrder(item)" href="javascript:" data-toggle="tooltip"
                                            class="btn btn-danger" title="删除">
                                             <i class="fa fa-trash-o"></i>
                                         </a>
@@ -152,7 +152,7 @@
                             </table>
                         </div>
                         <!--     分页-->
-                        <v-page :page="page" v-on:update="getList" :page_count="page_count"></v-page>
+                        <v-page :page="page" @update="getList" :page_count="page_count"></v-page>
                         <!--   /分页-->
                     </div>
                 </div>

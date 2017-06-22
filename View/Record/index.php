@@ -77,13 +77,13 @@
             <div v-if="page_count > 1" style="text-align: center">
                 <ul class="pagination pagination-sm no-margin">
                     <li>
-                        <a @click="page > 1 ? (page--) : '' ;getList()" href="javascript:;">上一页</a>
+                        <a @click="page > 1 ? (page--) : '' ;getList()" href="javascript:">上一页</a>
                     </li>
                     <li>
-                        <a href="javascript:;">{{ page }} / {{ page_count }}</a>
+                        <a href="javascript:">{{ page }} / {{ page_count }}</a>
                     </li>
-                    <li><a @click="page<page_count ? page++ : '' ;getList()" href="javascript:;">下一页</a></li>
-                    <input type="number" min="1" :max="page_count" v-model="temp_page" style="width:50px;margin-left: 50px;;margin-right: 5px"><a class="btn btn-info" @click="toPage()" href="javascript:;">GO</a>
+                    <li><a @click="page<page_count ? page++ : '' ;getList()" href="javascript:">下一页</a></li>
+                    <input type="number" min="1" :max="page_count" v-model="temp_page" style="width:50px;margin-left: 50px;;margin-right: 5px"><a class="btn btn-info" @click="toPage()" href="javascript:">GO</a>
                 </ul>
             </div>
         </div>

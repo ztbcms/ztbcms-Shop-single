@@ -11,7 +11,7 @@
                 <div class="panel-body">
                     <div class="navbar navbar-default">
                         <div class="navbar-form form-inline">
-                            <button @click="addBtnModdal" class="btn btn-primary pull-right" href="javascript:;">新增等级
+                            <button @click="addBtnModdal" class="btn btn-primary pull-right" href="javascript:">新增等级
                             </button>
                         </div>
                     </div>
@@ -22,19 +22,19 @@
                                     <thead>
                                     <tr>
                                         <td>
-                                            <a href="javascript:;">ID</a>
+                                            <a href="javascript:">ID</a>
                                         </td>
                                         <td>
-                                            <a href="javascript:;">名称</a>
+                                            <a href="javascript:">名称</a>
                                         </td>
                                         <td>
-                                            <a href="javascript:;">满足金额/积分</a>
+                                            <a href="javascript:">满足金额/积分</a>
                                         </td>
                                         <td>
-                                            <a href="javascript:;">折扣</a>
+                                            <a href="javascript:">折扣</a>
                                         </td>
                                         <td>
-                                            <a href="javascript:;">介绍</a>
+                                            <a href="javascript:">介绍</a>
                                         </td>
                                         <td>操作</td>
                                     </tr>
@@ -72,7 +72,7 @@
                             </div>
                         </form>
                         <!--     分页-->
-                        <v-page :page="page" v-on:update="getList" :page_count="page_count"></v-page>
+                        <v-page :page="page" @update="getList" :page_count="page_count"></v-page>
                         <!--   /分页-->
                     </div>
                 </div>

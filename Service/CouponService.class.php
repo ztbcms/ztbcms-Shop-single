@@ -128,4 +128,14 @@ class CouponService extends BaseService {
 
         return self::createReturn(true, $result_total_money > 0 ? $result_total_money : 0, '');
     }
+
+    /**
+     * 生成随机的优惠券编码
+     * @param int $length 随机数长度
+     * @return int
+     */
+    static function generate_code($length)
+    {
+        return rand(pow(10,($length-1)), pow(10,$length)-1);
+    }
 }

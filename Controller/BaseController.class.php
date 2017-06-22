@@ -19,8 +19,6 @@ class BaseController extends Base {
             $this->userid=$userinfo['userid'];
             $this->userinfo=$userinfo;
             $this->shop_user=$shop_user;
-        }else if(ACTION_NAME=='login'||ACTION_NAME=='register'){
-            //不需要登录的action
         } else {
             exit(json_encode(array('status' => false, 'data'=>null, 'msg' => '请先登录')));
         }

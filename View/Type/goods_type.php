@@ -32,7 +32,7 @@
                         </div>
                         <div class="pull-right">
                             <input type="hidden" name="id" :value="detail.id">
-                            <button v-on:click="addEditGoodsType()" class="btn btn-primary" title=""
+                            <button @click="addEditGoodsType()" class="btn btn-primary" title=""
                                     data-toggle="tooltip" data-original-title="保存"><i class="fa fa-save"></i> 确认
                             </button>
                         </div>

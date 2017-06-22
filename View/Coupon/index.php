@@ -29,28 +29,28 @@
                                     <thead>
                                     <tr>
                                         <td class="text-right">
-                                            <a href="javascript:;">ID</a>
+                                            <a href="javascript:">ID</a>
                                         </td>
                                         <td class="text-left">
-                                            <a href="javascript:;">优惠券说明</a>
+                                            <a href="javascript:">优惠券说明</a>
                                         </td>
                                         <td class="text-center">
-                                            <a href="javascript:;">优惠券类型</a>
+                                            <a href="javascript:">优惠券类型</a>
                                         </td>
                                         <td class="text-center">
-                                            <a href="javascript:;">优惠价格</a>
+                                            <a href="javascript:">优惠价格</a>
                                         </td>
                                         <td class="text-center">
-                                            <a href="javascript:;">满减价格</a>
+                                            <a href="javascript:">满减价格</a>
                                         </td>
                                         <td class="text-center">
-                                            <a href="javascript:;">优惠券状态</a>
+                                            <a href="javascript:">优惠券状态</a>
                                         </td>
                                         <td class="text-center">
-                                            <a href="javascript:;">使用起始时间</a>
+                                            <a href="javascript:">使用起始时间</a>
                                         </td>
                                         <td class="text-center">
-                                            <a href="javascript:;">过期时间</a>
+                                            <a href="javascript:">过期时间</a>
                                         </td>
                                         <td class="text-right">操作</td>
                                     </tr>
@@ -76,7 +76,7 @@
                                             <!--<a target="_blank" href="{:U('Home/Goods/goodsInfo',array('id'=>$list['goods_id']))}" class="btn btn-info" title="查看详情"><i class="fa fa-eye"></i></a>-->
                                             <a :href="'{:U('Coupon/edit_coupon')}&id='+item.id"
                                                class="btn btn-primary" title="编辑"><i class="fa fa-pencil"></i></a>
-                                            <a href="javascript:void(0);" v-on:click="delCoupon(item.id)"
+                                            <a href="javascript:void(0);" @click="delCoupon(item.id)"
                                                class="btn btn-danger" title="删除"><i class="fa fa-trash-o"></i></a>
                                             <!--<a href="javascript:void(0);" onclick="ClearGoodsHtml('{$list[goods_id]}')" class="btn btn-default" title="清除静态缓存页面"><i class="fa fa-fw fa-refresh"></i></a>-->
                                             <!--<a href="javascript:void(0);" onclick="ClearGoodsThumb('{$list[goods_id]}')" class="btn btn-default" title="清除缩略图缓存"><i class="glyphicon glyphicon-picture"></i></a>-->
@@ -88,7 +88,7 @@
                         </form>
 
                         <!--     分页-->
-                        <v-page :page="page" v-on:update="getList" :page_count="page_count"></v-page>
+                        <v-page :page="page" @update="getList" :page_count="page_count"></v-page>
                         <!--   /分页-->
                     </div>
                 </div>

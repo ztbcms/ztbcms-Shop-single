@@ -21,7 +21,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <button v-on:click="getList()" id="button-filter search-order"
+                                <button @click="getList()" id="button-filter search-order"
                                         class="btn btn-primary pull-right"><i class="fa fa-search"></i> 筛选
                                 </button>
                             </div>
@@ -35,16 +35,16 @@
                                     <thead>
                                     <tr>
                                         <td class="text-right">
-                                            <a href="javascript:;" v-on:click="orderBy('userid');">ID</a>
+                                            <a href="javascript:" @click="orderBy('userid');">ID</a>
                                         </td>
                                         <td class="text-left">
-                                            <a href="javascript:;" v-on:click="orderBy('nickname');">会员昵称</a>
+                                            <a href="javascript:" @click="orderBy('nickname');">会员昵称</a>
                                         </td>
                                         <td class="text-left">
-                                            <a href="javascript:;">手机号码</a>
+                                            <a href="javascript:">手机号码</a>
                                         </td>
                                         <td class="text-left">
-                                            <a href="javascript:;" v-on:click="orderBy('level');">等级</a>
+                                            <a href="javascript:" @click="orderBy('level');">等级</a>
                                         </td>
                                         <td class="text-left">
                                             <a href="javascript:void(0);">一级上线</a>
@@ -59,7 +59,7 @@
                                             <a href="javascript:void(0);">直接上线</a>
                                         </td>
                                         <td class="text-left">
-                                            <a href="javascript:;" v-on:click="orderBy('lastdate');">最后登录时间</a>
+                                            <a href="javascript:" @click="orderBy('lastdate');">最后登录时间</a>
                                         </td>
                                         <td class="text-right">操作</td>
                                     </tr>
@@ -97,7 +97,7 @@
                             </div>
                         </form>
                         <!--     分页-->
-                        <v-page :page="page" v-on:update="getList" :page_count="page_count"></v-page>
+                        <v-page :page="page" @update="getList" :page_count="page_count"></v-page>
                         <!--   /分页-->
                     </div>
                 </div>
