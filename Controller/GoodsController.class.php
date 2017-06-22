@@ -31,9 +31,9 @@ class GoodsController extends AdminBase {
      */
     function goodsList() {
         $where = [];
-        I('intro') ? $where['intro'] = I('intro') : '';
-        I('brand_id') ? $where['brand_id'] = I('brand_id') : '';
-        (I('is_on_sale') !== '') ? $where['is_on_sale'] = I('is_on_sale') : '';
+        $where['intro'] = I('intro') ? I('intro') : '';
+        $where['brand_id'] = I('brand_id') ? I('brand_id') : '';
+        $where['is_on_sale'] = I('is_on_sale') !== '' ? I('is_on_sale') : '';
         $cat_id = I('cat_id');
         // 关键词搜索
         $key_word = I('key_word') ? trim(I('key_word')) : '';
