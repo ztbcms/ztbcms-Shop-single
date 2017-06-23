@@ -88,7 +88,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2">显示排序</label>
-                                <div class="col-sm-1">
+                                <div class="col-sm-2">
                                     <input type="text" placeholder="50" class="form-control large" name="sort_order"
                                            v-model="detail.sort_order"/>
                                     <span class="help-inline" style="color:#F00; display:none;"
@@ -97,7 +97,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2">分佣比例</label>
-                                <div class="col-sm-1">
+                                <div class="col-sm-2">
                                     <input type="text" placeholder="50" class="form-control large"
                                            name="commission_rate" id="commission_rate"
                                            v-model="detail.commission_rate"/>

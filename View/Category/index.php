@@ -26,48 +26,48 @@
                                        aria-describedby="example1_info">
                                     <thead>
                                     <tr role="row">
-                                        <th valign="middle">分类ID</th>
-                                        <th valign="middle">分类名称</th>
-                                        <th valign="middle">手机显示名称</th>
-                                        <th valign="middle">是否推荐</th>
-                                        <th valign="middle">是否显示</th>
-                                        <th valign="middle">分组</th>
-                                        <th valign="middle">排序</th>
-                                        <th valign="middle">操作</th>
+                                        <th align="left">分类ID</th>
+                                        <th align="left">分类名称</th>
+                                        <th align="left">手机显示名称</th>
+                                        <th align="left">是否推荐</th>
+                                        <th align="left">是否显示</th>
+                                        <th align="left">分组</th>
+                                        <th align="left">排序</th>
+                                        <th align="left">操作</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr v-for="item in catList" role="row" align="center" :class="item.level"
+                                    <tr v-for="item in catList" role="row" align="left" :class="item.level"
                                         :id="item.level+'_'+item.id"
                                         v-bind:style="item.level > 1 ? 'display:none' : ''">
-                                        <td>{{item.id}}</td>
-                                        <td align="left" :style="'padding-left:'+item.level*5+'em'">
+                                        <td align="left">{{item.id}}</td>
+                                        <td :style="'padding-left:'+item.level*5+'em'">
                                             <span v-if="item.have_son == 1" class="glyphicon glyphicon-plus btn-warning"
                                                   style="padding:2px; font-size:12px;"
                                                   :id="'icon_'+item.level+'_'+item.id" aria-hidden="false"
                                                   onclick="rowClicked(this)"></span>&nbsp;
                                             <span>{{item.name}}</span>
                                         </td>
-                                        <td><span>{{item.mobile_name}}</span></td>
-                                        <td>
+                                        <td align="left"><span>{{item.mobile_name}}</span></td>
+                                        <td align="left">
                                             <img v-on:click="change(item,'is_hot')" width="20" height="20"
                                                  v-bind:src="item.is_hot == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
                                         </td>
-                                        <td>
+                                        <td align="left">
                                             <img v-on:click="change(item,'is_show')" width="20" height="20"
                                                  v-bind:src="item.is_show == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
                                         </td>
-                                        <td>
+                                        <td align="left">
                                             <input type="text" class="form-control input-sm"
                                                    v-on:change="update(item,'cat_group')" size="4"
                                                    v-model="item.cat_group"/>
                                         </td>
-                                        <td>
+                                        <td align="left">
                                             <input type="text" class="form-control input-sm"
                                                    v-on:change="update(item,'sort_order')" size="4"
                                                    v-model="item.sort_order"/>
                                         </td>
-                                        <td>
+                                        <td align="left">
                                             <a class="btn btn-primary" @click="editBtn(item.id)" href="javascript:;"><i
                                                         class="fa fa-pencil"></i></a>
                                             <a class="btn btn-danger" href="javascript:;"
