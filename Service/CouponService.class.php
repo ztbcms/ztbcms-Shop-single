@@ -20,7 +20,7 @@ class CouponService extends BaseService {
      * 获取用户优惠券列表
      *
      * @param array $where       查询条件
-     * @param array $total_money 支付总金额
+     * @param string $total_money 支付总金额
      * @return mixed
      */
     static function getCounponList($where, $total_money) {
@@ -64,7 +64,7 @@ class CouponService extends BaseService {
      * @param int $order_id   订单ID
      * @param int $order_type 订单类型
      * @param int $status     优惠券状态
-     * @return bool
+     * @return array
      */
     static function useCoupon($id, $userid, $order_id, $order_type, $status = self::COUPON_STATUS_ISUSE) {
         $where = array(
@@ -87,6 +87,13 @@ class CouponService extends BaseService {
         }
     }
 
+    /**
+     * 获取扣减优惠后的商品价格
+     * @param $id
+     * @param $cart_ids
+     * @param $userid
+     * @return array|bool
+     */
     static function cutDiscountPrice($id, $cart_ids, $userid) {
         if ($id) {
             $where = [
@@ -112,7 +119,7 @@ class CouponService extends BaseService {
             return $result;
         }
         $total_money = $result['data']['order_amount'];//支付总金额
-        if ($user_coupon['full_price'] < $total_money) {
+        if (isset($user_coupon['full_price']) && $user_coupon['full_price'] < $total_money) {
             //该订单价格满足满减
             $result_total_money = $total_money - $discount_price;
         } else {
@@ -120,5 +127,15 @@ class CouponService extends BaseService {
         }
 
         return self::createReturn(true, $result_total_money > 0 ? $result_total_money : 0, '');
+    }
+
+    /**
+     * 生成随机的优惠券编码
+     * @param int $length 随机数长度
+     * @return int
+     */
+    static function generate_code($length)
+    {
+        return rand(pow(10,($length-1)), pow(10,$length)-1);
     }
 }

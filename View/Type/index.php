@@ -35,10 +35,10 @@
                                            class="btn btn-info" data-original-title="属性列表">规格</a>
                                         <a :href="'{:U('Attribute/index')}&type_id='+item.id" data-toggle="tooltip" title=""
                                            class="btn btn-info" data-original-title="属性列表">属性</a>
-                                        <a href="javascript:;" @click="editBtn(item.id)" data-toggle="tooltip"
+                                        <a href="javascript:" @click="editBtn(item.id)" data-toggle="tooltip"
                                            title="" class="btn btn-primary" data-original-title="编辑"><i
                                                     class="fa fa-pencil"></i></a>
-                                        <a href="javascript:;" v-on:click="delGoodsType(item.id)" data-toggle="tooltip"
+                                        <a href="javascript:" @click="delGoodsType(item.id)" data-toggle="tooltip"
                                            title="" class="btn btn-danger" data-original-title="删除"><i
                                                     class="fa fa-trash-o"></i></a>
                                     </td>
@@ -47,7 +47,7 @@
                             </table>
                         </div>
                         <!--     分页-->
-                        <v-page :page="page" v-on:update="getList" :page_count="page_count"></v-page>
+                        <v-page :page="page" @update="getList" :page_count="page_count"></v-page>
                         <!--   /分页-->
                     </div>
                 </div>

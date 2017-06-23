@@ -97,7 +97,7 @@
                             </div>
                         </div>
                         <div class="pull-right">
-                            <button v-on:click="addEditBrand()" class="btn btn-primary" data-toggle="tooltip"
+                            <button @click="addEditBrand()" class="btn btn-primary" data-toggle="tooltip"
                                     type="submit" data-original-title="保存">保存
                             </button>
                         </div>

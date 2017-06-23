@@ -834,3 +834,79 @@ function get_user_info($user_id_or_name, $type = 0, $oauth = '') {
     $user = M('ShopUsers')->where($map)->find();
     return $user;
 }
+
+/**
+ * 查看商品是否有活动
+ * @param string $goods_id 商品ID
+ * @param int $user_id 用户ID
+ * @return array 活动信息
+ */
+
+function get_goods_promotion($goods_id,$user_id=0){
+    $now = time();
+    $goods = M('goods')->where("goods_id=$goods_id")->find();
+    $where = "end_time>$now and start_time<$now and id=".$goods['prom_id'];
+
+    $prom['price'] = $goods['shop_price'];
+    $prom['prom_type'] = $goods['prom_type'];
+    $prom['prom_id'] = $goods['prom_id'];
+    $prom['is_end'] = 0;
+
+    if($goods['prom_type'] == 1){//抢购
+        $prominfo = M('flash_sale')->where($where)->find();
+        if(!empty($prominfo)){
+            if($prominfo['goods_num'] == $prominfo['buy_num']){
+                $prom['is_end'] = 2;//已售馨
+            }else{
+                //核查用户购买数量
+                $where = "user_id = $user_id and order_status!=3 and  add_time>".$prominfo['start_time']." and add_time<".$prominfo['end_time'];
+                $order_id_arr = M('order')->where($where)->getField('order_id',true);
+                if($order_id_arr){
+                    $goods_num = M('order_goods')->where("prom_id={$goods['prom_id']} and prom_type={$goods['prom_type']} and order_id in (".implode(',', $order_id_arr).")")->sum('goods_num');
+                    if($goods_num < $prominfo['buy_limit']){
+                        $prom['price'] = $prominfo['price'];
+                    }
+                }else{
+                    $prom['price'] = $prominfo['price'];
+                }
+            }
+        }
+    }
+
+    if($goods['prom_type']==2){//团购
+        $prominfo = M('group_buy')->where($where)->find();
+        if(!empty($prominfo)){
+            if($prominfo['goods_num'] == $prominfo['buy_num']){
+                $prom['is_end'] = 2;//已售馨
+            }else{
+                $prom['price'] = $prominfo['price'];
+            }
+        }
+    }
+    if($goods['prom_type'] == 3){//优惠促销
+        $parse_type = array('0'=>'直接打折','1'=>'减价优惠','2'=>'固定金额出售','3'=>'买就赠优惠券','4'=>'买M件送N件');
+        $prominfo = M('prom_goods')->where($where)->find();
+        if(!empty($prominfo)){
+            if($prominfo['type'] == 0){
+                $prom['price'] = $goods['shop_price']*$prominfo['expression']/100;//打折优惠
+            }elseif($prominfo['type'] == 1){
+                $prom['price'] = $goods['shop_price']-$prominfo['expression'];//减价优惠
+            }elseif($prominfo['type']==2){
+                $prom['price'] = $prominfo['expression'];//固定金额优惠
+            }
+        }
+    }
+
+    if(!empty($prominfo)){
+        $prom['start_time'] = $prominfo['start_time'];
+        $prom['end_time'] = $prominfo['end_time'];
+    }else{
+        $prom['prom_type'] = $prom['prom_id'] = 0 ;//活动已过期
+        $prom['is_end'] = 1;//已结束
+    }
+
+    if($prom['prom_id'] == 0){
+        M('goods')->where("goods_id=$goods_id")->save($prom);
+    }
+    return $prom;
+}

@@ -59,7 +59,7 @@
                                 <div class="col-md-8">
                                 <form method="post" onsubmit="return false;">
                                     <textarea class="form-control" rows="3" placeholder="请输入回复内容" id="content"></textarea>
-                                    <div class="form-group"><button type="submit" v-on:click="doReply()" class="btn btn-primary pull-right margin">回复</button></div>
+                                    <div class="form-group"><button type="submit" @click="doReply()" class="btn btn-primary pull-right margin">回复</button></div>
                                 </form>            
                                 </div>
                                 <div class="col-md-2"></div>   

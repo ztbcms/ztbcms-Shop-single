@@ -9,6 +9,7 @@ namespace Shop\Controller;
 
 
 use Common\Controller\AdminBase;
+use Shop\Service\CouponService;
 
 class CouponController extends AdminBase
 {
@@ -151,7 +152,7 @@ class CouponController extends AdminBase
                 $coupon_info = M('ShopCoupon')->where('id='.I('post.coupon_id'))->find();
                 $coupon_info['coupon_id'] = $coupon_info['id'];
                 $coupon_info['userid'] = I('post.userid');
-                $coupon_info['coupon_num'] = $this->generate_code(6);
+                $coupon_info['coupon_num'] = CouponService::generate_code(6);
                 unset($coupon_info['id']);
                 $res = M('ShopUsercoupon')->add($coupon_info);
                 if($res){
@@ -199,15 +200,5 @@ class CouponController extends AdminBase
         }else{
             $this->ajaxReturn(['status'=>0, 'msg'=>'操作失败']);
         }
-    }
-
-    /**
-     * 生成随机的优惠券编码
-     * @param int $length 随机数长度
-     * @return int
-     */
-    public function generate_code($length)
-    {
-        return rand(pow(10,($length-1)), pow(10,$length)-1);
     }
 }

@@ -85,7 +85,7 @@
                         </div>
                         <div class="pull-right">
                             <button class="btn btn-primary" title="" data-toggle="tooltip" type="button"
-                                    v-on:click="addEditGoodsAttribute()" data-original-title="保存"><i
+                                    @click="addEditGoodsAttribute()" data-original-title="保存"><i
                                         class="fa fa-save"></i></button>
                         </div>
                     </form><!--表单数据-->

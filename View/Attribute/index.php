@@ -46,18 +46,18 @@
                                         <td class="text-left">{{ attr_input_type[item.attr_input_type] }}</td>
                                         <td class="text-left">{{item.attr_values}}</td>
                                         <td class="text-center">
-                                            <img v-on:click="changeAttrIndex(item)" width="20" height="20"
+                                            <img @click="changeAttrIndex(item)" width="20" height="20"
                                                  v-bind:src="item.attr_index == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
                                         </td>
                                         <td class="text-left">
                                             <input type="text" class="form-control input-sm"
-                                                   v-on:change="updateOrder(item)" size="4" v-model="item.order"/>
+                                                   @change="updateOrder(item)" size="4" v-model="item.order"/>
                                         </td>
                                         <td class="text-right">
-                                            <a href="javascript:;" @click="editBtn(item.attr_id)"
+                                            <a href="javascript:" @click="editBtn(item.attr_id)"
                                                data-toggle="tooltip" title="" class="btn btn-primary"
                                                data-original-title="编辑"><i class="fa fa-pencil"></i></a>
-                                            <a v-on:click="delGoodsAttr(item.attr_id)" href="javascript:;"
+                                            <a @click="delGoodsAttr(item.attr_id)" href="javascript:"
                                                id="button-delete6" data-toggle="tooltip" title="" class="btn btn-danger"
                                                data-original-title="删除"><i class="fa fa-trash-o"></i></a></td>
                                     </tr>
@@ -66,7 +66,7 @@
                             </div>
                         </form>
                         <!--     分页-->
-                        <v-page :page="page" v-on:update="getList" :page_count="page_count"></v-page>
+                        <v-page :page="page" @update="getList" :page_count="page_count"></v-page>
                         <!--   /分页-->
                     </div>
                 </div>
