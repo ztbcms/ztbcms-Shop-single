@@ -31,16 +31,16 @@
                 <table class="table table-bordered">
                     <tbody>
                     <tr>
-                        <td>订单 ID:</td>
-                        <td>订单号:</td>
-                        <td>会员:</td>
-                        <td>E-Mail:</td>
-                        <td>电话:</td>
-                        <td>应付:</td>
-                        <td>订单 状态:</td>
-                        <td>下单时间:</td>
-                        <td>支付时间:</td>
-                        <td>支付方式:</td>
+                        <td>订单 ID</td>
+                        <td>订单号</td>
+                        <td>会员</td>
+                        <td>E-Mail</td>
+                        <td>电话</td>
+                        <td>应付</td>
+                        <td>订单状态</td>
+                        <td>下单时间</td>
+                        <td>支付时间</td>
+                        <td>支付方式</td>
                     </tr>
                     <tr>
                         <td>{$order.order_id}</td>
@@ -74,11 +74,11 @@
             <div class="panel-body">
                 <table class="table table-bordered">
                     <tbody><tr>
-					<td>收货人:</td>
-					<td>联系方式:</td>
-					<td>地址:</td>
-					<td>邮编:</td>
-					<td>配送方式:</td>
+					<td>收货人</td>
+					<td>联系方式</td>
+					<td>地址</td>
+					<td>邮编</td>
+					<td>配送方式</td>
 			 
                     </tr>
                     <tr>
@@ -155,13 +155,13 @@
                 <table class="table table-bordered">
                     <tbody>
                     <tr>
-                        <td class="text-right">小计:</td>
-                        <td class="text-right">运费:</td>
-                        <td class="text-right">积分 (-{$order.integral}):</td>
+                        <td class="text-right">小计</td>
+                        <td class="text-right">运费</td>
+                        <td class="text-right">积分 (-{$order.integral})</td>
                         <td class="text-right">余额抵扣</td>
                         <td class="text-right">优惠券抵扣</td>
-                        <td class="text-right">价格调整:</td>
-                        <td class="text-right">应付:</td>
+                        <td class="text-right">价格调整</td>
+                        <td class="text-right">应付</td>
                     </tr>
                     <tr>
                         <td class="text-right">{$order.goods_price}</td>
@@ -187,7 +187,7 @@
                     <tbody>
                     <tr>
                         <div class="row">
-                            <td class="text-right col-sm-2"><p class="margin">操作备注：</p></td>
+                            <td class="text-right col-sm-2"><p class="margin">操作备注</p></td>
                             <td colspan="3">
                                 <form id="order-action">
                                     <textarea name="note" placeholder="请输入操作备注" rows="3" class="form-control"></textarea>
@@ -197,7 +197,7 @@
                     </tr>
                     <tr>
                         <div class="row">
-                            <td class="text-right col-sm-2"><p class="margin">当前可执行操作：</p></td>
+                            <td class="text-right col-sm-2"><p class="margin">当前可执行操作</p></td>
                             <td colspan="3">
                                 <div class="input-group">
                                 	<foreach name="button" item="vo" key="k">
