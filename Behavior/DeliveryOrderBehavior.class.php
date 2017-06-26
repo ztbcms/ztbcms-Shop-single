@@ -15,7 +15,7 @@ class DeliveryOrderBehavior {
     public function run(&$order) {
         Log::write($order['order_sn'] . '确认收货');
         $integral_res = $this->getIntegral($order);
-        $commission_res = $this->updateFrozenCommission($order);
+//        $commission_res = $this->updateFrozenCommission($order);
 //        Log::write('积分获取情况：' . json_encode($integral_res));
 //        Log::write('提成获取情况：' . json_encode($commission_res));
     }
@@ -42,6 +42,5 @@ class DeliveryOrderBehavior {
     protected function updateFrozenCommission($order) {
         //将相关的提成解冻
 //        return CommissionRecordService::updateFrozenCommission($order['order_sn'], 'commission');
-        return [];
     }
 }

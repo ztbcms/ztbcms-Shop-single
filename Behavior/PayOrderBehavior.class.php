@@ -13,9 +13,9 @@ use Think\Log;
 class PayOrderBehavior {
 
     public function run(&$order) {
-        Log::write($order['order_sn'] . '确认收货');
-        $commission_res = $this->getCommission($order);
-        Log::write('提成获取情况：' . json_encode($commission_res));
+        Log::write($order['order_sn'] . '支付成功');
+//        $commission_res = $this->getCommission($order);
+//        Log::write('提成获取情况：' . json_encode($commission_res));
     }
 
     /**
