@@ -57,10 +57,10 @@
                                             <a href="javascript:sort('order_id');">所选物流</a>
                                         </td>
                                         <td class="text-center">
-                                            <a href="">物流费用</a>
+                                            <a href="javascript:;">物流费用</a>
                                         </td>
                                         <td class="text-center">
-                                            <a href="#">支付时间</a>
+                                            <a href="javascript:;">支付时间</a>
                                         </td>
                                         <td class="text-center">
                                             <a href="javascript:sort('total_amount');">订单总价</a>

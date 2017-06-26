@@ -20,7 +20,8 @@ class ShopController extends AdminBase {
             //设置成功后删除缓存
             cache('Config', null);
 
-            return $this->success('设置成功');
+            $this->success('设置成功');
+            return;
         }
         $this->assign('config', cache('Config'));
         $this->display();
@@ -34,7 +35,8 @@ class ShopController extends AdminBase {
                 $res[$key]['item_list'] = $item_list ? $item_list : [];
             }
 
-            return $this->success($res ? $res : [], '', true);
+            $this->success($res ? $res : [], '', true);
+            return;
         }
         $this->display();
     }

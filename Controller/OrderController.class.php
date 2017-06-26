@@ -874,11 +874,14 @@ class OrderController extends AdminBase {
                     $rec_id = M(OrderService::ORDER_GOODS_TABLE_NAME)->add($val);
                     if (!$rec_id) {
                         $this->error('添加失败');
+                        return;
                     }
                 }
                 $this->success('添加订单成功', U("Shop/Order/detail", array('order_id' => $order_id)));
+                return;
             } else {
                 $this->error('添加失败');
+                return;
             }
         }
         $this->assign('payment_list', $payment_list);
