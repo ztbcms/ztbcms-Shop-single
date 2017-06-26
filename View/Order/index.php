@@ -129,7 +129,7 @@
                                         <a href="javascript:;">下单时间</a>
                                     </td>
                                     <td class="text-center">
-                                        <a href="javascript:;">操作</a>
+                                        操作
                                     </td>
                                 </tr>
                                 </thead>

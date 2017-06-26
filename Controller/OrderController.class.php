@@ -702,6 +702,7 @@ class OrderController extends AdminBase {
      */
     public function order_log() {
         $timegap = I('timegap');
+        $begin = $end = null;
         if ($timegap) {
             $gap = explode('-', $timegap);
             $begin = strtotime($gap[0]);
