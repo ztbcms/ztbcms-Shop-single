@@ -534,7 +534,7 @@ class OrderService extends BaseService {
      * @param string $order_id 订单ID
      * @param string $action_note 操作名称
      * @param string $status_desc 操作描述
-     * @param string $action_user  操作人
+     * @param string $action_user  操作人 空的时候会自动获取登录用户作为操作人
      * @return mixed
      */
     static function logOrder($order_id, $action_note, $status_desc, $action_user = '') {
@@ -868,8 +868,8 @@ class OrderService extends BaseService {
             $updata['shipping_status'] = 2;
         }
         M(OrderService::TABLE_NAME)->where("order_id=" . $data['order_id'])->save($updata);//改变订单状态
-        $s = $this->orderActionLog($order['order_id'], 'delivery', $data['note']);//操作日志
-        return $s && $r;
+        self::logOrder($order['order_id'], '发货', $data['note'], null);////操作日志
+        return  $r;
     }
 
     /**
