@@ -553,7 +553,9 @@ class OrderController extends AdminBase {
         }
     }
 
-
+    /**
+     * 获取发货信息
+     */
     public function delivery_info() {
         $order_id = I('order_id');
         if (IS_POST) {

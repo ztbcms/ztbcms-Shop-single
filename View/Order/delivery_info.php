@@ -212,7 +212,6 @@
             getDetail: function(){
                 var that = this;
                 that.httpPost('{:U("Shop/Order/delivery_info")}', {'order_id': '<?php echo $order_id;?>'}, function (res) {
-                    console.log(res);
                     that.order = res.order;
                     that.orderGoods = res.orderGoods;
                     that.delivery_record = res.delivery_record;
@@ -242,8 +241,6 @@
                     'note': that.order.note,
                     'invoice_no' : that.invoice_no
                 };
-                console.log(data);
-//                return;
                 that.httpPost('{:U("Shop/Order/deliveryHandle")}', data, function (res) {
                     layer.alert(res.msg, {
                         icon: res.icon
