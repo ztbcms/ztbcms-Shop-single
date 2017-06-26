@@ -116,13 +116,21 @@
                                     <td class="text-center">
                                         <a href="javascript:;">订单状态</a>
                                     </td>
-                                    <td class="text-center">支付状态</td>
-                                    <td class="text-center">发货状态</td>
-                                    <td class="text-center">支付方式</td>
+                                    <td class="text-center">
+                                        <a href="javascript:;">支付状态</a>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="javascript:;">发货状态</a>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="javascript:;">支付方式</a>
+                                    </td>
                                     <td class="text-center">
                                         <a href="javascript:;">下单时间</a>
                                     </td>
-                                    <td class="text-center">操作</td>
+                                    <td class="text-center">
+                                        <a href="javascript:;">操作</a>
+                                    </td>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -174,7 +182,6 @@
                 order_status: {},
                 pay_status: {},
                 shipping_status: {},
-                page: 1,
                 page_count: 0
             },
             mixins: [window.__baseMethods, window.__baseFilters],
@@ -199,6 +206,7 @@
                 },
                 delOrder: function (item) {
                     var that = this
+                    // 3已取消、5已作废订单不能删除
                     if (item.order_status == 3 || item.order_status == 5) {
                         layer.msg('该订单状态不允许删除')
                         return;

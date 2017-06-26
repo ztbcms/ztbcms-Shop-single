@@ -44,11 +44,12 @@ class OrderController extends AdminBase {
     }
 
     /**
-     * 订单列表
+     * 订单列表接口
      */
     public function orderList() {
         $orderService = new OrderService();
         $timegap = I('timegap');
+        $begin = $end = null;
         if ($timegap) {
             $gap = explode('-', $timegap);
             $begin = strtotime($gap[0]);
@@ -131,7 +132,7 @@ class OrderController extends AdminBase {
 
 
     /**
-     * AJAX 发货订单列表
+     * 获取发货订单列表接口
      */
     public function getDeliveryList() {
         $condition = array();
@@ -392,7 +393,7 @@ class OrderController extends AdminBase {
     }
 
     /**
-     * 订单删除
+     * 删除订单接口
      *
      * @param $order_id
      */
