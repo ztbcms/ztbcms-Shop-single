@@ -205,7 +205,7 @@ DROP TABLE IF EXISTS `cms_shop_order_action`;
 CREATE TABLE `cms_shop_order_action` (
   `action_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '表id',
   `order_id` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '订单ID',
-  `action_user` int(11) DEFAULT '0' COMMENT '操作人 0 为管理员操作',
+  `action_user` varchar(64) NOT NULL DEFAULT '' COMMENT '操作人',
   `order_status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '订单状态',
   `shipping_status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '配送状态',
   `pay_status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '支付状态',

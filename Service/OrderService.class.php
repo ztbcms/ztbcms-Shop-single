@@ -1,6 +1,7 @@
 <?php
 namespace Shop\Service;
 
+use Admin\Service\User;
 use Record\Model\RecordModel;
 use Record\Service\TradeRecordService;
 use Shop\Model\OrderModel;
@@ -523,11 +524,24 @@ class OrderService extends BaseService {
         }
     }
 
-    static function logOrder($order_id, $action_note, $status_desc, $user_id = 0) {
+    /**
+     * 创建订单日志
+     *
+     * @param string $order_id 订单ID
+     * @param string $action_note 操作名称
+     * @param string $status_desc 操作描述
+     * @param string $action_user  操作人
+     * @return mixed
+     */
+    static function logOrder($order_id, $action_note, $status_desc, $action_user = '') {
         $order = M(self::TABLE_NAME)->where("order_id = $order_id")->find();
+        if(empty($action_user)){
+            $login_user  = User::getInstance()->getInfo();
+            $action_user = $login_user['nickname'];
+        }
         $action_info = array(
             'order_id' => $order_id,
-            'action_user' => $user_id,
+            'action_user' => $action_user,
             'order_status' => $order['order_status'],
             'shipping_status' => $order['shipping_status'],
             'pay_status' => $order['pay_status'],

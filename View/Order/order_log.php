@@ -46,21 +46,21 @@
 		              <table id="list-table" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
 		                 <thead>
 		                   <tr role="row">
-			                   <th class="sorting" tabindex="0">订单ID</th>
-			                   <th class="sorting" tabindex="0">操作</th>
-			                   <th class="sorting" tabindex="0">操作员</th>
-			                   <th class="sorting" tabindex="0">操作备注</th>
-			                   <th class="sorting" tabindex="0">操作时间</th>
-			                   <th class="sorting" tabindex="0">操作动作</th>
+			                   <th class="sorting">订单ID</th>
+			                   <th class="sorting">操作</th>
+			                   <th class="sorting">操作人</th>
+			                   <th class="sorting">操作备注</th>
+			                   <th class="sorting">操作时间</th>
+			                   <th class="sorting">操作动作</th>
 			                   <th>查看</th>
 		                   </tr>
 		                 </thead>
 						<tbody>
 						  <foreach name="list" item="vo" key="k" >
-						  	<tr role="row" align="center">
+						  	<tr role="row">
 		                     <td>{$vo.order_id}</td>
 		                     <td>{$vo.status_desc}</td>
-		                      <td>{$admin[$vo[action_user]]}</td>
+		                     <td>{$vo.action_user}</td>
 		                     <td>{$vo.action_note}</td>
 		                     <td>{$vo.log_time|date='Y-m-d H:i',###}</td>
 		                     <td>{$vo.status_desc}</td>
