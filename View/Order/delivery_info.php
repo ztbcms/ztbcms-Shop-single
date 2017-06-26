@@ -60,7 +60,7 @@
                                 <td class="text-right">配送单号:</td>
                                 <td class="text-center">
                                     <input style="width: 200px;" class="form-control" name="invoice_no" id="invoice_no"
-                                           v-model="order.invoice_no">
+                                           v-model="invoice_no">
                                 </td>
                             </tr>
                             </tbody>
@@ -202,9 +202,10 @@
     new Vue({
         el: '#app',
         data: {
-            'order': [],
+            'order': {},
             'orderGoods': [],
-            'delivery_record': []
+            'delivery_record': [],
+            'invoice_no': '',
         },
         mixins: [window.__baseMethods, window.__baseFilters],
         methods: {
@@ -227,7 +228,7 @@
                 $('input[name="goods[]"]:checked').each(function(i){
                     goods[i] = $(this).val();
                 });
-                if (goods.length == 0) {
+                if (goods.length === 0) {
                     layer.alert('请选择发货商品', {icon: 2});
                     return;
                 }
@@ -238,15 +239,18 @@
                     'goods': goods,
                     'shipping_code': $("#shipping_code").val(),
                     'shipping_name': $("#shipping_code option:selected").html(),
-                    'note': that.order.note
+                    'note': that.order.note,
+                    'invoice_no' : that.invoice_no
                 };
                 console.log(data);
-
+//                return;
                 that.httpPost('{:U("Shop/Order/deliveryHandle")}', data, function (res) {
                     layer.alert(res.msg, {
                         icon: res.icon
                     });
-                    window.location.reload();
+                    setTimeout(function(){
+                        window.location.reload();
+                    }, 700)
                 });
             }
         },
