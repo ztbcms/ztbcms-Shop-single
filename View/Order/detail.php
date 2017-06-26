@@ -236,7 +236,7 @@
                         <td class="text-center">订单状态</td>
                         <td class="text-center">付款状态</td>
                         <td class="text-center">发货状态</td>
-                        <td class="text-center">描述</td>
+                        <td class="text-center">操作</td>
                         <td class="text-center">备注</td>
                     </tr>
                     </thead>
@@ -248,8 +248,8 @@
                             <td class="text-center">{$order_status[$log[order_status]]}</td>
                             <td class="text-center">{$pay_status[$log[pay_status]]}<if condition="$order['pay_code'] eq 'code'"><span style="color: red">(货到付款)</span></if></td>
                             <td class="text-center">{$shipping_status[$log[shipping_status]]}</td>
-                            <td class="text-center">{$log.status_desc}</td>
                             <td class="text-center">{$log.action_note}</td>
+                            <td class="text-center">{$log.status_desc}</td>
                         </tr>
                     </volist>
                     </tbody>

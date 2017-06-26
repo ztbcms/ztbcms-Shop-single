@@ -47,11 +47,10 @@
 		                 <thead>
 		                   <tr role="row">
 			                   <th class="sorting">订单ID</th>
-			                   <th class="sorting">操作</th>
-			                   <th class="sorting">操作人</th>
-			                   <th class="sorting">操作备注</th>
+                               <th class="sorting">操作人</th>
+                               <th class="sorting">操作</th>
+			                   <th class="sorting">备注</th>
 			                   <th class="sorting">操作时间</th>
-			                   <th class="sorting">操作动作</th>
 			                   <th>查看</th>
 		                   </tr>
 		                 </thead>
@@ -59,13 +58,13 @@
 						  <foreach name="list" item="vo" key="k" >
 						  	<tr role="row">
 		                     <td>{$vo.order_id}</td>
-		                     <td>{$vo.status_desc}</td>
-		                     <td>{$vo.action_user}</td>
+                             <td>{$vo.action_user}</td>
 		                     <td>{$vo.action_note}</td>
-		                     <td>{$vo.log_time|date='Y-m-d H:i',###}</td>
 		                     <td>{$vo.status_desc}</td>
+		                     <td>{$vo.log_time|date='Y-m-d H:i',###}</td>
 		                     <td>
-		                     <a href="{:U('Order/detail',array('order_id'=>$vo['order_id']))}" data-toggle="tooltip" title="" class="btn btn-info" data-original-title="查看详情"><i class="fa fa-eye"></i></a>
+		                        <a href="{:U('Order/detail',array('order_id'=>$vo['order_id']))}" data-toggle="tooltip" title="" class="btn btn-info" data-original-title="查看详情"><i class="fa fa-eye"></i></a>
+                             </td>
 		                   </tr>
 		                  </foreach>
 		                   </tbody>

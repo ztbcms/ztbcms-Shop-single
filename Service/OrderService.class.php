@@ -343,10 +343,11 @@ class OrderService extends BaseService {
     /**
      * 支付成功
      *
-     * @param $order_sn
+     * @param        $order_sn
+     * @param string $desc
      * @return bool
      */
-    public function payOrder($order_sn) {
+    public function payOrder($order_sn, $desc = '') {
         $order = M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->find();
         if ($order) {
             if ($order['pay_status'] == OrderModel::PAY_STATUS_NO) {
@@ -355,7 +356,7 @@ class OrderService extends BaseService {
                     'pay_time' => time()
                 ];
                 M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
-                self::logOrder($order['order_id'], '订单支付成功', '支付成功', $order['user_id']);
+                self::logOrder($order['order_id'], '订单支付成功', $desc, $order['user_id']);
                 //支付成功后调用支付成功hook
                 Hook::listen('shop_order_pay', $order);
 
@@ -376,10 +377,11 @@ class OrderService extends BaseService {
     /**
      * 取消支付
      *
-     * @param $order_sn
+     * @param        $order_sn
+     * @param string $desc
      * @return bool
      */
-    public function cancelPay($order_sn) {
+    public function cancelPay($order_sn, $desc = '') {
         $order = M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->find();
         if ($order) {
             if ($order['pay_status'] == OrderModel::PAY_STATUS_YES) {
@@ -388,7 +390,7 @@ class OrderService extends BaseService {
                     'pay_time' => time()
                 ];
                 M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
-                self::logOrder($order['order_id'], '订单取消支付', '支付取消', $order['user_id']);
+                self::logOrder($order['order_id'], '订单取消支付', $desc, $order['user_id']);
 
                 return $order['order_id'];
             } else {
@@ -410,7 +412,7 @@ class OrderService extends BaseService {
      * @param $order_sn
      * @return bool
      */
-    public function confirmOrder($order_sn) {
+    public function confirmOrder($order_sn, $desc = '') {
         $order = M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->find();
         if ($order) {
             $update = [
@@ -418,7 +420,7 @@ class OrderService extends BaseService {
                 'update_time' => time()
             ];
             M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
-            self::logOrder($order['order_id'], '订单确认', '订单确认', $order['user_id']);
+            self::logOrder($order['order_id'], '订单确认', $desc, $order['user_id']);
 
             return true;
         } else {
@@ -434,7 +436,7 @@ class OrderService extends BaseService {
      * @param $order_sn
      * @return bool
      */
-    public function cancelOrder($order_sn) {
+    public function cancelOrder($order_sn, $desc = '') {
         $order = M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->find();
         if ($order) {
             $update = [
@@ -459,7 +461,7 @@ class OrderService extends BaseService {
                 M(GoodsService::GOODS_TABLE_NAME)->where(['goods_id' => $value['goods_id']])->setDec('sales_sum',
                     $value['goods_num']);
             }
-            self::logOrder($order['order_id'], '订单取消', '订单取消', $order['user_id']);
+            self::logOrder($order['order_id'], '订单取消', $desc, $order['user_id']);
 
             return true;
         } else {
@@ -472,10 +474,11 @@ class OrderService extends BaseService {
     /**
      * 订单无效操作
      *
-     * @param $order_sn
+     * @param        $order_sn
+     * @param string $desc
      * @return bool
      */
-    public function invalidOrder($order_sn) {
+    public function invalidOrder($order_sn, $desc = '') {
         $order = M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->find();
         if ($order) {
             if ($order['order_status'] == OrderModel::STATUS_CANCEL) {
@@ -489,7 +492,7 @@ class OrderService extends BaseService {
             ];
             M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
 
-            self::logOrder($order['order_id'], '作废订单', '作废订单', $order['user_id']);
+            self::logOrder($order['order_id'], '作废订单', $desc, $order['user_id']);
 
             return true;
         } else {
@@ -502,10 +505,11 @@ class OrderService extends BaseService {
     /**
      * 确认收货操作
      *
-     * @param $order_sn
+     * @param        $order_sn
+     * @param string $desc
      * @return bool
      */
-    public function deliveryOrder($order_sn) {
+    public function deliveryOrder($order_sn, $desc = '') {
         $order = M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->find();
         if ($order) {
             $update = [
@@ -513,7 +517,7 @@ class OrderService extends BaseService {
                 'update_time' => time()
             ];
             M(self::TABLE_NAME)->where(['order_sn' => $order_sn])->save($update);
-            self::logOrder($order['order_id'], '确认收货', '确认收货', $order['user_id']);
+            self::logOrder($order['order_id'], '确认收货', $desc, $order['user_id']);
             Hook::listen('shop_order_delivery', $order);
 
             return true;
@@ -730,35 +734,36 @@ class OrderService extends BaseService {
     /**
      * @param string $order_id
      * @param string $act
+     * @param string $desc 描述
      * @return bool
      */
-    public function orderProcessHandle($order_id, $act) {
+    public function orderProcessHandle($order_id, $act, $desc = '') {
         $order_sn = M(OrderService::TABLE_NAME)->where("order_id = $order_id")->getField("order_sn");
 //        $order_service = new OrderService();
         $res = null;
         switch ($act) {
             case 'pay': //付款
-                $res = $this->payOrder($order_sn);
+                $res = $this->payOrder($order_sn, $desc);
 
                 break;
             case 'pay_cancel': //取消付款
-                $res = $this->cancelPay($order_sn);
+                $res = $this->cancelPay($order_sn, $desc);
 
                 break;
             case 'confirm': //确认订单
-                $res = $this->confirmOrder($order_sn);
+                $res = $this->confirmOrder($order_sn, $desc);
 
                 break;
             case 'cancel': //取消确认
-                $res = $this->cancelOrder($order_sn);
+                $res = $this->cancelOrder($order_sn, $desc);
 
                 break;
             case 'invalid': //作废订单
-                $res = $this->invalidOrder($order_sn);
+                $res = $this->invalidOrder($order_sn, $desc);
 
                 break;
             case 'delivery_confirm'://确认收货
-                $res = $this->deliveryOrder($order_sn);
+                $res = $this->deliveryOrder($order_sn, $desc);
 
                 break;
             default:

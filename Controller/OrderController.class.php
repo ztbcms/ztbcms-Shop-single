@@ -685,8 +685,9 @@ class OrderController extends AdminBase {
         $action = I('get.type');
         $order_id = I('get.order_id');
         $order = M(OrderService::TABLE_NAME)->find($order_id);
+        $note = I('post.note');
         if ($action && $order) {
-            $res = $orderService->orderProcessHandle($order_id, $action);
+            $res = $orderService->orderProcessHandle($order_id, $action, $note);
             if ($res) {
                 exit(json_encode(array('status' => 1, 'msg' => '操作成功')));
             } else {
