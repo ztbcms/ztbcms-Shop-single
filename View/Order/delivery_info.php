@@ -219,7 +219,7 @@
             },
             dosubmit: function(){
                 var that = this;
-                if (!that.order['invoice_no']){
+                if (!that.invoice_no){
                     layer.alert('请输入配送单号', {icon: 2});
                     return;
                 }
