@@ -18,4 +18,5 @@ return [
     	2 => '部分发货'	        
     ),
     'AUTH_CODE' => "ZHUTIBANG", //安装完毕之后不要改变，否则所有密码都会出错
+    "IMG_DOMAIN"=>''
 ];

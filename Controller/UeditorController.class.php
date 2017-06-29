@@ -211,39 +211,20 @@ class UeditorController extends AdminBase
         $paths = array(UPLOAD_PATH, 'upload1/');
         $action = htmlspecialchars($_REQUEST["action"]);
         if ($action == "get") {
-            if (!defined('SAE_TMP_PATH')) {
-                $files = array();
-                foreach ($paths as $path) {
-                    $tmp = File::getFiles($path);
-                    if ($tmp) {
-                        $files = array_merge($files, $tmp);
-                    }
-                }
-                if (!count($files)) return;
-                rsort($files, SORT_STRING);
-                $str = "";
-                foreach ($files as $file) {
-                    $str .= __ROOT__ . '/' . $file . "ue_separate_ue";
-                }
-                echo $str;
-            } else {
-                // SAE环境下
-                $st = new \SaeStorage(); // 实例化
-                /*
-                *  getList:获取指定domain下的文件名列表
-                *  return: 执行成功时返回文件列表数组，否则返回false
-                *  参数：存储域，路径前缀，返回条数，起始条数
-                */
-                $num = 0;
-                while ($ret = $st->getList(C('SaeStorage'), null, 100, $num)) {
-                    foreach ($ret as $file) {
-                        if (preg_match("/\.(gif|jpeg|jpg|png|bmp)$/i", $file))
-
-                            echo $st->getUrl('upload', $file) . "ue_separate_ue";
-                        $num++;
-                    }
+            $files = array();
+            foreach ($paths as $path) {
+                $tmp = File::getFiles($path);
+                if ($tmp) {
+                    $files = array_merge($files, $tmp);
                 }
             }
+            if (!count($files)) return;
+            rsort($files, SORT_STRING);
+            $str = "";
+            foreach ($files as $file) {
+                $str .= C('IMG_DOMAIN'). '/' . $file . "ue_separate_ue";
+            }
+            echo $str;
         }
     }
 
@@ -292,7 +273,7 @@ class UeditorController extends AdminBase
         }
 
         $return_data['status'] = $status;
-        $return_data['url'] = $info['upfile']['urlpath'];
+        $return_data['url'] = C('IMG_DOMAIN').$info['upfile']['urlpath'];
         $return_data['title'] = $title;
         $return_data['original'] = $info['upfile']['name'];
         $return_data['msg'] = $state;
