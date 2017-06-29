@@ -1,6 +1,7 @@
 <?php
 namespace Shop\Service;
 
+use Record\Model\RecordModel;
 use Record\Records\TradeRecord;
 use Record\Service\TradeRecordService;
 
@@ -374,4 +375,80 @@ class UserService extends BaseService {
 
         return self::createReturn(true, $res['status'] ? $res['data'] : 0, 'ok');
     }
+
+    /**
+     *通过 to 获取所属交易列表
+     *
+     * @param        $to
+     * @param string $to_type
+     * @param int    $status
+     * @param int    $page
+     * @param int    $limit
+     * @param string $order
+     * @return array
+     */
+    static function getTradeRecordList(
+        $to,
+        $to_type = 'member',
+        $status = RecordModel::STATUS_VAILD,
+        $page = 1,
+        $limit = 20,
+        $order = ''
+    ) {
+        $where = [
+            'to' => $to,
+            'to_type' => $to_type,
+            'status' => $status
+        ];
+
+        $lists = self::selectBy('RecordTrade', $where, $order, $page, $limit)['data'];
+        $total = M('RecordTrade')->where($where)->count();
+        $data = [
+            'lists' => $lists,
+            'page' => $page,
+            'limit' => $limit,
+            'total' => $total,
+            'page_count' => ceil($total / $limit)
+        ];
+
+        return self::createReturn(true, $data, 'ok');
+    }
+    /**
+     *通过 to 获取所属积分记录列表
+     *
+     * @param        $to
+     * @param string $to_type
+     * @param int    $status
+     * @param int    $page
+     * @param int    $limit
+     * @param string $order
+     * @return array
+     */
+    static function getIntegralRecordList(
+        $to,
+        $to_type = 'member',
+        $status = RecordModel::STATUS_VAILD,
+        $page = 1,
+        $limit = 20,
+        $order = ''
+    ) {
+        $where = [
+            'to' => $to,
+            'to_type' => $to_type,
+            'status' => $status
+        ];
+
+        $lists = self::selectBy('RecordIntegral', $where, $order, $page, $limit)['data'];
+        $total = M('RecordIntegral')->where($where)->count();
+        $data = [
+            'lists' => $lists,
+            'page' => $page,
+            'limit' => $limit,
+            'total' => $total,
+            'page_count' => ceil($total / $limit)
+        ];
+
+        return self::createReturn(true, $data, 'ok');
+    }
+
 }

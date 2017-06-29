@@ -1,7 +1,7 @@
 <?php
 namespace Shop\Service;
 
-class BaseService {
+class BaseService extends \System\Service\BaseService {
 
     /**
      * 存放错误信息
