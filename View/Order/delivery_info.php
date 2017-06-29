@@ -149,7 +149,7 @@
                                 <tr>
                                     <td colspan="4">
                                         <div class="form-group text-center">
-                                            <button v-on:click="dosubmit()" class="btn btn-primary" type="button">确认发货
+                                            <button @click="dosubmit()" class="btn btn-primary" type="button">确认发货
                                             </button>
                                             <button onclick="history.go(-1)" class="btn btn-primary" type="button">返回
                                             </button>

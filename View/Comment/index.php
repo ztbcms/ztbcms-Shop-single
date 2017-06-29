@@ -20,7 +20,7 @@
                           <div class="form-group">
                               <input type="text" v-model="where.content" class="form-control" name="content" placeholder="搜索评论内容">
                           </div>
-                          <button type="button" v-on:click="filter()" class="btn btn-info"><i class="fa fa-search"></i> 筛选</button>
+                          <button type="button" @click="filter()" class="btn btn-info"><i class="fa fa-search"></i> 筛选</button>
 			          </form>		
 			      </div>
     			</nav>
@@ -60,30 +60,30 @@
                                             {{ goodsList[item.goods_id] }}
                                         </td>
                                         <td class="text-center">
-                                            <img v-on:click="changeShow(item)" width="20" height="20" v-bind:src="item.is_show == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
+                                            <img @click="changeShow(item)" width="20" height="20" v-bind:src="item.is_show == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
                                         </td>
                                         <td class="text-center">{{ item.add_time | getFormatTime }}</td>
                                         <td class="text-center">{{item.ip_address}}</td>
 
                                         <td class="text-center">
                                             <a :href="'{:U('Comment/detail')}&id='+item.comment_id" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="编辑"><i class="fa fa-eye"></i></a>
-                                            <a href="javascript:void(0);" v-on:click="delComment(item.comment_id)" id="button-delete6" data-toggle="tooltip" title="" class="btn btn-danger" data-original-title="删除"><i class="fa fa-trash-o"></i></a>
+                                            <a href="javascript:void(0);" @click="delComment(item.comment_id)" id="button-delete6" data-toggle="tooltip" title="" class="btn btn-danger" data-original-title="删除"><i class="fa fa-trash-o"></i></a>
                                         </td>
                                     </tr>
 
                                 </tbody>
                             </table>
                             <div class="dataTables_paginate paging_simple_numbers">
-                                <button v-on:click="toPage( parseInt(page) - 1 )" class="btn btn-primary">上一页
+                                <button @click="toPage( parseInt(page) - 1 )" class="btn btn-primary">上一页
                                 </button>
-                                <button v-on:click="toPage( parseInt(page) + 1 )" class="btn btn-primary">下一页
+                                <button @click="toPage( parseInt(page) + 1 )" class="btn btn-primary">下一页
                                 </button>
                                 <span style="line-height: 30px;margin-left: 50px"><input id="ipt_page"
                                                                                          style="width:30px;"
                                                                                          type="text"
                                                                                          v-model="temp_page"> / {{ page_count }}</span>
                                 <span><button class="btn btn-primary"
-                                              v-on:click="toPage( temp_page )">GO</button></span>
+                                              @click="toPage( temp_page )">GO</button></span>
                             </div>
                         </div>
                     </div>

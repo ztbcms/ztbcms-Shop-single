@@ -47,18 +47,18 @@
                                         <td class="text-left">{{item.name}}</td>
                                         <td class="text-left">{{item.spec_item}}</td>
                                         <td class="text-center">
-                                            <img v-on:click="changeSearchIndex(item)" width="20" height="20"
+                                            <img @click="changeSearchIndex(item)" width="20" height="20"
                                                  v-bind:src="item.search_index == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
                                         </td>
                                         <td class="text-right">
                                             <input type="text" class="form-control input-sm"
-                                                   v-on:change="updateOrder(item)" size="4" v-model="item.order"/>
+                                                   @change="updateOrder(item)" size="4" v-model="item.order"/>
                                         </td>
                                         <td class="text-left">
-                                            <a href="javascript:;" @click="editBtn(item.id)" data-toggle="tooltip"
+                                            <a href="javascript:" @click="editBtn(item.id)" data-toggle="tooltip"
                                                title="" class="btn btn-primary" data-original-title="编辑"><i
                                                         class="fa fa-pencil"></i></a>
-                                            <a v-on:click="delGoodsSpec(item.id)" href="javascript:;"
+                                            <a @click="delGoodsSpec(item.id)" href="javascript:"
                                                id="button-delete6" data-toggle="tooltip" title="" class="btn btn-danger"
                                                data-original-title="删除"><i class="fa fa-trash-o"></i></a></td>
                                     </tr>
@@ -67,7 +67,7 @@
                             </div>
                         </form>
                         <!--     分页-->
-                        <v-page :page="page" v-on:update="getList" :page_count="page_count"></v-page>
+                        <v-page :page="page" @update="getList" :page_count="page_count"></v-page>
                         <!--   /分页-->
                     </div>
                 </div>

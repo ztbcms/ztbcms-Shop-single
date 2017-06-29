@@ -59,7 +59,7 @@
                             </div>
                             <!--排序规则-->
                             <input type="hidden" name="orderby" value="goods_id desc"/>
-                            <button type="submit" v-on:click="getList"
+                            <button type="submit" @click="getList"
                                     id="button-filter search-order" class="btn btn-primary"><i class="fa fa-search"></i>
                                 筛选
                             </button>
@@ -75,37 +75,37 @@
                                     <thead>
                                     <tr>
                                         <td class="text-right">
-                                            <a href="javascript:;" v-on:click="sort('goods_id')">ID</a>
+                                            <a href="javascript:" @click="sort('goods_id')">ID</a>
                                         </td>
                                         <td class="text-left">
-                                            <a href="javascript:;" v-on:click="sort('goods_name')">商品名称</a>
+                                            <a href="javascript:" @click="sort('goods_name')">商品名称</a>
                                         </td>
                                         <td class="text-left">
-                                            <a href="javascript:;" v-on:click="sort('goods_sn')">货号</a>
+                                            <a href="javascript:" @click="sort('goods_sn')">货号</a>
                                         </td>
                                         <td class="text-left">
-                                            <a href="javascript:;" v-on:click="sort('cat_id')">分类</a>
+                                            <a href="javascript:" @click="sort('cat_id')">分类</a>
                                         </td>
                                         <td class="text-left">
-                                            <a href="javascript:;" v-on:click="sort('shop_price')">价格</a>
+                                            <a href="javascript:" @click="sort('shop_price')">价格</a>
                                         </td>
                                         <td class="text-left">
                                             <a href="javascript:void(0);">库存</a>
                                         </td>
                                         <td class="text-center">
-                                            <a href="javascript:;" v-on:click="sort('is_on_sale')">上架</a>
+                                            <a href="javascript:" @click="sort('is_on_sale')">上架</a>
                                         </td>
                                         <td class="text-center">
-                                            <a href="javascript:;" v-on:click="sort('is_recommend')">推荐</a>
+                                            <a href="javascript:" @click="sort('is_recommend')">推荐</a>
                                         </td>
                                         <td class="text-center">
-                                            <a href="javascript:;" v-on:click="sort('is_new')">新品</a>
+                                            <a href="javascript:" @click="sort('is_new')">新品</a>
                                         </td>
                                         <td class="text-center">
-                                            <a href="javascript:;" v-on:click="sort('is_hot')">热卖</a>
+                                            <a href="javascript:" @click="sort('is_hot')">热卖</a>
                                         </td>
                                         <td class="text-center">
-                                            <a href="javascript:;" v-on:click="sort('sort')">排序</a>
+                                            <a href="javascript:" @click="sort('sort')">排序</a>
                                         </td>
                                         <td class="text-right">操作</td>
                                     </tr>
@@ -120,61 +120,61 @@
                                         <td class="text-left">
                                             <input type="text" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')"
                                                    onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
-                                                   v-on:change="ajaxUpdateField('shop_goods',item.goods_id,'store_count',item.store_count)"
+                                                   @change="ajaxUpdateField('shop_goods',item.goods_id,'store_count',item.store_count)"
                                                    size="4" v-model="item.store_count"
                                             />
                                         </td>
                                         <td class="text-center">
                                             <img v-if="item.is_on_sale == 1" width="20" height="20"
                                                  src="{$config_siteurl}statics/extres/shop/images/yes.png "
-                                                 v-on:click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_on_sale',0,item)"
+                                                 @click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_on_sale',0,item)"
                                                  id="img_is_on_sale"/>
                                             <img v-else width="20" height="20"
                                                  src="{$config_siteurl}statics/extres/shop/images/cancel.png "
-                                                 v-on:click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_on_sale',1,item)"
+                                                 @click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_on_sale',1,item)"
                                                  id="img_is_on_sale"/>
                                         </td>
                                         <td class="text-center">
                                             <img v-if="item.is_recommend == 1" width="20" height="20"
                                                  src="{$config_siteurl}statics/extres/shop/images/yes.png "
-                                                 v-on:click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_recommend',0,item)"
+                                                 @click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_recommend',0,item)"
                                                  id="img_is_recommend"/>
                                             <img v-else width="20" height="20"
                                                  src="{$config_siteurl}statics/extres/shop/images/cancel.png "
-                                                 v-on:click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_recommend',1,item)"
+                                                 @click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_recommend',1,item)"
                                                  id="img_is_recommend"/>
                                         </td>
                                         <td class="text-center">
                                             <img v-if="item.is_new == 1" width="20" height="20"
                                                  src="{$config_siteurl}statics/extres/shop/images/yes.png "
-                                                 v-on:click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_new',0,item)"
+                                                 @click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_new',0,item)"
                                                  id="img_is_new"/>
                                             <img v-else width="20" height="20"
                                                  src="{$config_siteurl}statics/extres/shop/images/cancel.png "
-                                                 v-on:click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_new',1,item)"
+                                                 @click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_new',1,item)"
                                                  id="img_is_new"/>
                                         </td>
                                         <td class="text-center">
                                             <img v-if="item.is_hot == 1" width="20" height="20"
                                                  src="{$config_siteurl}statics/extres/shop/images/yes.png "
-                                                 v-on:click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_hot',0,item)"
+                                                 @click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_hot',0,item)"
                                                  id="img_is_hot"/>
                                             <img v-else width="20" height="20"
                                                  src="{$config_siteurl}statics/extres/shop/images/cancel.png "
-                                                 v-on:click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_hot',1,item)"
+                                                 @click="changeTableVal('shop_goods','goods_id',item.goods_id,'is_hot',1,item)"
                                                  id="img_is_hot"/>
                                         </td>
                                         <td class="text-center">
                                             <input type="text" onkeyup="this.value=this.value.replace(/[^\d]/g,'')"
                                                    onpaste="this.value=this.value.replace(/[^\d]/g,'')"
-                                                   v-on:change="changeTableVal('shop_goods','goods_id',item.goods_id,'sort',item.sort,item)"
+                                                   @change="changeTableVal('shop_goods','goods_id',item.goods_id,'sort',item.sort,item)"
                                                    size="4" v-model=" item.sort "/>
                                         </td>
                                         <td class="text-right">
                                             <!--<a target="_blank" href="{:U('Home/Goods/goodsInfo',array('id'=>$list['goods_id']))}" class="btn btn-info" title="查看详情"><i class="fa fa-eye"></i></a>-->
                                             <a :href="'{:U('Goods/addEditGoods')}&id='+item.goods_id"
                                                class="btn btn-primary" title="编辑"><i class="fa fa-pencil"></i></a>
-                                            <a href="javascript:void(0);" v-on:click="delGoods(item.goods_id)"
+                                            <a href="javascript:void(0);" @click="delGoods(item.goods_id)"
                                                class="btn btn-danger" title="删除"><i class="fa fa-trash-o"></i></a>
                                             <!--<a href="javascript:void(0);" onclick="ClearGoodsHtml('{$list[goods_id]}')" class="btn btn-default" title="清除静态缓存页面"><i class="fa fa-fw fa-refresh"></i></a>-->
                                             <!--<a href="javascript:void(0);" onclick="ClearGoodsThumb('{$list[goods_id]}')" class="btn btn-default" title="清除缩略图缓存"><i class="glyphicon glyphicon-picture"></i></a>-->
@@ -185,7 +185,7 @@
                             </div>
                         </form>
                         <!--     分页-->
-                        <v-page :page="page" v-on:update="getList" :page_count="page_count"></v-page>
+                        <v-page :page="page" @update="getList" :page_count="page_count"></v-page>
                         <!--   /分页-->
                     </div>
                 </div>

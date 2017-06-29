@@ -66,7 +66,7 @@ class OrderService extends BaseService {
         );
     }
 
-    public function getOrders($where, $page, $limit, $order = '') {
+    static function getOrders($where, $page, $limit, $order = '') {
         $total = M(self::TABLE_NAME)->where($where)->count();
         $order_str = "order_id DESC";
         $order_list = M(self::TABLE_NAME)->order($order_str)->where($where)->page($page,
@@ -103,9 +103,9 @@ class OrderService extends BaseService {
      * @param string     $invoice_title 发票
      * @param string|int $coupon_id     优惠券id
      * @param array      $cart_price    各种价格
-     * @return string $order_id 返回新增的订单id
+     * @return mixed $order_id 返回新增的订单id
      */
-    public static function addOrder(
+    static function addOrder(
         $user_id,
         $cartList,
         $address_id,
@@ -238,7 +238,7 @@ class OrderService extends BaseService {
      * @param int $coupon_id
      * @return array|bool
      */
-    public static function calculatePrice(
+    static function calculatePrice(
         $userid = 0,
         $order_goods,
         $shipping_price = 0,
@@ -889,26 +889,6 @@ class OrderService extends BaseService {
     }
 
     /**
-     * 根据id获取地区名字
-     *
-     * @param     $regionId
-     * @param int $level
-     * @return mixed
-     */
-    public static function getRegionName($regionId, $level = 1) {
-        if ($level == 1) {
-            $data = M('AreaProvince')->where(['id' => $regionId])->find();
-        } elseif ($level == 2) {
-            $data = M('AreaCity')->where(['id' => $regionId])->find();
-        } else {
-            $data = M('AreaDistrict')->where(['id' => $regionId])->find();
-        }
-
-        return self::createReturn(true, $data['areaname'], '获取成功');
-    }
-
-
-    /**
      * 删除订单
      *
      * @param $order_id
@@ -932,8 +912,42 @@ class OrderService extends BaseService {
      * @return array
      */
     static function orderDelivery($order_sn) {
-        $deliverys = M('DeliveryDoc')->where(['order_sn' => $order_sn])->select();
+        $deliverys = M('ShopDelivery')->where(['order_sn' => $order_sn])->select();
 
         return self::createReturn(true, $deliverys ? $deliverys : [], '');
+    }
+
+    static function orderDetail($order_id, $userid) {
+        $map['order_id'] = $order_id;
+        $map['user_id'] = $userid;
+        $order_info = M(OrderService::TABLE_NAME)->where($map)->find();
+        if (!$order_info) {
+            return self::createReturn(false, '', '查不到该订单');
+        }
+        $order_info['province_name'] = AddressService::getRegionName($order_info['province'], 1)['data'];
+        $order_info['city_name'] = AddressService::getRegionName($order_info['city'], 2)['data'];
+        $order_info['district_name'] = AddressService::getRegionName($order_info['district'], 3)['data'];
+
+        if (!$order_info) {
+            return self::createReturn(false, '', '查不到指定订单信息');
+        }
+        //获取订单商品
+        $order_service = new OrderService();
+        $data = $order_service->get_order_goods($order_info['order_id']);
+        $order_info['goods_list'] = $data;
+
+        //获取订单操作记录
+        $order_action = M(OrderService::ORDER_ACTION_TABLE_NAME)->where(array('order_id' => $order_id))->select();
+
+        //订单状态对应的中文描述
+        $res_data['order_status'] = OrderService::ORDER_STATUS();
+        //订单物流状态对应的中文描述
+        $res_data['shipping_status'] = OrderService::SHIPPING_STATUS();
+        //订单支付状态
+        $res_data['pay_status'] = OrderService::PAY_STATUS();
+        $res_data['order_info'] = $order_info;
+        $res_data['order_action'] = $order_action;
+
+        return self::createReturn(true, $res_data, '获取订单详情成功');
     }
 }

@@ -13,7 +13,7 @@
                                 </button>
                             </div>
                             <div class="col-md-2 pull-right">
-                                <a href="javascript:;" @click="addBtn" class="btn btn-primary "><i
+                                <a href="javascript:" @click="addBtn" class="btn btn-primary "><i
                                             class="fa fa-plus"></i>新增分类</a>
                             </div>
                         </div>
@@ -48,30 +48,30 @@
                                                   onclick="rowClicked(this)"></span>&nbsp;
                                             <span>{{item.name}}</span>
                                         </td>
-                                        <td align="left"><span>{{item.mobile_name}}</span></td>
-                                        <td align="left">
-                                            <img v-on:click="change(item,'is_hot')" width="20" height="20"
+                                        <td><span>{{item.mobile_name}}</span></td>
+                                        <td>
+                                            <img @click="change(item,'is_hot')" width="20" height="20"
                                                  v-bind:src="item.is_hot == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
                                         </td>
-                                        <td align="left">
-                                            <img v-on:click="change(item,'is_show')" width="20" height="20"
+                                        <td>
+                                            <img @click="change(item,'is_show')" width="20" height="20"
                                                  v-bind:src="item.is_show == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
                                         </td>
                                         <td align="left">
                                             <input type="text" class="form-control input-sm"
-                                                   v-on:change="update(item,'cat_group')" size="4"
+                                                   @change="update(item,'cat_group')" size="4"
                                                    v-model="item.cat_group"/>
                                         </td>
                                         <td align="left">
                                             <input type="text" class="form-control input-sm"
-                                                   v-on:change="update(item,'sort_order')" size="4"
+                                                   @change="update(item,'sort_order')" size="4"
                                                    v-model="item.sort_order"/>
                                         </td>
-                                        <td align="left">
-                                            <a class="btn btn-primary" @click="editBtn(item.id)" href="javascript:;"><i
+                                        <td>
+                                            <a class="btn btn-primary" @click="editBtn(item.id)" href="javascript:"><i
                                                         class="fa fa-pencil"></i></a>
-                                            <a class="btn btn-danger" href="javascript:;"
-                                               v-on:click="delGoodsCategory(item.id)"><i class="fa fa-trash-o"></i></a>
+                                            <a class="btn btn-danger" href="javascript:"
+                                               @click="delGoodsCategory(item.id)"><i class="fa fa-trash-o"></i></a>
                                         </td>
                                     </tr>
                                     </tbody>

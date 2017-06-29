@@ -20,10 +20,10 @@
                             </div>
                             <div class="form-group">
                                 <button class="btn btn-primary" id="button-filter search-order" type="submit"
-                                        v-on:click="getList()"><i class="fa fa-search"></i> 筛选
+                                        @click="getList()"><i class="fa fa-search"></i> 筛选
                                 </button>
                             </div>
-                            <a href="javascript:;" @click="addBtn" type="button" class="btn btn-primary pull-right">
+                            <a href="javascript:" @click="addBtn" type="button" class="btn btn-primary pull-right">
                                 <i class="fa fa-plus"></i> 添加品牌
                             </a>
                         </form>
@@ -54,18 +54,18 @@
                                     <td class="text-center">{{catList[item.parent_cat_id]}} {{catList[item.cat_id]}}
                                     </td>
                                     <td>
-                                        <img v-on:click="changeHot(item)" width="20" height="20"
+                                        <img @click="changeHot(item)" width="20" height="20"
                                              v-bind:src="item.is_hot == 1 ? '{$config_siteurl}statics/extres/shop/images/yes.png' : '{$config_siteurl}statics/extres/shop/images/cancel.png'"/>
                                     </td>
                                     <td class="text-center">
-                                        <input type="text" class="form-control input-sm" v-on:change="updateSort(item)"
+                                        <input type="text" class="form-control input-sm" @change="updateSort(item)"
                                                size="4" v-model="item.sort"/>
                                     </td>
                                     <td class="text-center">
-                                        <a @click="editBtn(item.id)" href="javascript:;" data-toggle="tooltip"
+                                        <a @click="editBtn(item.id)" href="javascript:" data-toggle="tooltip"
                                            title="" class="btn btn-primary" data-original-title="编辑"><i
                                                     class="fa fa-pencil"></i></a>
-                                        <a v-on:click="del(item.id)" href="javascript:;" id="button-delete6"
+                                        <a @click="del(item.id)" href="javascript:" id="button-delete6"
                                            data-toggle="tooltip" title="" class="btn btn-danger"
                                            data-original-title="删除"><i class="fa fa-trash-o"></i></a></td>
                                     </td>
@@ -75,7 +75,7 @@
                         </div>
 
                         <!--     分页-->
-                        <v-page :page="page" v-on:update="getList" :page_count="page_count"></v-page>
+                        <v-page :page="page" @update="getList" :page_count="page_count"></v-page>
                         <!--   /分页-->
                     </div>
                 </div>

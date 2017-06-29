@@ -98,16 +98,16 @@
                         </form>
                     </div>
                     <div class="dataTables_paginate paging_simple_numbers">
-                        <button v-on:click="toPage( parseInt(page) - 1 )" class="btn btn-primary">上一页
+                        <button @click="toPage( parseInt(page) - 1 )" class="btn btn-primary">上一页
                         </button>
-                        <button v-on:click="toPage( parseInt(page) + 1 )" class="btn btn-primary">下一页
+                        <button @click="toPage( parseInt(page) + 1 )" class="btn btn-primary">下一页
                         </button>
                         <span style="line-height: 30px;margin-left: 50px"><input id="ipt_page"
                                                                                  style="width:30px;"
                                                                                  type="text"
                                                                                  v-model="temp_page"> / {{ page_count }}</span>
                         <span><button class="btn btn-primary"
-                                      v-on:click="toPage( temp_page )">GO</button></span>
+                                      @click="toPage( temp_page )">GO</button></span>
                     </div>
                 </div>
             </div>

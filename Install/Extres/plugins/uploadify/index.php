@@ -288,7 +288,7 @@ $(function() {
 	<div class="Wrap">
 		<div class="Title">
 			<h3 class="MainTit"><?php echo $title; ?></h3>
-			<a href="javascript:;" title="关闭" class="Close"> </a>
+			<a href="javascript:" title="关闭" class="Close"> </a>
 		</div>
 		<div class="Cont">
 			<p class="Note">最多上传<strong><?php echo $num; ?></strong>个附件,单文件最大<strong><?php echo GetRealSize($size); ?></strong>,类型<strong><?php echo GetUpType($type); ?></strong></p>

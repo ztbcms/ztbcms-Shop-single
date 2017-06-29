@@ -110,7 +110,7 @@
                         <div class="box-footer">
                             <input type="hidden" name="id" value="{$goods_category_info.id}">
                             <button type="reset" class="btn btn-primary pull-left"><i class="icon-ok"></i>重填</button>
-                            <button type="button" v-on:click="addEditCate()" class="btn btn-primary pull-right"><i
+                            <button type="button" @click="addEditCate()" class="btn btn-primary pull-right"><i
                                         class="icon-ok"></i>提交
                             </button>
                         </div>

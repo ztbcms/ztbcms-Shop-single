@@ -12,7 +12,7 @@
                 首页推荐
             </h1>
             <span style="position: absolute;top: 27%;right: 0%;">
-                <a class="btn btn-primary" onclick="$('#addRecomModal').modal()" href="javascript:;">
+                <a class="btn btn-primary" onclick="$('#addRecomModal').modal()" href="javascript:">
                     添加推荐位
                 </a>
             </span>
@@ -22,8 +22,8 @@
                 <div class="box-header">
                     <h3 class="box-title">{{ item.name }}</h3>
                     <span style="float: right;">
-                        <a class="btn btn-primary" @click="addRecomItemModelBtn(item.id)" href="javascript:;">添加推荐内容</a>
-                        <a class="btn btn-danger" @click="delBtn(item)" href="javascript:;">删除</a>
+                        <a class="btn btn-primary" @click="addRecomItemModelBtn(item.id)" href="javascript:">添加推荐内容</a>
+                        <a class="btn btn-danger" @click="delBtn(item)" href="javascript:">删除</a>
                     </span>
                 </div>
                 <div class="box-body">
@@ -62,9 +62,9 @@
                                         <td>{{ i.link }}</td>
                                         <td style="width: 150px;">
                                             <a class="btn btn-primary" @click="editRecomItemModalBtn(i)"
-                                               href="javascript:;">编辑</a>
+                                               href="javascript:">编辑</a>
                                             <a class="btn btn-danger" @click="delRecomItem(i)"
-                                               href="javascript:;">删除</a>
+                                               href="javascript:">删除</a>
                                         </td>
                                     </tr>
                                     </tbody>
