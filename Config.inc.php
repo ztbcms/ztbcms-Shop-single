@@ -21,7 +21,7 @@ return array(
     'authoremail' => 'zhlhuang888@foxmail.com',
     //版本号，请不要带除数字外的其他字符
     'version' => '0.9.0.0',
-    //适配最低ZtbFCMS版本，
+    //适配最低ZTBCMS版本，
     'adaptation' => '3.0.0.0',
     //签名
     'sign' => 'b19cc279ed484c13c96c2f7142e2f437',
